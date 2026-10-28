@@ -24,7 +24,7 @@ Releases (APKs): https://github.com/fatterdev/grindr-plus-plus/releases
 
 Repo root `news.json` remains for `BridgeService` / `fetchNotifs` (periodic soft-fail ping). Schema is still `{message_id, text, date}` for compatibility, but content is **fork-maintained**, not a Telegram mirror. Include `#push` in `text` to trigger a device notification when the id changes.
 
-CI workflow `news.yml` still soft-skips without `TELEGRAM_BOT_TOKEN` (fork-friendly).
+The old `news.yml` CI workflow (Telegram mirror) was removed in the Ver.5 cleanup; `news.json` is fork-maintained and committed manually.
 
 ## Wiki pages
 
