@@ -6,6 +6,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
+import kotlin.io.path.createTempDirectory
 
 class MorpheBCatalogTest {
     @Test
@@ -20,7 +21,7 @@ class MorpheBCatalogTest {
 
     @Test
     fun engineInjectsMarkerAsset() {
-        val dir = createTempDir("morpheb")
+        val dir = createTempDirectory("morpheb").toFile()
         val apk = File(dir, "base.apk")
         // minimal zip with one entry
         java.util.zip.ZipOutputStream(apk.outputStream()).use { zos ->
@@ -45,7 +46,7 @@ class MorpheBCatalogTest {
 
     @Test
     fun selectBaseApk_prefersNamedBaseOverFirstSplit() {
-        val dir = createTempDir("morpheb-base")
+        val dir = createTempDirectory("morpheb-base").toFile()
         val config = File(dir, "config.xxhdpi.apk").also { it.writeText("tiny") }
         val base = File(dir, "base.apk").also { it.writeText("larger-base-content-here") }
         assertEquals(base, MorpheBPatchEngine.selectBaseApk(listOf(config, base)))
@@ -53,7 +54,7 @@ class MorpheBCatalogTest {
 
     @Test
     fun fingerprintScanWritesReportOnHit() {
-        val dir = createTempDir("morpheb-bc")
+        val dir = createTempDirectory("morpheb-bc").toFile()
         val apk = File(dir, "base.apk")
         java.util.zip.ZipOutputStream(apk.outputStream()).use { zos ->
             zos.putNextEntry(java.util.zip.ZipEntry("classes.dex"))

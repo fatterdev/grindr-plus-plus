@@ -6,12 +6,13 @@ import org.junit.Test
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.createTempDirectory
 
 class PairIpStaticDecryptTest {
 
     @Test
     fun detectPairIp_falseWithoutMarkers() {
-        val dir = createTempDir(prefix = "pairip-neg-")
+        val dir = createTempDirectory(prefix = "pairip-neg-").toFile()
         val apk = File(dir, "base.apk")
         ZipOutputStream(apk.outputStream()).use { zos ->
             zos.putNextEntry(ZipEntry("assets/hello.txt"))
@@ -23,7 +24,7 @@ class PairIpStaticDecryptTest {
 
     @Test
     fun detectPairIp_trueWithPairipcore() {
-        val dir = createTempDir(prefix = "pairip-pos-")
+        val dir = createTempDirectory(prefix = "pairip-pos-").toFile()
         val apk = File(dir, "base.apk")
         ZipOutputStream(apk.outputStream()).use { zos ->
             zos.putNextEntry(ZipEntry("lib/arm64-v8a/libpairipcore.so"))
@@ -35,7 +36,7 @@ class PairIpStaticDecryptTest {
 
     @Test
     fun apply_splicesNativeWhenPackPresent() {
-        val dir = createTempDir(prefix = "pairip-apply-")
+        val dir = createTempDirectory(prefix = "pairip-apply-").toFile()
         val base = File(dir, "base.apk")
         ZipOutputStream(base.outputStream()).use { zos ->
             zos.putNextEntry(ZipEntry("lib/arm64-v8a/libpairipcore.so"))

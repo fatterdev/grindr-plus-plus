@@ -24,11 +24,12 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.createTempDirectory
 
 class DexlibBytecodeBackendTest {
     @Test
     fun prependsReturnTrueOnStringFingerprint() {
-        val dir = createTempDir("morpheb-dexlib")
+        val dir = createTempDirectory("morpheb-dexlib").toFile()
         val apk = File(dir, "base.apk")
         writeApkWithDex(apk, fixtureDexReturningFalse())
 
@@ -49,7 +50,7 @@ class DexlibBytecodeBackendTest {
 
     @Test
     fun injectsMarkerClassAndRewriteReport() {
-        val dir = createTempDir("morpheb-marker")
+        val dir = createTempDirectory("morpheb-marker").toFile()
         val apk = File(dir, "base.apk")
         writeApkWithDex(apk, fixtureDexReturningFalse())
 
@@ -71,7 +72,7 @@ class DexlibBytecodeBackendTest {
 
     @Test
     fun invalidDexFallsBackToByteScan() {
-        val dir = createTempDir("morpheb-fallback")
+        val dir = createTempDirectory("morpheb-fallback").toFile()
         val apk = File(dir, "base.apk")
         ZipOutputStream(apk.outputStream()).use { zos ->
             zos.putNextEntry(java.util.zip.ZipEntry("classes.dex"))

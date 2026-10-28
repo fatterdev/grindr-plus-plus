@@ -541,9 +541,11 @@ object GrindrPlus {
 
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
+                @Suppress("DEPRECATION")
+                val threadId = thread.id
                 Logger.e("Uncaught exception in thread: ${thread.name}", LogSource.MODULE)
                 Logger.e("Exception: ${throwable.javaClass.simpleName}: ${throwable.message}", LogSource.MODULE)
-                Logger.writeRaw("Thread: ${thread.name} (id=${thread.id})")
+                Logger.writeRaw("Thread: ${thread.name} (id=$threadId)")
                 Logger.writeRaw("Exception: ${throwable.javaClass.name}")
                 Logger.writeRaw("Message: ${throwable.message}")
                 Logger.writeRaw("Stack trace:")
