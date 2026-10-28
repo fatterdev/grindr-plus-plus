@@ -42,4 +42,4 @@ Bytecode today is a **dexlib2 rewriter** inside the orchestrator (ADR 0007): Mor
 
 ## Package
 
-`com.gpp.morphe.b` — `MorpheBCatalog`, `MorpheBPatchEngine`.
+`dev.fatter.gpp.morphe.b` — `MorpheBCatalog`, `MorpheBPatchEngine`.

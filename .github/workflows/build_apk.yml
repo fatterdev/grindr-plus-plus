@@ -200,9 +200,9 @@ jobs:
           - Signed: \`${{ steps.signing.outputs.available }}\`
 
           **Install**
-          - **Morphe** (\`com.gpp.morphe\`) — rootless Manager / LSPatch
-          - **Alloy** (\`com.gpp.alloy\`) — Vector module ([JingMatrix/Vector](https://github.com/JingMatrix/Vector))
-          - **embed** (\`com.gpp.morphe.payload\`) — slim \`-m\` payload (build artifact)
+          - **Morphe** (\`dev.fatter.gpp.morphe\`) — rootless Manager / LSPatch
+          - **Alloy** (\`dev.fatter.gpp.alloy\`) — Vector module ([JingMatrix/Vector](https://github.com/JingMatrix/Vector))
+          - **embed** (\`dev.fatter.gpp.morphe.payload\`) — slim \`-m\` payload (build artifact)
 
           UI label is **Grindr++** for both user APKs. See \`docs/dual-apk-migration.md\`.
           EOF

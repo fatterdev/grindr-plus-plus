@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gpp"
+    namespace = "dev.fatter.gpp"
     // libxposed service/interface 102.0.0 require compileSdk ≥ 37 (ADR 0008).
     compileSdk = 37
 
@@ -17,8 +17,8 @@ android {
         // applicationId set per delivery flavor (ADR 0005)
         minSdk = 26
         targetSdk = 34
-        versionCode = 14
-        versionName = "4.7.2-$gitCommitHash"
+        versionCode = 15
+        versionName = "4.8.0-$gitCommitHash"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -31,18 +31,18 @@ android {
     productFlavors {
         create("morphe") {
             dimension = "delivery"
-            applicationId = "com.gpp.morphe"
+            applicationId = "dev.fatter.gpp.morphe"
             buildConfigField("String", "DELIVERY_CHANNEL", "\"morphe\"")
         }
         create("alloy") {
             dimension = "delivery"
-            applicationId = "com.gpp.alloy"
+            applicationId = "dev.fatter.gpp.alloy"
             buildConfigField("String", "DELIVERY_CHANNEL", "\"alloy\"")
         }
         // Internal slim -m payload (not a primary Releases product). ADR 0005.
         create("embed") {
             dimension = "delivery"
-            applicationId = "com.gpp.morphe.payload"
+            applicationId = "dev.fatter.gpp.morphe.payload"
             buildConfigField("String", "DELIVERY_CHANNEL", "\"embed\"")
         }
     }

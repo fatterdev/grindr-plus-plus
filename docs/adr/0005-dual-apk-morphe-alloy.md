@@ -8,7 +8,7 @@
 
 A single legacy `com.grindrplus` APK mixed Vector/LSPosed-module UX and LSPatch install UX. Users need a clear product split. Continuity must favor the **rootless / UI-first** audience, not rooted power users.
 
-**Product naming (2026-10-07):** umbrella product is **Grindr++**; Manager UI for both flavors is **GrindMod** (`com.gpp.*`). Morphe also installs a **Grindr++** clone beside stock Play Grindr.
+**Product naming (2026-10-07):** umbrella product is **Grindr++**; Manager UI for both flavors is **GrindMod** (`dev.fatter.gpp.*`). Morphe also installs a **Grindr++** clone beside stock Play Grindr.
 
 ## Decision
 
@@ -16,8 +16,8 @@ A single legacy `com.grindrplus` APK mixed Vector/LSPosed-module UX and LSPatch 
 
 | Flavor | `applicationId` | Launcher label | Role |
 | --- | --- | --- | --- |
-| `morphe` | `com.gpp.morphe` | **GrindMod** | Rootless Manager: export installed Play Grindr → clone `com.grindrapp.android.plus` labeled **Grindr++** → LSPatch `-l 2` |
-| `alloy` | `com.gpp.alloy` | **GrindMod** | Rooted Vector module + Manager **without** Install tab; Settings toggle for Vector enable/disable (root + CLI) |
+| `morphe` | `dev.fatter.gpp.morphe` | **GrindMod** | Rootless Manager: export installed Play Grindr → clone `com.grindrapp.android.plus` labeled **Grindr++** → LSPatch `-l 2` |
+| `alloy` | `dev.fatter.gpp.alloy` | **GrindMod** | Rooted Vector module + Manager **without** Install tab; Settings toggle for Vector enable/disable (root + CLI) |
 
 ### 2. Drawer model (asymmetric by design)
 
@@ -40,7 +40,7 @@ LSPatch `-m` embed payload is build-only for the Morphe pipeline.
 
 - `morphe`: LSPatch; Install UX; never a Vector module.
 - `alloy`: sole Vector registrant (libxposed API 102; ADR 0008); Install nav omitted; root CLI toggle allowed.
-- Bridge permission `com.gpp.permission.ACCESS_BRIDGE_SERVICE` stays signature-shared.
+- Bridge permission `dev.fatter.gpp.permission.ACCESS_BRIDGE_SERVICE` stays signature-shared.
 
 ## Consequences
 

@@ -13,10 +13,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="com.gpp.permission.ACCESS_BRIDGE_SERVICE" />
+    <uses-permission android:name="dev.fatter.gpp.permission.ACCESS_BRIDGE_SERVICE" />
 
     <permission
-        android:name="com.gpp.permission.ACCESS_BRIDGE_SERVICE"
+        android:name="dev.fatter.gpp.permission.ACCESS_BRIDGE_SERVICE"
         android:protectionLevel="signature" />
 
     <application
@@ -70,14 +70,14 @@
         </activity-alias>
 
         <receiver
-            android:name="com.gpp.bridge.NotificationActionReceiver"
+            android:name="dev.fatter.gpp.bridge.NotificationActionReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.gpp.COPY_ACTION" />
-                <action android:name="com.gpp.VIEW_PROFILE_ACTION" />
-                <action android:name="com.gpp.CUSTOM_ACTION" />
-                <action android:name="com.gpp.DEFAULT_ACTION" />
+                <action android:name="dev.fatter.gpp.COPY_ACTION" />
+                <action android:name="dev.fatter.gpp.VIEW_PROFILE_ACTION" />
+                <action android:name="dev.fatter.gpp.CUSTOM_ACTION" />
+                <action android:name="dev.fatter.gpp.DEFAULT_ACTION" />
             </intent-filter>
         </receiver>
     </application>
