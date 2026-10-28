@@ -30,6 +30,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 jobs:
   build:
@@ -151,6 +153,22 @@ jobs:
           echo "EMBED_RELEASE=$EMBED_RELEASE" >> "$GITHUB_ENV"
           echo "RELEASE_APK=$MORPHE_RELEASE" >> "$GITHUB_ENV"
 
+      - name: Generate SHA256SUMS
+        run: |
+          set -euo pipefail
+          FILES=("$MORPHE_RELEASE" "$ALLOY_RELEASE")
+          if [ -n "${EMBED_RELEASE:-}" ]; then FILES+=("$EMBED_RELEASE"); fi
+          sha256sum "${FILES[@]}" > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Attest release APKs (provenance)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            app/build/outputs/apk/morphe/release/*.apk
+            app/build/outputs/apk/alloy/release/*.apk
+            app/build/outputs/apk/embed/release/*.apk
+
       - name: Upload debug artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -167,6 +185,7 @@ jobs:
             ${{ env.MORPHE_RELEASE }}
             ${{ env.ALLOY_RELEASE }}
             ${{ env.EMBED_RELEASE }}
+            SHA256SUMS.txt
 
       - name: Resolve release tag
         id: tag
@@ -209,6 +228,7 @@ jobs:
           )"
           FILES=("$MORPHE_DEBUG" "$ALLOY_DEBUG" "$MORPHE_RELEASE" "$ALLOY_RELEASE")
           if [ -n "${EMBED_RELEASE:-}" ]; then FILES+=("$EMBED_RELEASE"); fi
+          FILES+=("SHA256SUMS.txt")
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "${FILES[@]}" --clobber
           else
