@@ -2,6 +2,10 @@
 
 In-app News tab + README news entry point.
 
+## Migration note — namespace change (Ver.5)
+
+GrindMod/Grindr++ APKs moved to the `dev.fatter.gpp.*` applicationIds (`dev.fatter.gpp.morphe`, `dev.fatter.gpp.alloy`, `dev.fatter.gpp.morphe.payload`). Because the applicationId changed, Android treats the new build as a separate app: **uninstall the previous `com.gpp.*` build first, then install the new APK**. Alloy (Vector/LSPosed) users must re-confirm the module scope for `dev.fatter.gpp.alloy` after installing.
+
 ## Default link (current)
 
 **GitHub Wiki** — https://github.com/fatterdev/grindr-plus-plus/wiki
