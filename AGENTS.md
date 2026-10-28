@@ -19,7 +19,7 @@
 - Dual APK IDs locked in `docs/adr/0005-dual-apk-morphe-alloy.md`; brand masters in `docs/brand/grindr-plus-plus/` (allowlist only).
 - Rooted framework is **Vector** ([JingMatrix/Vector](https://github.com/JingMatrix/Vector)); legacy `isLsPosed` identifiers kept. Alloy/embed target **libxposed / Vector API 102** (ADR 0008). Modding active = Vector CLI; hot-reload = code swap only.
 - Mapping is pack-driven by Grindr `versionCode`; soft-fail on missing packs.
-- Artifact naming uses **gpp** and must not embed the Grindr host version in `versionName`.
+- Artifact naming uses **gpp** and must not embed the Grindr host version in `versionName`; module version line is **5.x** (pre-release/dev format: `5.0.0-dev-<sha>`).
 - Settings↔runtime truthfulness is a Ver.5 pillar; anonymous opt-in telemetry via Manager analytics.
 - Lab Android SDK/Studio under `C:\devbin`; unit tests need JDK 17/21 (lab JBR); JDK 25 breaks Robolectric.
 - Legacy name **GrindrMod** (XDA) is unrelated; About should disclaim. Not Modr++.
