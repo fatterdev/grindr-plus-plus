@@ -27,7 +27,7 @@ class NewsViewModel : ViewModel() {
     companion object {
         private const val TAG = "NewsViewModel"
         private const val RELEASES_URL =
-            "https://api.github.com/repos/terenzif/grindr-plus-plus/releases"
+            "https://api.github.com/repos/fatterdev/grindr-plus-plus/releases"
         private val client = OkHttpClient()
     }
 

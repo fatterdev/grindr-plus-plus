@@ -3,7 +3,7 @@ description:  Create a report about something that is not working
 title: "[BUG]: "
 labels: ["bug"]
 assignees:
-  - terenzif
+  - fatterdev
 body:
   - type: markdown
     attributes:
@@ -19,7 +19,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please search to see if an issue already exists for the bug you encountered. You can search existing issues [here](https://github.com/terenzif/grindr-plus-plus/issues).
+        Please search to see if an issue already exists for the bug you encountered. You can search existing issues [here](https://github.com/fatterdev/grindr-plus-plus/issues).
 
   - type: checkboxes
     id: existing-issue

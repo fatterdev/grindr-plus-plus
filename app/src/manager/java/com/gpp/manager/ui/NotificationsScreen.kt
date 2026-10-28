@@ -133,7 +133,7 @@ fun NotificationScreen(
                                 .fillMaxWidth()
                                 .clickable {
                                     context.startActivity(Intent(Intent.ACTION_VIEW).apply {
-                                        data = "https://github.com/terenzif/grindr-plus-plus/releases".toUri()
+                                        data = "https://github.com/fatterdev/grindr-plus-plus/releases".toUri()
                                     })
                                 },
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)

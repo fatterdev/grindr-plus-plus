@@ -11,13 +11,13 @@
 <p align="center"><em>take them all</em></p>
 
 <p align="center">
-  Maintained by <a href="https://github.com/terenzif">@terenzif</a> — Xposed / Vector module for Grindr.
+  Maintained by <a href="https://github.com/fatterdev">@fatterdev</a> — Xposed / Vector module for Grindr.
 </p>
 
 <p align="center">
-  <a href="https://github.com/terenzif/grindr-plus-plus/actions/workflows/verify.yml"><img src="https://img.shields.io/github/actions/workflow/status/terenzif/grindr-plus-plus/verify.yml?branch=master&logo=github&label=Verify" alt="Verify"></a>
-  <a href="https://github.com/terenzif/grindr-plus-plus/actions/workflows/build_apk.yml"><img src="https://img.shields.io/github/actions/workflow/status/terenzif/grindr-plus-plus/build_apk.yml?branch=master&logo=github&label=Build" alt="Build"></a>
-  <a href="https://github.com/terenzif/grindr-plus-plus/releases/latest"><img src="https://img.shields.io/github/v/release/terenzif/grindr-plus-plus?label=Release" alt="Release"></a>
+  <a href="https://github.com/fatterdev/grindr-plus-plus/actions/workflows/verify.yml"><img src="https://img.shields.io/github/actions/workflow/status/fatterdev/grindr-plus-plus/verify.yml?branch=master&logo=github&label=Verify" alt="Verify"></a>
+  <a href="https://github.com/fatterdev/grindr-plus-plus/actions/workflows/build_apk.yml"><img src="https://img.shields.io/github/actions/workflow/status/fatterdev/grindr-plus-plus/build_apk.yml?branch=master&logo=github&label=Build" alt="Build"></a>
+  <a href="https://github.com/fatterdev/grindr-plus-plus/releases/latest"><img src="https://img.shields.io/github/v/release/fatterdev/grindr-plus-plus?label=Release" alt="Release"></a>
 </p>
 
 ## What this is
@@ -45,10 +45,10 @@ Free mod, no warranty. We are not responsible for lost chats, bans, or other iss
 
 ## Download & news
 
-- Releases / APKs: [Releases](https://github.com/terenzif/grindr-plus-plus/releases)
+- Releases / APKs: [Releases](https://github.com/fatterdev/grindr-plus-plus/releases)
 - In-app **News** tab: wiki CTA + GitHub Releases list — [docs/news.md](docs/news.md)
-- Wiki: [terenzif/grindr-plus-plus/wiki](https://github.com/terenzif/grindr-plus-plus/wiki)
-- CI: [Verify](https://github.com/terenzif/grindr-plus-plus/actions/workflows/verify.yml) · [Build & Release](https://github.com/terenzif/grindr-plus-plus/actions/workflows/build_apk.yml)
+- Wiki: [fatterdev/grindr-plus-plus/wiki](https://github.com/fatterdev/grindr-plus-plus/wiki)
+- CI: [Verify](https://github.com/fatterdev/grindr-plus-plus/actions/workflows/verify.yml) · [Build & Release](https://github.com/fatterdev/grindr-plus-plus/actions/workflows/build_apk.yml)
 
 Compatibility is **pack-driven** per installed Grindr `versionCode` (catalog: `mapping-packs/index.json`).
 
@@ -57,7 +57,7 @@ Compatibility is **pack-driven** per installed Grindr `versionCode` (catalog: `m
 ### Rootless (Ver.5 / Morphe A — recommended product path)
 
 1. Install **stock Grindr** from the Play Store.
-2. Install **`gpp-morphe-*.apk`** (GrindMod) from [Releases](https://github.com/terenzif/grindr-plus-plus/releases).
+2. Install **`gpp-morphe-*.apk`** (GrindMod) from [Releases](https://github.com/fatterdev/grindr-plus-plus/releases).
 3. Open GrindMod → **Install** → **Create Grindr++** (copies the installed Play APK, clones as `com.grindrapp.android.plus`, LSPatch embed).
 4. Open **Grindr++** for the modded app; stock **Grindr** stays for Play updates. Re-run Create/Update after Store updates.
 
@@ -67,7 +67,7 @@ Details: [docs/morphe-a.md](docs/morphe-a.md), [docs/manager-ui-lspatch.md](docs
 
 **Requirements:** Magisk / KernelSU + [JingMatrix/Vector](https://github.com/JingMatrix/Vector) (API 102 / Vector ≥ 2.2).
 
-1. Install **`gpp-alloy-*.apk`** (GrindMod Alloy) from [Releases](https://github.com/terenzif/grindr-plus-plus/releases).
+1. Install **`gpp-alloy-*.apk`** (GrindMod Alloy) from [Releases](https://github.com/fatterdev/grindr-plus-plus/releases).
 2. Install stock Grindr (mapping pack required for your `versionCode`).
 3. Enable modding in GrindMod **Settings → Modding active** (root + Vector CLI) *or* enable the module in Vector with Grindr in scope.
 4. Open Grindr and verify.
@@ -137,7 +137,7 @@ Grindr++ is not a continuation-in-name of GrindrPlus. The useful parts of that a
 
 - Original idea and mod: [ElJaviLuki/GrindrPlus](https://github.com/ElJaviLuki/GrindrPlus)
 - Rewrite through archive: [R0rt1z2/GrindrPlus](https://github.com/R0rt1z2/GrindrPlus) and contributors
-- This product: [terenzif/grindr-plus-plus](https://github.com/terenzif/grindr-plus-plus)
+- This product: [fatterdev/grindr-plus-plus](https://github.com/fatterdev/grindr-plus-plus)
 - Vector / LSPatch: [JingMatrix](https://github.com/JingMatrix) ([Vector](https://github.com/JingMatrix/Vector), [LSPatch](https://github.com/JingMatrix/LSPatch))
 
 ## License

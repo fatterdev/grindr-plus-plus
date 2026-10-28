@@ -27,7 +27,7 @@ class GppMessage(
  * Not Telegram — fork-maintained JSON on GitHub. News UI uses Releases + wiki.
  */
 const val CHANNEL_PING_URL =
-    "https://raw.githubusercontent.com/terenzif/grindr-plus-plus/refs/heads/master/news.json"
+    "https://raw.githubusercontent.com/fatterdev/grindr-plus-plus/refs/heads/master/news.json"
 
 val tgMessages = MutableStateFlow<List<GppMessage>>(listOf())
 
@@ -43,7 +43,7 @@ suspend fun fetchNotifs(context: Context) = withContext(Dispatchers.IO) {
             .url(CHANNEL_PING_URL)
             .header(
                 "User-Agent",
-                "GrindMod/terenzif (Android; news-ping)"
+                "GrindMod/fatterdev (Android; news-ping)"
             )
             .build()
 

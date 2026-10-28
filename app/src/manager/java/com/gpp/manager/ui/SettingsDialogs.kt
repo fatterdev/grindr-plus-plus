@@ -281,14 +281,14 @@ fun AboutDialog(
 
                         Row {
                             Text(
-                                text = "terenzif",
+                                text = "fatterdev",
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.primary
                                 ),
                                 modifier = Modifier.clickable {
                                     val intent = Intent(
                                         Intent.ACTION_VIEW,
-                                        "https://github.com/terenzif/grindr-plus-plus".toUri()
+                                        "https://github.com/fatterdev/grindr-plus-plus".toUri()
                                     )
                                     context.startActivity(intent)
                                 }

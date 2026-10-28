@@ -1,7 +1,7 @@
 ---
 name: code-review
 description: >-
-  GrindrPlus (terenzif fork) code-review standards for GitHub Copilot pull request
+  GrindrPlus (fatterdev fork) code-review standards for GitHub Copilot pull request
   reviews. Use for every PR review on this repository — Vector/Xposed Kotlin
   module, MappingDictionary packs, soft-fail hooks, version gates, and security
   constraints. Prefer medium+ findings that affect init abort, ClassNotFound
@@ -10,7 +10,7 @@ description: >-
 
 # GrindrPlus code review (Copilot)
 
-You are reviewing **terenzif/grindr-plus-plus** (product name Grindr++): a **Vector / Xposed** module (Kotlin) that hooks the Grindr Android app. Public docs/README are English; the maintainer may discuss in Italian — keep review comments in **English**.
+You are reviewing **fatterdev/grindr-plus-plus** (product name Grindr++): a **Vector / Xposed** module (Kotlin) that hooks the Grindr Android app. Public docs/README are English; the maintainer may discuss in Italian — keep review comments in **English**.
 
 ## What to prioritize (medium+)
 

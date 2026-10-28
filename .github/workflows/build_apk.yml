@@ -1,6 +1,6 @@
 name: Build APK and Release
 
-# Build for terenzif/grindr-plus-plus.
+# Build for fatterdev/grindr-plus-plus.
 # - Always builds debug + release APKs and uploads artifacts (no upstream Telegram required).
 # - Signs release only when KEYSTORE_* secrets are present.
 # - Publishes a GitHub Release when create_release=true or on v* tags (needs contents:write).
@@ -193,7 +193,7 @@ jobs:
           TAG="${{ steps.tag.outputs.tag }}"
           TITLE="Grindr++ ${{ env.VERSION_INFO }} (${TAG})"
           NOTES="$(cat <<EOF
-          Dual APK build for **terenzif/grindr-plus-plus** (ADR 0005).
+          Dual APK build for **fatterdev/grindr-plus-plus** (ADR 0005).
 
           - Commit: \`${{ env.COMMIT_SHA }}\`
           - Version info: \`${{ env.VERSION_INFO }}\`
