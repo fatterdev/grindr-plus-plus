@@ -2,10 +2,6 @@
   <img src="docs/brand/grindr-plus-plus/hero-master.jpg" alt="Grindr++ — take them all" width="100%">
 </p>
 
-<p align="center">
-  <img src="docs/brand/grindr-plus-plus/icon-master.jpg" alt="Grindr++" width="120" height="120">
-</p>
-
 <h1 align="center">Grindr++</h1>
 
 <p align="center"><em>take them all</em></p>
