@@ -518,41 +518,28 @@ class BridgeService : Service() {
     }
 
     private fun createActionIntent(actionType: String, actionData: String): Intent {
-        val intent = when (actionType) {
-            "COPY" -> Intent("dev.fatter.gpp.COPY_ACTION").apply {
-                putExtra("data", actionData)
-                setPackage(applicationContext.packageName)
-                setClassName(
-                    applicationContext.packageName,
-                    "${applicationContext.packageName}.bridge.NotificationActionReceiver"
-                )
+        // Explicit component (not a dynamic setClassName string): keeps CodeQL
+        // java/android/implicit-pendingintents satisfied and delivery deterministic.
+        val intent = Intent(applicationContext, NotificationActionReceiver::class.java)
+        when (actionType) {
+            "COPY" -> {
+                intent.action = "dev.fatter.gpp.COPY_ACTION"
+                intent.putExtra("data", actionData)
             }
 
-            "VIEW_PROFILE" -> Intent("dev.fatter.gpp.VIEW_PROFILE_ACTION").apply {
-                putExtra("profileId", actionData)
-                setPackage(applicationContext.packageName)
-                setClassName(
-                    applicationContext.packageName,
-                    "${applicationContext.packageName}.bridge.NotificationActionReceiver"
-                )
+            "VIEW_PROFILE" -> {
+                intent.action = "dev.fatter.gpp.VIEW_PROFILE_ACTION"
+                intent.putExtra("profileId", actionData)
             }
 
-            "CUSTOM" -> Intent("dev.fatter.gpp.CUSTOM_ACTION").apply {
-                putExtra("data", actionData)
-                setPackage(applicationContext.packageName)
-                setClassName(
-                    applicationContext.packageName,
-                    "${applicationContext.packageName}.bridge.NotificationActionReceiver"
-                )
+            "CUSTOM" -> {
+                intent.action = "dev.fatter.gpp.CUSTOM_ACTION"
+                intent.putExtra("data", actionData)
             }
 
-            else -> Intent("dev.fatter.gpp.DEFAULT_ACTION").apply {
-                putExtra("data", actionData)
-                setPackage(applicationContext.packageName)
-                setClassName(
-                    applicationContext.packageName,
-                    "${applicationContext.packageName}.bridge.NotificationActionReceiver"
-                )
+            else -> {
+                intent.action = "dev.fatter.gpp.DEFAULT_ACTION"
+                intent.putExtra("data", actionData)
             }
         }
 

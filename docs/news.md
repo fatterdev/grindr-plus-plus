@@ -4,7 +4,7 @@ In-app News tab + README news entry point.
 
 ## Migration note — namespace change (Ver.5)
 
-GrindMod/Grindr++ APKs moved to the `dev.fatter.gpp.*` applicationIds (`dev.fatter.gpp.morphe`, `dev.fatter.gpp.alloy`, `dev.fatter.gpp.morphe.payload`). Because the applicationId changed, Android treats the new build as a separate app: **uninstall the previous `com.gpp.*` build first, then install the new APK**. Alloy (Vector/LSPosed) users must re-confirm the module scope for `dev.fatter.gpp.alloy` after installing.
+GrindMod/Grindr++ APKs moved to the `dev.fatter.gpp.*` applicationIds (`dev.fatter.gpp.morphe`, `dev.fatter.gpp.alloy`, `dev.fatter.gpp.morphe.payload`). Because the applicationId changed, Android treats the new build as a separate app: **uninstall the previous `com.gpp.*` build first, then install the new APK**. Uninstalling also removes the old app's local data (settings, block log, saved phrases) and its cache-held clone-signing key — back up what you need first. Existing Morphe clones remain bound to the old Manager (bridge + signing key) and cannot be updated by the new one: after installing the new Manager, **recreate the Grindr++ clone** (GrindMod → Install). Alloy (Vector/LSPosed) users must re-confirm the module scope for `dev.fatter.gpp.alloy` after installing.
 
 ## Default link (current)
 

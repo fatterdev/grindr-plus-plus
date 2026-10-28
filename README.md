@@ -54,7 +54,7 @@ Compatibility is **pack-driven** per installed Grindr `versionCode` (catalog: `m
 
 ## Installation
 
-> **Migration note (Ver.5 namespace change):** GrindMod APKs now use the `dev.fatter.gpp.*` applicationIds (`dev.fatter.gpp.morphe`, `dev.fatter.gpp.alloy`). The new app id means the system treats it as a different app: **uninstall the old `com.gpp.*` build before installing the new one**. For Alloy (Vector/LSPosed), re-open the module manager afterwards and re-confirm Grindr is in scope for `dev.fatter.gpp.alloy`.
+> **Migration note (Ver.5 namespace change):** GrindMod APKs now use the `dev.fatter.gpp.*` applicationIds (`dev.fatter.gpp.morphe`, `dev.fatter.gpp.alloy`). The new app id means the system treats it as a different app: **uninstall the old `com.gpp.*` build before installing the new one** — this also deletes the old app's local data (settings, block log, saved phrases, and the cache-held clone-signing key), so back up anything you need first. Existing Morphe clones stay bound to the old Manager (bridge + signing key) and cannot be updated by the new one: after installing the new Manager, **recreate the Grindr++ clone** via GrindMod → **Install**. For Alloy (Vector/LSPosed), re-open the module manager afterwards and re-confirm Grindr is in scope for `dev.fatter.gpp.alloy`.
 
 ### Rootless (Ver.5 / Morphe A — recommended product path)
 
