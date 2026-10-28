@@ -78,38 +78,38 @@ android {
         // Manager UI — morphe + alloy only (not slim embed).
         // Register on both java + kotlin dirs so AGP built-in Kotlin picks .kt files.
         getByName("morphe") {
-            java.srcDir("src/manager/java")
-            kotlin.srcDir("src/manager/java")
+            java.directories.add("src/manager/java")
+            kotlin.directories.add("src/manager/java")
             // Rootless Install / Play / LSPatch orchestration
-            java.srcDir("src/manager-install/java")
-            kotlin.srcDir("src/manager-install/java")
+            java.directories.add("src/manager-install/java")
+            kotlin.directories.add("src/manager-install/java")
             // Morphe B DEX rewriter (ADR 0007)
-            java.srcDir("src/morphe-b/java")
-            kotlin.srcDir("src/morphe-b/java")
+            java.directories.add("src/morphe-b/java")
+            kotlin.directories.add("src/morphe-b/java")
         }
         getByName("alloy") {
-            java.srcDir("src/manager/java")
-            kotlin.srcDir("src/manager/java")
+            java.directories.add("src/manager/java")
+            kotlin.directories.add("src/manager/java")
             // Vector module runtime + mapping packs
-            java.srcDir("src/module/java")
-            kotlin.srcDir("src/module/java")
+            java.directories.add("src/module/java")
+            kotlin.directories.add("src/module/java")
             // Alloy-only Manager↔Vector service bridge
-            java.srcDir("src/alloy/java")
-            kotlin.srcDir("src/alloy/java")
-            assets.srcDir("src/module/assets")
-            resources.srcDir("src/module/resources")
+            java.directories.add("src/alloy/java")
+            kotlin.directories.add("src/alloy/java")
+            assets.directories.add("src/module/assets")
+            resources.directories.add("src/module/resources")
         }
         getByName("embed") {
             // Slim LSPatch -m payload: module runtime only
-            java.srcDir("src/module/java")
-            kotlin.srcDir("src/module/java")
-            assets.srcDir("src/module/assets")
-            resources.srcDir("src/module/resources")
+            java.directories.add("src/module/java")
+            kotlin.directories.add("src/module/java")
+            assets.directories.add("src/module/assets")
+            resources.directories.add("src/module/resources")
         }
         // Unit tests cover Morphe B without a product flavor on the test classpath.
         getByName("test") {
-            java.srcDir("src/morphe-b/java")
-            kotlin.srcDir("src/morphe-b/java")
+            java.directories.add("src/morphe-b/java")
+            kotlin.directories.add("src/morphe-b/java")
         }
     }
 }
