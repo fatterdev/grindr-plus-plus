@@ -1,10 +1,10 @@
 ## Learned User Preferences
 
-- Product name is **Grindr++** (repo/folder `grindr-plus-plus`). Tagline on 16:9 art: take them all. Manager UI name is **GrindMod** (mask icon + gear badge). GPP remains an internal acronym; `com.gpp.*` applicationIds stay.
+- Product name is **Grindr++** (repo/folder `grindr-plus-plus`). Tagline on 16:9 art: take them all. Manager UI name is **GrindMod** (mask icon + gear badge). GPP remains an internal acronym; `dev.fatter.gpp.*` applicationIds stay.
 - Recycle Grace Barbarica cinematic dark/gold style, but never barbarians or GB lettering; wide graphics are 16:9. Brand phoenix: only `ref-phoenix-head` (not full `ref-phoenix-stencil`); flat solid gold-yellow with fake relief; Grindr-style mask face with stylized mouth (grind grin + solemn rebirth).
 - Do not treat README or personal/lab-use wording as architectural constraints; do not invent product constraints the user never decided; treat user corrections as authoritative.
 - Ver.5 must stay version-agnostic: no hardcoded single Grindr version as destiny.
-- Dual delivery: `com.gpp.morphe` (rootless GrindMod Manager — never a Vector module) and `com.gpp.alloy` (sole rooted Vector registrant). Slim LSPatch `-m` embed is build-only. Do not give primary Manager continuity to the rooted channel.
+- Dual delivery: `dev.fatter.gpp.morphe` (rootless GrindMod Manager — never a Vector module) and `dev.fatter.gpp.alloy` (sole rooted Vector registrant). Slim LSPatch `-m` embed is build-only. Do not give primary Manager continuity to the rooted channel.
 - Rootless Install: **only** from Play-installed `com.grindrapp.android` → clone `com.grindrapp.android.plus` labeled Grindr++ (stock stays). No CDN Grindr happy path.
 - Alloy: no Grindr++ drawer clone; Settings “Modding active” via root + Vector CLI + force-stop Grindr (hot reload ≠ enable/disable). Shortcut launcher not required.
 - Delivery sequence: Morphe A complete in Ver.5 → Ver.5 green → then Morphe B.

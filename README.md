@@ -22,7 +22,7 @@
 
 ## What this is
 
-**Grindr++** is the product. **GrindMod** is the Manager app (`com.gpp.morphe` / `com.gpp.alloy`). It rose from the archived GrindrPlus line (ElJaviLuki → R0rt1z2, then this tree) after that project was frozen and after the PairIP / VM phase. Not affiliated with legacy XDA **GrindrMod**.
+**Grindr++** is the product. **GrindMod** is the Manager app (`dev.fatter.gpp.morphe` / `dev.fatter.gpp.alloy`). It rose from the archived GrindrPlus line (ElJaviLuki → R0rt1z2, then this tree) after that project was frozen and after the PairIP / VM phase. Not affiliated with legacy XDA **GrindrMod**.
 
 The phoenix/mask is the product mark: a masked head, ready to take them all. GrindMod’s launcher adds a small gear badge so it is not confused with Grindr++.
 
@@ -53,6 +53,8 @@ Free mod, no warranty. We are not responsible for lost chats, bans, or other iss
 Compatibility is **pack-driven** per installed Grindr `versionCode` (catalog: `mapping-packs/index.json`).
 
 ## Installation
+
+> **Migration note (Ver.5 namespace change):** GrindMod APKs now use the `dev.fatter.gpp.*` applicationIds (`dev.fatter.gpp.morphe`, `dev.fatter.gpp.alloy`). The new app id means the system treats it as a different app: **uninstall the old `com.gpp.*` build before installing the new one** — this also deletes the old app's local data (settings, block log, saved phrases, and the cache-held clone-signing key), so back up anything you need first. Existing Morphe clones stay bound to the old Manager (bridge + signing key) and cannot be updated by the new one: after installing the new Manager, **recreate the Grindr++ clone** via GrindMod → **Install**. For Alloy (Vector/LSPosed), re-open the module manager afterwards and re-confirm Grindr is in scope for `dev.fatter.gpp.alloy`.
 
 ### Rootless (Ver.5 / Morphe A — recommended product path)
 
@@ -128,7 +130,7 @@ See [docs/README.md](docs/README.md).
 
 - Mapping packs (bundled): `app/src/main/assets/mappings/<versionCode>.json`
 - Mapping packs (remote publish path): `mapping-packs/<versionCode>.json` — [docs/remote-mapping-packs.md](docs/remote-mapping-packs.md)
-- Loader: `com.gpp.core.mapping.MappingDictionary`
+- Loader: `dev.fatter.gpp.core.mapping.MappingDictionary`
 - Brand assets: [docs/brand/grindr-plus-plus](docs/brand/grindr-plus-plus)
 
 ## Lineage

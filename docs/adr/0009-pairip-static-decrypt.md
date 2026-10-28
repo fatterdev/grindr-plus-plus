@@ -12,7 +12,7 @@ Grindr Play **26.19.0 / 185656** ships Google PairIP (`com.pairip.*`, `libpairip
 ## Decision
 
 1. **Stop** Alloy runtime PairIP stubs as the product path (tombstoned).
-2. **Morphe B phase 1** ([`PairIpStaticDecrypt`](../../app/src/morphe-b/java/com/gpp/morphe/b/PairIpStaticDecrypt.kt)):
+2. **Morphe B phase 1** ([`PairIpStaticDecrypt`](../../app/src/morphe-b/java/dev/fatter/gpp/morphe/b/PairIpStaticDecrypt.kt)):
    - Detect PairIP on input APKs.
    - Splice decrypted natives from `pairip-decrypt/<versionCode>/` (produced by [`scripts/pairip_dump_natives.py`](../../scripts/pairip_dump_natives.py) against stock Grindr).
    - DEX-stub `SignatureCheck.verifyIntegrity` / `LicenseClient.checkLicense` so LSPatch re-sign does not trip integrity; keep `StartupLauncher` / `VMRunner` + real `libpairipcore` for string/VM init on the **rootless clone** (no Vector).

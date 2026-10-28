@@ -19,13 +19,13 @@
             tools:node="remove" />
 
         <activity
-            android:name="com.gpp.manager.MainActivity"
+            android:name="dev.fatter.gpp.manager.MainActivity"
             tools:node="remove" />
         <activity-alias
-            android:name="com.gpp.manager.MainActivityAlias"
+            android:name="dev.fatter.gpp.manager.MainActivityAlias"
             tools:node="remove" />
         <service
-            android:name="com.gpp.bridge.BridgeService"
+            android:name="dev.fatter.gpp.bridge.BridgeService"
             android:exported="true"
             android:foregroundServiceType="specialUse"
             tools:node="merge">

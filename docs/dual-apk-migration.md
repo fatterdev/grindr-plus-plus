@@ -4,8 +4,8 @@ GrindMod ships two packages (Manager label **GrindMod**):
 
 | Audience | Package | Artifact |
 | --- | --- | --- |
-| Rootless | `com.gpp.morphe` | `gpp-morphe-*.apk` |
-| Rooted | `com.gpp.alloy` | `gpp-alloy-*.apk` |
+| Rootless | `dev.fatter.gpp.morphe` | `gpp-morphe-*.apk` |
+| Rooted | `dev.fatter.gpp.alloy` | `gpp-alloy-*.apk` |
 
 Product / Morphe clone label: **Grindr++** (`com.grindrapp.android.plus`).
 
