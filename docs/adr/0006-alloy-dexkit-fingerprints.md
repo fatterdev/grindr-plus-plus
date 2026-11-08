@@ -12,7 +12,7 @@ The `alloy` APK (`dev.fatter.gpp.alloy`) is the rooted Vector channel. Residual 
 
 1. Depend on `org.luckypray:dexkit` for **alloy** (`alloyImplementation`); other flavors `compileOnly` so shared hooks compile.
 2. Façade: `dev.fatter.gpp.alloy.AlloyDexKit` (`ensureInitialized`, `findClassByStrings`).
-3. Pilot: [Favorites.kt](../../app/src/main/java/com/grindrplus/hooks/Favorites.kt) falls back to DexKit string search when pack remap class is missing (Alloy only).
+3. Pilot: [Favorites.kt](../../app/src/module/java/dev/fatter/gpp/hooks/Favorites.kt) falls back to DexKit string search when pack remap class is missing (Alloy only).
 4. Init: `GrindrPlus.initializeCore` calls `AlloyDexKit.ensureInitialized` before `HookManager.init` on Alloy.
 
 ## Non-goals
