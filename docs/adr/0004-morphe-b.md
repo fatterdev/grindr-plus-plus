@@ -13,7 +13,7 @@ Ver.5 delivers **Morphe A**: orchestrate APK patch + embed Vector/LSPatch. Some 
 1. **Gate:** Morphe B starts after Ver.5 green + device E2E (lab satisfied 2026-10-05).
 2. **Scope:** Pack-skipped / unregistered features: Chat terminal, EmptyCalls, Disable shuffle, Notification Alerts, Favorites, WebSocketAlive, Status Dialog.
 3. **Delivery:**
-   - `MorpheBPatchEngine` runs **before** LSPatch in `MorpheOrchestrator` and embeds `assets/grindrplus/morphe_b.json`.
+   - `MorpheBPatchEngine` runs **before** signing in `ApplyMorpheBStep` (then LSPatch in `PatchApkStep`) and embeds `assets/grindrplus/morphe_b.json`.
    - `RUNTIME_REMAP` hooks use MappingDictionary symbols (tip: `websocket.a`, `VideoCallHasNotChattedException`, …).
    - `DEFERRED` features stay Settings-honest skipped until DEX allows.
 4. **Non-goal:** Do not replace HookManager wholesale.

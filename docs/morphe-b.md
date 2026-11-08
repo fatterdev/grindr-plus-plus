@@ -16,7 +16,7 @@ select APKs
     → SessionInstaller
 ```
 
-`MorpheOrchestrator` runs B then A. B failures are non-fatal (A continues).
+`ApplyMorpheBStep` runs B before `SignClonedGrindrApk`; `PatchApkStep` then runs A. B failures are non-fatal (A continues). Running B after signing would invalidate the input signature LSPatch reads.
 
 Bytecode today is a **dexlib2 rewriter** inside the orchestrator (ADR 0007): MorpheApp-shaped `bytecodePatch` execute, marker class inject, fingerprint locate. Feature instruction recipes (Chat / Favorites) are next; Cascade data-class getters are not rewrite targets.
 
