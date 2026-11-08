@@ -1,0 +1,5 @@
+# LSPatch pin (Morphe A / ADR 0003)
+# Source: https://github.com/JingMatrix/LSPatch/releases/tag/v1.2
+# Artifact URL: https://github.com/JingMatrix/LSPatch/releases/download/v1.2/lspatch-v1.2-487-release.jar
+# Upstream SHA256: D238FDC414D121B7FA454D8B4CCF420DF3A8C97D563761861FF92BD9C5DA2165
+# Installed as: app/libs/lspatch.jar (+ assets/lspatch/*)

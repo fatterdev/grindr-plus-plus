@@ -6,7 +6,9 @@
 
 ## Context
 
-Manifests and docs briefly claimed Vector **API 103**. That level does not exist; [libxposed/api](https://github.com/libxposed/api) tops out at **102**, shipped in [Vector 2.2](https://github.com/JingMatrix/Vector/releases/tag/v2.2). Alloy/embed still used the legacy `de.robv.android.xposed` entry and hook engine, so a numeric bump alone would be cosmetic.
+Manifests and docs briefly claimed Vector **API 103**. At the time that level did not exist; [libxposed/api](https://github.com/libxposed/api) topped out at **102**, shipped in [Vector 2.2](https://github.com/JingMatrix/Vector/releases/tag/v2.2). Alloy/embed still used the legacy `de.robv.android.xposed` entry and hook engine, so a numeric bump alone would be cosmetic.
+
+**Status check (2026-11-08):** Maven Central still publishes only `io.github.libxposed:api` / `service` **102.0.0**; Vector 2.2 (and its latest canary) and LSPatch **v1.2** target API 102. API 103 exists only as unreleased draft branches: `feat/dexsql` adds `PackageLoadedParam.openDex()` (read-only SQL over a loaded package's DEX) and `feat/object` adds `XposedInterface.findInstances()` (heap scan for live objects). Neither is tagged, has a Maven artifact, or is implemented by a shipped framework. Grindr++ keeps **API 102**; `openDex`/`findInstances` are not required for Ver.5 and would break both the Morphe/embed and Alloy channels today.
 
 GrindMod Settings already has **Modding active** via root + Vector CLI ([`VectorModToggle`](../../app/src/main/java/dev/fatter/gpp/manager/vector/VectorModToggle.kt)). That enable/disable path must stay distinct from API 102 **code** hot-reload.
 

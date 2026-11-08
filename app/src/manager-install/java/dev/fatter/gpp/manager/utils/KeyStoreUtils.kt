@@ -2,9 +2,13 @@ package dev.fatter.gpp.manager.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import com.android.apksig.ApkSigner
 import org.bouncycastle.asn1.x500.X500Name
+import org.bouncycastle.asn1.x500.X500NameBuilder
+import org.bouncycastle.asn1.x500.style.BCStyle
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.cert.X509v3CertificateBuilder
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter
@@ -22,13 +26,21 @@ import java.util.Date
 import java.util.Locale
 
 class KeyStoreUtils(context: Context) {
+    private val appContext = context.applicationContext
+
     val keyStore by lazy {
-        File(context.cacheDir, "keystore.jks").also {
+        File(appContext.cacheDir, "keystore.jks").also {
             if (!it.exists()) {
                 try {
                     newKeystore(it)
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Failed to create keystore: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(
+                            appContext,
+                            "Failed to create keystore: ${e.localizedMessage}",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
                     throw e
                 }
             }
@@ -90,7 +102,9 @@ class KeyStoreUtils(context: Context) {
             do serialNumber = SecureRandom().nextInt().toBigInteger()
             while (serialNumber < BigInteger.ZERO)
 
-            val x500Name = X500Name("CN=Grindr++")
+            val x500Name = X500NameBuilder(BCStyle.INSTANCE)
+                .addRDN(BCStyle.CN, "Grindr++")
+                .build()
             val pair = KeyPairGenerator.getInstance("RSA").run {
                 initialize(2048)
                 generateKeyPair()

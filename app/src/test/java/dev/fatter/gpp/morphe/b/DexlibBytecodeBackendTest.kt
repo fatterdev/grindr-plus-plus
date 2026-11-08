@@ -71,8 +71,67 @@ class DexlibBytecodeBackendTest {
     }
 
     @Test
-    fun invalidDexFallsBackToByteScan() {
-        val dir = createTempDirectory("morpheb-fallback").toFile()
+    fun rewritePreservesStoredEntries() {
+        val dir = createTempDirectory("morpheb-stored").toFile()
+        val apk = File(dir, "base.apk")
+        val arsc = ByteArray(64) { it.toByte() }
+        val dex = ByteArray(128) { (it * 3).toByte() }
+        ZipOutputStream(apk.outputStream()).use { zos ->
+            writeStored(zos, "resources.arsc", arsc)
+            writeStored(zos, "classes.dex", dex)
+            zos.putNextEntry(java.util.zip.ZipEntry("assets/readme.txt"))
+            zos.write("deflated".toByteArray())
+            zos.closeEntry()
+        }
+
+        ApkAssetInjector.replaceEntries(
+            apk,
+            mapOf(
+                "classes.dex" to dex,
+                "assets/grindrplus/morphe_b.json" to """{"ok":true}""".toByteArray(),
+            ),
+        )
+
+        ZipFile(apk).use { zip ->
+            assertEquals(
+                java.util.zip.ZipEntry.STORED,
+                zip.getEntry("resources.arsc").method,
+            )
+            assertEquals(
+                java.util.zip.ZipEntry.STORED,
+                zip.getEntry("classes.dex").method,
+            )
+            assertEquals(
+                java.util.zip.ZipEntry.DEFLATED,
+                zip.getEntry("assets/readme.txt").method,
+            )
+            assertEquals(
+                java.util.zip.ZipEntry.DEFLATED,
+                zip.getEntry("assets/grindrplus/morphe_b.json").method,
+            )
+        }
+    }
+
+    private fun writeStored(
+        zos: ZipOutputStream,
+        name: String,
+        data: ByteArray,
+    ) {
+        val crc = java.util.zip.CRC32()
+        crc.update(data)
+        val entry = java.util.zip.ZipEntry(name).apply {
+            method = java.util.zip.ZipEntry.STORED
+            size = data.size.toLong()
+            compressedSize = data.size.toLong()
+            this.crc = crc.value
+        }
+        zos.putNextEntry(entry)
+        zos.write(data)
+        zos.closeEntry()
+    }
+
+    @Test
+    fun invalidDexFallsBackToByteScan() {        val dir = createTempDirectory("morpheb-fallback").toFile()
         val apk = File(dir, "base.apk")
         ZipOutputStream(apk.outputStream()).use { zos ->
             zos.putNextEntry(java.util.zip.ZipEntry("classes.dex"))

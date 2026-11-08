@@ -48,13 +48,15 @@ Introduce a `PatchBackend` (name may vary) interface extracted from the patching
 - **No blind nightly** pulls in CI or on-device patch flows.
 - Document the pin location beside Gradle / manager dependencies when implemented.
 
-**Current pin status:** `scripts/setup_lspatch.gradle.kts` downloads **JingMatrix/LSPatch v0.8** from GitHub Releases and verifies SHA-256 before installing into `app/libs/lspatch.jar` + `app/src/main/assets/lspatch/`.
+**Current pin status:** `scripts/setup_lspatch.gradle.kts` downloads **JingMatrix/LSPatch v1.2** from GitHub Releases and verifies SHA-256 before installing into `app/libs/lspatch.jar` + `app/src/main/assets/lspatch/`.
 
-**API 102 note (ADR 0008):** Embed uses modern `META-INF/xposed/*` registration. JingMatrix LSPatch loads both legacy and modern modules; if Create Grindr++ fails to inject the embed after the API 102 cutover, bump the pin to a Vector/LSPatch release that matches Vector ≥ 2.2 and re-verify SHA-256 here.
+**API 102 note (ADR 0008):** Embed uses modern `META-INF/xposed/*` registration. LSPatch **v0.8** predates libxposed API 102 and loads the embed through its legacy path, which crashes with a null `PreLoadedApk`. **v1.2** (August 2026) is the first stable release on API 102 and loads modern modules; it is the pin required by the Morphe embed path.
+
+**resources.arsc note:** LSPatch v1.2 still aligns only `.so` and the nested original APK. `LSPatchIntegratedBackend` extends `ApkPatcher.Z_FILE_OPTIONS` at runtime with a 4-byte `resources.arsc` rule, because Android 11+ rejects a patched APK whose `resources.arsc` is compressed or unaligned.
 
 | Artifact | Location | Pin |
 | --- | --- | --- |
-| Integrated LSPatch jar / `so*` / dex | `app/libs/lspatch.jar` + `app/src/main/assets/lspatch/` | **v0.8** — URL `…/releases/download/v0.8/lspatch.jar`, upstream SHA-256 `B81094AC3D088849D9781E2678A87562936F8E0D78C4D136A9072DCE40F72208` (see `app/libs/lspatch-v0.8.sha256.txt`) |
+| Integrated LSPatch jar / `so*` / dex | `app/libs/lspatch.jar` + `app/src/main/assets/lspatch/` | **v1.2** — URL `…/releases/download/v1.2/lspatch-v1.2-487-release.jar`, upstream SHA-256 `D238FDC414D121B7FA454D8B4CCF420DF3A8C97D563761861FF92BD9C5DA2165` (see `app/libs/lspatch-v1.2.sha256.txt`) |
 | Runtime patch CLI | `LSPatchIntegratedBackend` (`-l 2`) | Same jar pin; no on-device nightly fetch |
 
 See also [manager-ui-lspatch.md](../manager-ui-lspatch.md) and [morphe-a.md](../morphe-a.md).

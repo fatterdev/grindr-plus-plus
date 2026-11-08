@@ -11,7 +11,7 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 | Platform concurrency / backoff / circuit-breaker | Done | CHM maps, `TaskScheduler` backoff, `HookCircuitBreaker` |
 | Settings ↔ runtime truthfulness | Done | `runtimeStatus` + Settings subtitles; pack `hooks.status` consumed |
 | E2E Settings↔runtime | Device Done (lab) | [e2e-wave4-results.md](e2e-wave4-results.md); session `5dd9df` on Mi A2 lite |
-| Morphe A path rootless | MVP Done + jar pin | `PatchBackend`, LSPatch **v0.8** pinned |
+| Morphe A path rootless | Done + E2E (lab) | `PatchBackend`, LSPatch **v1.2** pinned; Create/Update Grindr++ installs and launches on emulator ([e2e-wave4-results.md](e2e-wave4-results.md)) |
 | Anonymous opt-in telemetry | Done | `AnonymousTelemetry` HTTP flush when `analytics_endpoint` set |
 | Hot-reload packs | Done | `MappingDictionary.reloadForVersion` |
 | `vision.md` + README aligned | Done | [vision.md](vision.md), docs/README links |

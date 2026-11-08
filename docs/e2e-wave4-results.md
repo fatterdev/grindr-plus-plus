@@ -24,7 +24,27 @@
 
 Log sink: workspace `debug-5dd9df.log` (NDJSON, session `5dd9df`).
 
-## What still needs deeper device UX (not blocking matrix green)
+## Morphe A rootless E2E (2026-11-08)
+
+| Field | Value |
+| --- | --- |
+| Host | Grindr `26.16.1` / `versionCode` `179451` installed from Play |
+| Manager | `dev.fatter.gpp.morphe` `5.0.0-dev-83b7261` |
+| Patcher | JingMatrix LSPatch **v1.2** (`-l 2` + slim embed) |
+| Pack | `mapping-packs/179451.json` |
+| Device | `Medium_Phone_API_36.1` emulator (x86_64, Play image, ARM translation) |
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Create/Update Grindr++ pipeline | Pass | Export installed splits → clone `com.grindrapp.android.plus` → icon → Morphe B → sign → LSPatch → PackageInstaller |
+| `resources.arsc` install rule | Pass | Patched base + `config.xxhdpi` have `resources.arsc` **STORED** and data offset `% 4 == 0`; `adb install-multiple` succeeds |
+| Clone launch | Pass | `com.grindrapp.android.plus` reaches the Grindr login screen; no `ExceptionInInitializerError` |
+| Modern embed module | Pass | LSPatch v1.2 logs `VectorModuleManager: Loaded module dev.fatter.gpp.morphe.payload successfully`; `GppXposedModule.onModuleLoaded` / `onPackageLoaded` / `onPackageReady` |
+| Pack + bridge init | Pass | `GrindrPlus.init` `hasPack=true`, `bridge_connect connected=true`, `init_ok initTimeMs=297` |
+| Settings toggle matrix | Not re-run | Fresh clone has no login session; matrix evidence remains the rooted run above |
+| Morphe B timing | Debt | dexlib2 marker run can take several minutes on 11 DEX files; dirty-DEX-only rewrite + stored-entry preservation now reduce the work |
+
+
 
 - Behavioral ON/OFF asserts for every mapped Manage Hooks row’s *user-visible* effect (screenshots, albums, explorer, etc.).
 - Partial-hook remaining sites (ban UI details, boost upsells, profile detail fields).

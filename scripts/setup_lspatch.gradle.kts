@@ -12,11 +12,12 @@ tasks.register("setupLSPatch") {
         val tempDir = layout.buildDirectory.get().asFile.resolve("lspatch_temp")
         tempDir.mkdirs()
 
-        // Pinned JingMatrix/LSPatch v0.8 (https://github.com/JingMatrix/LSPatch/releases/tag/v0.8)
-        val jarUrl = "https://github.com/JingMatrix/LSPatch/releases/download/v0.8/lspatch.jar"
-        val expectedSha256 = "B81094AC3D088849D9781E2678A87562936F8E0D78C4D136A9072DCE40F72208"
+        // Pinned JingMatrix/LSPatch v1.2 (https://github.com/JingMatrix/LSPatch/releases/tag/v1.2)
+        // v1.2 is the first stable release on libxposed API 102 and loads modern modules.
+        val jarUrl = "https://github.com/JingMatrix/LSPatch/releases/download/v1.2/lspatch-v1.2-487-release.jar"
+        val expectedSha256 = "D238FDC414D121B7FA454D8B4CCF420DF3A8C97D563761861FF92BD9C5DA2165"
 
-        val jarDownload = tempDir.resolve("lspatch-v0.8.jar")
+        val jarDownload = tempDir.resolve("lspatch-v1.2.jar")
         URI(jarUrl).toURL().openStream().use { input ->
             FileOutputStream(jarDownload).use { output ->
                 input.copyTo(output)
@@ -35,17 +36,17 @@ tasks.register("setupLSPatch") {
         val actualSha256 = digest.digest().joinToString("") { b -> "%02x".format(b) }.uppercase()
         if (actualSha256 != expectedSha256) {
             throw GradleException(
-                "LSPatch v0.8 SHA-256 mismatch: expected $expectedSha256 got $actualSha256"
+                "LSPatch v1.2 SHA-256 mismatch: expected $expectedSha256 got $actualSha256"
             )
         }
 
-        // Extract only native libs under assets/lspatch/so* to src/main/.
+        // Extract only native libs under assets/lspatch/so* to the morphe flavor.
         // loader.dex / metaloader.dex remain inside lspatch.jar (packaging both duplicates entries).
         copy {
             from(zipTree(jarDownload)) {
                 include("assets/lspatch/so*/**")
             }
-            into(project.projectDir.resolve("src/main/"))
+            into(project.projectDir.resolve("src/morphe/"))
         }
 
         // Move/Copy jar to libs/lspatch.jar
@@ -74,10 +75,10 @@ tasks.register("setupLSPatch") {
         }
 
         // Record pin metadata next to the jar for audits
-        project.projectDir.resolve("libs/lspatch-v0.8.sha256.txt").writeText(
+        project.projectDir.resolve("libs/lspatch-v1.2.sha256.txt").writeText(
             """
             # LSPatch pin (Morphe A / ADR 0003)
-            # Source: https://github.com/JingMatrix/LSPatch/releases/tag/v0.8
+            # Source: https://github.com/JingMatrix/LSPatch/releases/tag/v1.2
             # Artifact URL: $jarUrl
             # Upstream SHA256: $expectedSha256
             # Installed as: app/libs/lspatch.jar (+ assets/lspatch/*)

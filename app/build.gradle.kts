@@ -173,7 +173,6 @@ dependencies {
             exclude(group = "org.jetbrains", module = "annotations")
             exclude(group = "com.google.guava", module = "guava")
             exclude(group = "com.google.guava", module = "failureaccess")
-            exclude(group = "com.google.guava", module = "listenablefuture")
             exclude(group = "com.google.j2objc", module = "j2objc-annotations")
             exclude(group = "com.google.errorprone", module = "error_prone_annotations")
             exclude(group = "org.codehaus.mojo", module = "animal-sniffer-annotations")
