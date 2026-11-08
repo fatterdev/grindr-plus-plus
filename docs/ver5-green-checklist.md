@@ -26,6 +26,7 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 2. Cascade V2 Favorites UI rewrite (`Favorites.FRAGMENT`)
 3. Disable shuffle / Notification Alerts — product surface absent on tip DEX
 4. Optional: full SessionInstaller E2E of A+B patched APK on device
+5. Play tip **26.23.0 / 194910** has no mapping pack yet; catalog newest is 26.19.0 / 185656 (soft-fail documented in [remote-mapping-packs.md](remote-mapping-packs.md))
 
 ## Morphe B
 
