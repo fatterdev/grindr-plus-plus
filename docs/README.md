@@ -35,7 +35,7 @@ Read here how to [set up dev environment](env_setup.md)
 
 ## Analysis
 
-- [Codebase analysis / critical issues](codebase-analysis-critical-issues.md)
+- [Wave 0 P0 debt](wave0-p0-debt.md)
 
 ## Patches
 

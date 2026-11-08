@@ -122,4 +122,3 @@ Play tip when that delivery is unavailable; hooks then soft-skip on 194910 inste
 - ADR: [adr/0001-mapping-pack-schema-v2.md](adr/0001-mapping-pack-schema-v2.md)
 - Bundled multi-version corpus notes: Project store `docs/mapping-packs-multiversion.md`
 - Loader: `dev.fatter.gpp.core.mapping.MappingDictionary`
-- Analysis handoff: [codebase-analysis-critical-issues.md](codebase-analysis-critical-issues.md)
