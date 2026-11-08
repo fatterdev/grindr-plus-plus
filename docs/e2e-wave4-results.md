@@ -42,7 +42,7 @@ Log sink: workspace `debug-5dd9df.log` (NDJSON, session `5dd9df`).
 | Modern embed module | Pass | LSPatch v1.2 logs `VectorModuleManager: Loaded module dev.fatter.gpp.morphe.payload successfully`; `GppXposedModule.onModuleLoaded` / `onPackageLoaded` / `onPackageReady` |
 | Pack + bridge init | Pass | `GrindrPlus.init` `hasPack=true`, `bridge_connect connected=true`, `init_ok initTimeMs=297` |
 | Settings toggle matrix | Not re-run | Fresh clone has no login session; matrix evidence remains the rooted run above |
-| Morphe B timing | Debt | dexlib2 marker run can take several minutes on 11 DEX files; dirty-DEX-only rewrite + stored-entry preservation now reduce the work |
+| Morphe B timing | Pass (optimized) | After dirty-DEX-only rewrite + stored-entry preservation, Create/Update reached the installer in under 60s and the full install completed in ~80s on the emulator |
 
 
 
