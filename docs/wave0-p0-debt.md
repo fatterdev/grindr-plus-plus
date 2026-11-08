@@ -1,6 +1,6 @@
 # Wave 0 — frozen P0 debts
 
-Freeze list for Ver.5 Wave 0. These items are **in scope for green**; do not expand the list casually. Source analysis: [codebase-analysis-critical-issues.md](codebase-analysis-critical-issues.md), pack notes in `mapping-packs/179451.json`, and runtime paths below.
+Freeze list for Ver.5 Wave 0. These items are **in scope for green**; do not expand the list casually. Source: pack notes in `mapping-packs/179451.json` and runtime paths below.
 
 **Vision:** [vision.md](vision.md)
 

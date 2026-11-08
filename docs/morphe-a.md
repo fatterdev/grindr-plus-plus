@@ -12,7 +12,7 @@ Prefer a **slim embed payload** as `-m` (hooks + bridge + Xposed entry), not the
 | --- | --- | --- |
 | Seam | `PatchBackend` | Suspend API: input APKs + mod + keystore → patched output |
 | Default backend | `LSPatchIntegratedBackend` | Integrated LSPatch (`-l 2`), Maps API key rewrite, optional embed-off copy |
-| LSPatch pin | JingMatrix **v0.8** | `scripts/setup_lspatch.gradle.kts` + `app/libs/lspatch.jar` (upstream SHA-256 in `app/libs/lspatch-v0.8.sha256.txt`). Host CLI dry-run uses unstripped `lspatch-v0.8.jar`; Android `lspatch.jar` strips conflicting Guava/errorprone classes. |
+| LSPatch pin | JingMatrix **v1.2** | `scripts/setup_lspatch.gradle.kts` + `app/libs/lspatch.jar` (upstream SHA-256 in `app/libs/lspatch-v1.2.sha256.txt`). v1.2 is the first stable libxposed API 102 release and loads the modern embed module. Host CLI dry-run uses the unstripped v1.2 jar; Android `lspatch.jar` strips conflicting Guava/errorprone classes. |
 | Orchestrator | `MorpheOrchestrator` | Select APKs → `PatchBackend.patch` → output ready for `SessionInstaller` |
 | Install step | `PatchApkStep` | Thin `Installation` step; delegates via `MorpheOrchestrator` (injectable `PatchBackend`) |
 
@@ -42,4 +42,4 @@ InstallApkStep / SessionInstaller
 
 ## Artifact pinning
 
-Pinned to JingMatrix/LSPatch **v0.8** (GitHub Release + SHA-256) via `scripts/setup_lspatch.gradle.kts`. Details: [ADR 0003](adr/0003-morphe-a-patch-backend.md), `app/libs/lspatch-v0.8.sha256.txt`.
+Pinned to JingMatrix/LSPatch **v1.2** (GitHub Release + SHA-256) via `scripts/setup_lspatch.gradle.kts`. Details: [ADR 0003](adr/0003-morphe-a-patch-backend.md), `app/libs/lspatch-v1.2.sha256.txt`.

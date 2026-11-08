@@ -2,6 +2,7 @@ package dev.fatter.gpp.morphe.b
 
 import java.io.File
 import java.io.IOException
+import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
@@ -134,18 +135,17 @@ internal object ApkAssetInjector {
         val tmp = File(apk.parentFile, "${apk.name}.bytecode.tmp")
         ZipFile(apk).use { zip ->
             ZipOutputStream(tmp.outputStream().buffered()).use { zos ->
+                val originalMethods = mutableMapOf<String, Int>()
                 val entries = zip.entries()
                 while (entries.hasMoreElements()) {
                     val entry = entries.nextElement()
+                    originalMethods[entry.name] = entry.method
                     if (entry.isDirectory || entry.name in updates) continue
-                    zos.putNextEntry(ZipEntry(entry.name))
-                    zip.getInputStream(entry).use { it.copyTo(zos) }
-                    zos.closeEntry()
+                    val data = zip.getInputStream(entry).use { it.readBytes() }
+                    writePreservingMethod(zos, entry, data)
                 }
                 for ((name, data) in updates) {
-                    zos.putNextEntry(ZipEntry(name))
-                    zos.write(data)
-                    zos.closeEntry()
+                    writeEntry(zos, name, data, originalMethods[name] ?: ZipEntry.DEFLATED)
                 }
             }
         }
@@ -156,5 +156,40 @@ internal object ApkAssetInjector {
             tmp.copyTo(apk, overwrite = true)
             tmp.delete()
         }
+    }
+
+    /**
+     * Rebuilds an entry with the original compression method.
+     *
+     * `ZipOutputStream` defaults to DEFLATE. Rewriting a stored `resources.arsc` or
+     * `classes*.dex` as deflated makes the clone smaller but breaks Android 11+ install
+     * rules for `resources.arsc` and defeats the later zipalign pass.
+     */
+    private fun writePreservingMethod(
+        zos: ZipOutputStream,
+        original: ZipEntry,
+        data: ByteArray,
+    ) {
+        writeEntry(zos, original.name, data, original.method)
+    }
+
+    private fun writeEntry(
+        zos: ZipOutputStream,
+        name: String,
+        data: ByteArray,
+        method: Int,
+    ) {
+        val entry = ZipEntry(name)
+        entry.method = method
+        if (method == ZipEntry.STORED) {
+            val crc = CRC32()
+            crc.update(data)
+            entry.size = data.size.toLong()
+            entry.compressedSize = data.size.toLong()
+            entry.crc = crc.value
+        }
+        zos.putNextEntry(entry)
+        zos.write(data)
+        zos.closeEntry()
     }
 }

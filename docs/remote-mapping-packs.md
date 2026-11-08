@@ -108,9 +108,17 @@ Devices with a module that includes remote fetch will pick up the new file on th
 
 Mismatches log warnings only; init continues (literals / soft-fail).
 
+## Play tip vs catalog (2026-11-08)
+
+Play currently serves Grindr **26.23.0 / 194910**, while the newest mapping pack is
+**26.19.0 / 185656**. [`latest_play.json`](../latest_play.json) tracks the Play tip for the
+`DisableUpdates` spoof; it is **not** a supported-version gate. `validate_mapping_packs.py
+--require-tip` will report 194910 missing until a pack is published. The Manager's Play
+download soft-prefers the newest pack-known `versionCode` (185656) and only falls back to the
+Play tip when that delivery is unavailable; hooks then soft-skip on 194910 instead of aborting.
+
 ## Related
 
 - ADR: [adr/0001-mapping-pack-schema-v2.md](adr/0001-mapping-pack-schema-v2.md)
 - Bundled multi-version corpus notes: Project store `docs/mapping-packs-multiversion.md`
 - Loader: `dev.fatter.gpp.core.mapping.MappingDictionary`
-- Analysis handoff: [codebase-analysis-critical-issues.md](codebase-analysis-critical-issues.md)

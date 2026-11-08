@@ -3,10 +3,13 @@ package dev.fatter.gpp.manager.installation
 import dev.fatter.gpp.manager.installation.steps.Print
 
 import android.content.Context
+import com.android.tools.build.apkzlib.zip.AlignmentRules
+import com.android.tools.build.apkzlib.zip.ZFileOptions
 import com.reandroid.apk.ApkModule
 import com.reandroid.xml.StyleDocument
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.lsposed.patch.ApkPatcher
 import org.lsposed.patch.LSPatch
 import org.lsposed.patch.util.Logger
 import java.io.File
@@ -70,9 +73,10 @@ class LSPatchIntegratedBackend : PatchBackend {
         print("Using mod file: ${modFile.absolutePath}")
         print("Using keystore: ${keyStore.absolutePath}")
 
+        ensureResourcesArscAlignment(print)
+
         withContext(Dispatchers.IO) {
-            LSPatch(
-                logger,
+            val cli = LSPatch(
                 *apkFilePaths,
                 "-o", outputDir.absolutePath,
                 "-l", "2",
@@ -83,7 +87,8 @@ class LSPatchIntegratedBackend : PatchBackend {
                 keyStorePassword,
                 keyAlias,
                 keyPassword,
-            ).doCommandLine()
+            )
+            ApkPatcher(logger, cli.toSpec()).patch()
         }
 
         val patchedFiles = outputDir.listFiles()
@@ -96,6 +101,27 @@ class LSPatchIntegratedBackend : PatchBackend {
 
         patchedFiles.forEachIndexed { index, file ->
             print("  ${index + 1}. ${file.name} (${file.length() / 1024}KB)")
+        }
+    }
+
+    /**
+     * LSPatch v1.2 aligns `.so` and the nested original APK, but not `resources.arsc`.
+     * Android 11+ rejects an APK whose `resources.arsc` is not stored and 4-byte aligned.
+     * The field is private static, so configure it reflectively before LSPatch runs.
+     */
+    private fun ensureResourcesArscAlignment(print: Print) {
+        try {
+            val patcherClass = Class.forName("org.lsposed.patch.ApkPatcher")
+            val field = patcherClass.getDeclaredField("Z_FILE_OPTIONS")
+            field.isAccessible = true
+            val options = field.get(null) as ZFileOptions
+            options.alignmentRule = AlignmentRules.compose(
+                options.alignmentRule,
+                AlignmentRules.constantForSuffix("resources.arsc", 4),
+            )
+            print("LSPatch: resources.arsc 4-byte alignment enabled")
+        } catch (t: Throwable) {
+            print("LSPatch: resources.arsc alignment not configured (${t.message})")
         }
     }
 

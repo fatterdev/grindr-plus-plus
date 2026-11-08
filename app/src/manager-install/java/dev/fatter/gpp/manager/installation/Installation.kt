@@ -3,6 +3,7 @@ package dev.fatter.gpp.manager.installation
 import android.content.Context
 import android.widget.Toast
 import dev.fatter.gpp.manager.ManagerBridge
+import dev.fatter.gpp.manager.installation.steps.ApplyMorpheBStep
 import dev.fatter.gpp.manager.installation.steps.CheckStorageSpaceStep
 import dev.fatter.gpp.manager.installation.steps.CloneGrindrStep
 import dev.fatter.gpp.manager.installation.steps.DownloadStep
@@ -71,6 +72,7 @@ class Installation(
                 debuggable = false,
             ),
             InjectCloneIconStep(unzipFolder),
+            ApplyMorpheBStep(unzipFolder),
             SignClonedGrindrApk(keyStoreUtils, unzipFolder),
             PatchApkStep(
                 unzipFolder,

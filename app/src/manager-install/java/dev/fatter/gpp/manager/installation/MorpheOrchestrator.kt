@@ -3,7 +3,6 @@ package dev.fatter.gpp.manager.installation
 import dev.fatter.gpp.manager.installation.steps.Print
 
 import android.content.Context
-import dev.fatter.gpp.morphe.b.MorpheBPatchEngine
 import java.io.File
 import java.io.IOException
 
@@ -19,8 +18,6 @@ import java.io.IOException
  */
 class MorpheOrchestrator(
     private val patchBackend: PatchBackend = LSPatchIntegratedBackend(),
-    private val morpheB: MorpheBPatchEngine = MorpheBPatchEngine(),
-    private val applyMorpheB: Boolean = true,
 ) {
     /**
      * Patch [inputApks] into [outputDir] for a subsequent session install.
@@ -52,18 +49,9 @@ class MorpheOrchestrator(
             throw IOException("No valid APK files found to patch")
         }
 
-        // No-embed copies pre-signed APKs; mutating them here breaks PackageManager verify.
-        // Embed path: LSPatch re-signs outputs after reading mutated inputs.
-        if (applyMorpheB && embedModule) {
-            try {
-                morpheB.apply(apks, print)
-            } catch (t: Throwable) {
-                print("Morphe B failed (continuing with Morphe A only): ${t.message}")
-            }
-        } else if (applyMorpheB && !embedModule) {
-            print("Morphe B: skipped (no-embed preserves signatures from SignClonedGrindrApk)")
-        }
-
+        // Morphe B runs before signing (ApplyMorpheBStep). Mutating signed inputs here
+        // invalidates the APK signature and makes LSPatch fail with
+        // "get original signature failed".
         patchBackend.patch(
             context = context,
             inputApks = apks,

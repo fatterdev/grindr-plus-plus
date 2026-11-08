@@ -104,12 +104,12 @@ class DexlibBytecodeBackend(
 
         val updates = mutableMapOf<String, ByteArray>()
         for (dex in parsed) {
-            updates[dex.name] = writeDex(dex)
+            if (dex.dirty) updates[dex.name] = writeDex(dex)
         }
         val report = buildReportJson(located, patchResults)
         updates[FingerprintScanBytecodeBackend.REPORT_ENTRY] = report.toByteArray(Charsets.UTF_8)
         ApkAssetInjector.replaceEntries(apk, updates)
-        print("Morphe B bytecode: rewrite complete (mode=rewrite, patches=${patchResults.size})")
+        print("Morphe B bytecode: rewrite complete (mode=rewrite, patches=${patchResults.size}, dex=${updates.size - 1})")
     }
 
     private fun buildReportJson(
@@ -221,6 +221,7 @@ data class ParsedDex(
     val name: String,
     val opcodes: Opcodes,
     val classes: MutableList<ClassDef>,
+    var dirty: Boolean = false,
 )
 
 /** Mirrors MorpheApp `bytecodePatch { execute { ... } }` without the desktop Patcher. */
@@ -241,6 +242,7 @@ class DexPatchContext(private val dex: ParsedDex) {
     fun injectMarkerClass() {
         if (dex.classes.any { it.type == DexlibBytecodeBackend.MARKER_TYPE }) return
         dex.classes += DexlibBytecodeBackend.markerClass()
+        dex.dirty = true
     }
 
     fun findMethodsUsingString(needle: String): List<MethodRef> {
@@ -299,6 +301,7 @@ class DexPatchContext(private val dex: ParsedDex) {
             cls.directMethods.map { if (same(it)) replacement else it },
             cls.virtualMethods.map { if (same(it)) replacement else it },
         )
+        dex.dirty = true
     }
 
     private fun methodUsesString(method: Method, needle: String): Boolean {

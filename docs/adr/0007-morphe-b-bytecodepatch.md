@@ -10,14 +10,14 @@ Morphe B today embeds a JSON marker and uses RUNTIME_REMAP. Tip-DEX residuals ne
 
 ## Decision
 
-1. Integrate MorpheApp patcher **inside** `MorpheBPatchEngine` via [MorpheBytecodeBackend](../../app/src/main/java/com/grindrplus/morphe/b/MorpheBytecodeBackend.kt) (not as Morphe Manager product).
+1. Integrate MorpheApp patcher **inside** `MorpheBPatchEngine` via [MorpheBytecodeBackend](../../app/src/morphe-b/java/dev/fatter/gpp/morphe/b/MorpheBytecodeBackend.kt) (not as Morphe Manager product).
 2. Pipeline: **B (bytecode) → A (LSPatch `-l 2` + slim embed) → SessionInstaller** on `dev.fatter.gpp.morphe`.
 3. Fail-soft per patch; Settings stay honest on miss.
 4. Pilot Chat terminal and/or Favorites Cascade residual after patcher dependency lands.
 
 ## Current state
 
-Default backend is [DexlibBytecodeBackend](../../app/src/main/java/com/grindrplus/morphe/b/DexlibBytecodeBackend.kt): parses `classes*.dex` with `smali-dexlib2` (same writer as MorpheApp `bytecodePatch` / patches-template), locating [BytecodePilotCatalog](../../app/src/main/java/com/grindrplus/morphe/b/BytecodePilotCatalog.kt) needles to class types, then executing in-process `MorpheBytecodePatch` blocks (`addInstructions`-style prepend + marker class inject). Invalid DEX falls back to `FingerprintScanBytecodeBackend`. Desktop `app.morphe:morphe-patcher` is **not** embedded (apktool/resource decode is too heavy for on-device Manager). Slim embed stays `compileOnly` for dexlib2.
+Default backend is [DexlibBytecodeBackend](../../app/src/morphe-b/java/dev/fatter/gpp/morphe/b/DexlibBytecodeBackend.kt): parses `classes*.dex` with `smali-dexlib2` (same writer as MorpheApp `bytecodePatch` / patches-template), locating [BytecodePilotCatalog](../../app/src/morphe-b/java/dev/fatter/gpp/morphe/b/BytecodePilotCatalog.kt) needles to class types, then executing in-process `MorpheBytecodePatch` blocks (`addInstructions`-style prepend + marker class inject). Invalid DEX falls back to `FingerprintScanBytecodeBackend`. Desktop `app.morphe:morphe-patcher` is **not** embedded (apktool/resource decode is too heavy for on-device Manager). Slim embed stays `compileOnly` for dexlib2.
 
 Pilot: marker class `Lcom/grindrplus/morphe/b/BytecodeApplied;` plus boolean-gate prepend primitive. Chat terminal / Favorites remain locate-only — JADX tip `FavoritesHeaderData` is a Cascade data class, not the layout Fragment hook (Settings stay RUNTIME_REMAP / honest skip).
 
