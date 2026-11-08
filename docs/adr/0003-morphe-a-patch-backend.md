@@ -48,7 +48,7 @@ Introduce a `PatchBackend` (name may vary) interface extracted from the patching
 - **No blind nightly** pulls in CI or on-device patch flows.
 - Document the pin location beside Gradle / manager dependencies when implemented.
 
-**Current pin status:** `scripts/setup_lspatch.gradle.kts` downloads **JingMatrix/LSPatch v1.2** from GitHub Releases and verifies SHA-256 before installing into `app/libs/lspatch.jar` + `app/src/main/assets/lspatch/`.
+**Current pin status:** `scripts/setup_lspatch.gradle.kts` downloads **JingMatrix/LSPatch v1.2** from GitHub Releases and verifies SHA-256 before installing into `app/libs/lspatch.jar` + `app/src/morphe/assets/lspatch/`.
 
 **API 102 note (ADR 0008):** Embed uses modern `META-INF/xposed/*` registration. LSPatch **v0.8** predates libxposed API 102 and loads the embed through its legacy path, which crashes with a null `PreLoadedApk`. **v1.2** (August 2026) is the first stable release on API 102 and loads modern modules; it is the pin required by the Morphe embed path.
 
@@ -56,7 +56,7 @@ Introduce a `PatchBackend` (name may vary) interface extracted from the patching
 
 | Artifact | Location | Pin |
 | --- | --- | --- |
-| Integrated LSPatch jar / `so*` / dex | `app/libs/lspatch.jar` + `app/src/main/assets/lspatch/` | **v1.2** — URL `…/releases/download/v1.2/lspatch-v1.2-487-release.jar`, upstream SHA-256 `D238FDC414D121B7FA454D8B4CCF420DF3A8C97D563761861FF92BD9C5DA2165` (see `app/libs/lspatch-v1.2.sha256.txt`) |
+| Integrated LSPatch jar / `so*` / dex | `app/libs/lspatch.jar` + `app/src/morphe/assets/lspatch/` | **v1.2** — URL `…/releases/download/v1.2/lspatch-v1.2-487-release.jar`, upstream SHA-256 `D238FDC414D121B7FA454D8B4CCF420DF3A8C97D563761861FF92BD9C5DA2165` (see `app/libs/lspatch-v1.2.sha256.txt`) |
 | Runtime patch CLI | `LSPatchIntegratedBackend` (`-l 2`) | Same jar pin; no on-device nightly fetch |
 
 See also [manager-ui-lspatch.md](../manager-ui-lspatch.md) and [morphe-a.md](../morphe-a.md).
