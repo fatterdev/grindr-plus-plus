@@ -1,9 +1,7 @@
 package dev.fatter.gpp.manager.installation.steps
 
 import android.content.Context
-import com.aurora.gplayapi.helpers.AppDetailsHelper
-import com.aurora.gplayapi.helpers.PurchaseHelper
-import dev.fatter.gpp.manager.play.PlayHttpClient
+import com.aurora.gplayapi.model.AppFile
 import dev.fatter.gpp.manager.play.PlayStoreSession
 import dev.fatter.gpp.manager.utils.download
 import dev.fatter.gpp.manager.utils.validateFile
@@ -15,8 +13,9 @@ import java.util.zip.ZipOutputStream
 import org.json.JSONObject
 
 /**
- * Downloads Grindr split APKs from Google Play using Aurora OSS [gplayapi]
- * (anonymous dispenser + purchase/delivery), then zips them for [ExtractBundleStep].
+ * Downloads Grindr split APKs from Google Play using Aurora OSS gplayapi 4
+ * (dispenser-authenticated session with anonymous checkin fallback), then zips them
+ * for [ExtractBundleStep].
  *
  * Replaces CDN URL downloads when [grindrUrl] is blank — no Aurora Store app, no APK host.
  *
@@ -38,13 +37,12 @@ class PlayGrindrDownloadStep(
 
         val preferredVersionCode = preferredPackVersionCode(context)
 
-        print("Authenticating with Play (anonymous dispenser, Aurora protocol)...")
-        val http = PlayHttpClient()
-        val auth = try {
-            PlayStoreSession.buildAnonymousAuth(context, http)
+        print("Authenticating with Play (anonymous session)...")
+        val play = try {
+            PlayStoreSession.createClient(context)
         } catch (e: Exception) {
             throw IOException(
-                "Play anonymous auth failed (${e.message}). " +
+                "Play session failed (${e.message}). " +
                     "Check network / Cloudflare, or use Custom Files with a local Grindr APK.",
                 e
             )
@@ -52,8 +50,7 @@ class PlayGrindrDownloadStep(
 
         print("Fetching Grindr details from Play...")
         val app = try {
-            AppDetailsHelper(auth).using(http)
-                .getAppByPackageName(PlayStoreSession.GRINDR_PACKAGE)
+            play.apps.details(PlayStoreSession.GRINDR_PACKAGE)
         } catch (e: Exception) {
             throw IOException("Play app details failed: ${e.message}", e)
         }
@@ -87,7 +84,7 @@ class PlayGrindrDownloadStep(
         print("Requesting delivery for ${app.displayName} vc=$versionCode ot=$offerType...")
 
         val files = try {
-            PurchaseHelper(auth).using(http).purchase(
+            play.delivery.resolve(
                 packageName = PlayStoreSession.GRINDR_PACKAGE,
                 versionCode = versionCode,
                 offerType = offerType,
@@ -101,7 +98,7 @@ class PlayGrindrDownloadStep(
                 versionCode = tipVersionCode
                 print("Requesting delivery for ${app.displayName} vc=$versionCode ot=$offerType...")
                 try {
-                    PurchaseHelper(auth).using(http).purchase(
+                    play.delivery.resolve(
                         packageName = PlayStoreSession.GRINDR_PACKAGE,
                         versionCode = versionCode,
                         offerType = offerType,
@@ -117,7 +114,10 @@ class PlayGrindrDownloadStep(
             }
         }
 
-        val apkFiles = files.filter { it.url.isNotBlank() && it.name.endsWith(".apk", ignoreCase = true) }
+        val apkFiles = files.filter {
+            it.url.isNotBlank() &&
+                (it.type == AppFile.Type.BASE || it.type == AppFile.Type.SPLIT)
+        }
         if (apkFiles.isEmpty()) {
             throw IOException("Play returned no APK splits (${files.size} file(s))")
         }
@@ -130,7 +130,9 @@ class PlayGrindrDownloadStep(
 
         try {
             for ((index, playFile) in apkFiles.withIndex()) {
-                val out = File(workDir, playFile.name.ifBlank { "split-$index.apk" })
+                val fileName = playFile.name.ifBlank { "split-$index.apk" }
+                    .let { if (it.endsWith(".apk", ignoreCase = true)) it else "$it.apk" }
+                val out = File(workDir, fileName)
                 print("  (${index + 1}/${apkFiles.size}) ${out.name} (${playFile.size / 1024}KB)")
                 val result = download(context, out, playFile.url, print)
                 if (!result.success || !out.exists() || out.length() <= 0) {
