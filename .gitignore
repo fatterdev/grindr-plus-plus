@@ -33,3 +33,6 @@ release-stage/
 pairip-decrypt/**/*.rx.bin
 pairip-decrypt/**/*.rx.raw
 .tmp/
+
+# Local editor/agent state
+.cursor/
