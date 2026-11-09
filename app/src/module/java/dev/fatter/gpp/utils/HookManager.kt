@@ -13,6 +13,7 @@ import dev.fatter.gpp.hooks.AntiDetection
 import dev.fatter.gpp.hooks.BanManagement
 import dev.fatter.gpp.hooks.ChatIndicators
 import dev.fatter.gpp.hooks.ChatTerminal
+import dev.fatter.gpp.hooks.CloneLoginCompat
 import dev.fatter.gpp.hooks.DisableAnalytics
 import dev.fatter.gpp.hooks.DisableBoosting
 import dev.fatter.gpp.hooks.DisableShuffle
@@ -52,6 +53,7 @@ class HookManager {
                 BanManagement(),
                 ChatIndicators(),
                 ChatTerminal(),
+                CloneLoginCompat(),
                 DisableAnalytics(),
                 DisableBoosting(),
                 DisableShuffle(),

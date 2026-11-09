@@ -88,7 +88,7 @@ fun InstallPage(
         isPackageInstalled(context, Installation.PRODUCT_CLONE_PACKAGE)
     }
 
-    val manifestUrl = (Config.get("custom_manifest", DATA_URL) as String).ifBlank { null }
+    val manifestUrl = (Config.get("custom_manifest", DATA_URL) as String).ifBlank { DATA_URL }
 
     LaunchedEffect(Unit) {
         viewModel.loadVersionData(manifestUrl.toString())

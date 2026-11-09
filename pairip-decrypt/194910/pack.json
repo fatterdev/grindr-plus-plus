@@ -1,0 +1,6 @@
+{
+  "versionCode": 194910,
+  "package": "com.grindrapp.android",
+  "libs": ["libsqliteJni.so"],
+  "note": "Stock in-memory RX dump; PairIP decrypted .text"
+}

@@ -3,6 +3,7 @@ package dev.fatter.gpp
 import android.app.Application
 import android.os.Bundle
 import dev.fatter.gpp.core.Constants.GRINDR_PACKAGE_NAME
+import dev.fatter.gpp.core.DeliveryChannel
 import dev.fatter.gpp.core.DeviceFlags
 import dev.fatter.gpp.core.LogSource
 import dev.fatter.gpp.core.Logger
@@ -60,8 +61,11 @@ class GppXposedModule : XposedModule() {
             data = mapOf("packageName" to pkg),
         )
         // #endregion
-        // PairIP must be neutralized before ContentProvider / Application.attachBaseContext.
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+        // PairIP runtime neutralization is Alloy-lab only (tombstoned product path).
+        // Morphe/embed clones keep real PairIP so Morphe B static decrypt can run.
+        if (DeliveryChannel.current.isRootedModule &&
+            android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
+        ) {
             runCatching {
                 installPairIpEarlyBypass(param.defaultClassLoader)
             }.onFailure {
