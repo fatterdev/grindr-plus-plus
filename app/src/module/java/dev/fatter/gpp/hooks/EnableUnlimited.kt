@@ -9,7 +9,6 @@ import dev.fatter.gpp.core.logd
 import dev.fatter.gpp.core.loge
 import dev.fatter.gpp.core.logi
 import dev.fatter.gpp.core.mapping.MappingDictionary
-import dev.fatter.gpp.ui.Utils.copyToClipboard
 import dev.fatter.gpp.utils.Hook
 import dev.fatter.gpp.utils.HookStage
 import dev.fatter.gpp.utils.hook
@@ -27,6 +26,7 @@ class EnableUnlimited : Hook(
         )
     private val profileModel = "com.grindrapp.android.persistence.model.Profile"
     private val tabLayoutClass = "com.google.android.material.tabs.TabLayout"
+    private var paywallToastShown = false
 
     override fun init() {
         val userSessionClass = findClass(GrindrPlus.userSession)
@@ -224,27 +224,19 @@ class EnableUnlimited : Hook(
                         !it.toString().contains("LSPHooker")
                     }.drop(1).joinToString("\n")
 
+                    logd("Paywall suppressed:\n$stackTrace")
+
                     val activity = GrindrPlus.currentActivity
-                    if (activity != null) {
-                        android.app.AlertDialog.Builder(activity)
-                            .setTitle("Paywalled Feature Detected")
-                            .setMessage(
-                                "This feature is server-enforced and cannot be bypassed in this version.\n\n" +
-                                    "If you think this is a mistake, please report it to the developer. " +
-                                    "You can copy the stack trace below to help with troubleshooting."
-                            )
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setCancelable(false)
-                            .setNegativeButton("Copy Stack Trace") { _, _ ->
-                                copyToClipboard(
-                                    "Stack trace",
-                                    stackTrace
-                                )
-                            }
-                            .setPositiveButton("Ok", null)
-                            .show()
+                    if (activity != null && !paywallToastShown) {
+                        paywallToastShown = true
+                        android.widget.Toast.makeText(
+                            activity,
+                            "Paywall suppressed",
+                            android.widget.Toast.LENGTH_SHORT,
+                        ).show()
                     }
 
+                    // Suppress the upsell; the feature may still be server-enforced.
                     param.setResult(null)
                 }
             }.onFailure {

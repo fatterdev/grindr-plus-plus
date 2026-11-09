@@ -17,6 +17,9 @@ import dev.fatter.gpp.utils.hook
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
 
+/** Lab-only PairIP early bypass. Off for Alloy: the stock Play signature already passes. */
+private const val ENABLE_PAIRIP_EARLY_BYPASS = false
+
 /**
  * libxposed API 102 entry (ADR 0008). Sole Java entry for Alloy + embed.
  */
@@ -61,9 +64,13 @@ class GppXposedModule : XposedModule() {
             data = mapOf("packageName" to pkg),
         )
         // #endregion
-        // PairIP runtime neutralization is Alloy-lab only (tombstoned product path).
-        // Morphe/embed clones keep real PairIP so Morphe B static decrypt can run.
-        if (DeliveryChannel.current.isRootedModule &&
+        // PairIP runtime neutralization is lab-only. Alloy runs the Play-signed
+        // stock APK, so native PairIP already passes; the early bypass redirects
+        // libpairipcore to a stub and no-ops Firebase Perf (`co20.d`), which
+        // breaks FirebaseInitProvider on 26.23.0 (`ExceptionInInitializerError`).
+        // Keep it off for product; enable only for a lab re-signed host.
+        if (ENABLE_PAIRIP_EARLY_BYPASS &&
+            DeliveryChannel.current.isRootedModule &&
             android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
         ) {
             runCatching {
