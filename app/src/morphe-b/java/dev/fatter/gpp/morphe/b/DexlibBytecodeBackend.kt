@@ -4,6 +4,7 @@ import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction10x
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction11n
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction11x
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction21c
@@ -235,7 +236,25 @@ object MorpheBytecodePatches {
         ctx.injectMarkerClass()
     }
 
-    val defaults: List<MorpheBytecodePatch> = listOf(marker)
+    /**
+     * Disable forced-update dialog: the app-upgrade manager is the only class
+     * that builds `market://details?id=com.grindrapp.android`. Stub its
+     * `showDeprecatedDialog(AppCompatActivity)` entry point.
+     */
+    val disableUpdatesDialog = MorpheBytecodePatch("disable-updates-dialog") { ctx ->
+        val managers = ctx.findClassesUsingString("market://details?id=com.grindrapp.android")
+        managers.forEach { classType ->
+            val stubbed = ctx.stubVoidMethods(
+                classType = classType,
+                parameterType = "Landroidx/appcompat/app/AppCompatActivity;",
+            )
+            if (stubbed > 0) {
+                println("Morphe B bytecode: disable-updates stubbed $classType ($stubbed)")
+            }
+        }
+    }
+
+    val defaults: List<MorpheBytecodePatch> = listOf(marker, disableUpdatesDialog)
 }
 
 class DexPatchContext(private val dex: ParsedDex) {
@@ -255,6 +274,64 @@ class DexPatchContext(private val dex: ParsedDex) {
             }
         }
         return out
+    }
+
+    fun findClassesUsingString(needle: String): List<String> =
+        dex.classes.filter { DexlibBytecodeBackend.classUsesString(it, needle) }.map { it.type }
+
+    /**
+     * Replace every void method with exactly [parameterType] by a `return-void` stub.
+     * Returns the number of methods rewritten.
+     */
+    fun stubVoidMethods(classType: String, parameterType: String): Int {
+        val idx = dex.classes.indexOfFirst { it.type == classType }
+        if (idx < 0) return 0
+        val cls = dex.classes[idx]
+        var count = 0
+        val methods = cls.methods.map { method ->
+            val matches = method.returnType == "V" &&
+                method.parameterTypes.size == 1 &&
+                method.parameterTypes[0] == parameterType &&
+                method.implementation != null
+            if (!matches) return@map method
+            count++
+            stubVoid(method)
+        }
+        if (count == 0) return 0
+        dex.classes[idx] = ImmutableClassDef(
+            cls.type,
+            cls.accessFlags,
+            cls.superclass,
+            cls.interfaces,
+            cls.sourceFile,
+            cls.annotations,
+            cls.staticFields,
+            cls.instanceFields,
+            cls.directMethods.map { m -> methods.firstOrNull { sameMethod(it, m) } ?: m },
+            cls.virtualMethods.map { m -> methods.firstOrNull { sameMethod(it, m) } ?: m },
+        )
+        dex.dirty = true
+        return count
+    }
+
+    private fun sameMethod(a: Method, b: Method): Boolean =
+        a.name == b.name &&
+            a.parameterTypes == b.parameterTypes &&
+            a.returnType == b.returnType
+
+    private fun stubVoid(method: Method): Method {
+        val impl = MutableMethodImplementation(max(method.implementation?.registerCount ?: 1, 1))
+        impl.addInstruction(BuilderInstruction10x(Opcode.RETURN_VOID))
+        return ImmutableMethod(
+            method.definingClass,
+            method.name,
+            method.parameters,
+            method.returnType,
+            method.accessFlags,
+            method.annotations,
+            method.hiddenApiRestrictions,
+            impl,
+        )
     }
 
     fun prependReturnTrue(ref: MethodRef) {

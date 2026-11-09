@@ -41,8 +41,20 @@ Log sink: workspace `debug-5dd9df.log` (NDJSON, session `5dd9df`).
 | Clone launch | Pass | `com.grindrapp.android.plus` reaches the Grindr login screen; no `ExceptionInInitializerError` |
 | Modern embed module | Pass | LSPatch v1.2 logs `VectorModuleManager: Loaded module dev.fatter.gpp.morphe.payload successfully`; `GppXposedModule.onModuleLoaded` / `onPackageLoaded` / `onPackageReady` |
 | Pack + bridge init | Pass | `GrindrPlus.init` `hasPack=true`, `bridge_connect connected=true`, `init_ok initTimeMs=297` |
-| Settings toggle matrix | Not re-run | Fresh clone has no login session; matrix evidence remains the rooted run above |
+| Settings toggle matrix | Blocked | Clone reaches login, but the supplied lab account is **Account Restricted / Additional Review Required**; login is rejected by Grindr before a session exists |
 | Morphe B timing | Pass (optimized) | After dirty-DEX-only rewrite + stored-entry preservation, Create/Update reached the installer in under 60s and the full install completed in ~80s on the emulator |
+
+## 2026-11-09 retry — 26.23.0 / 194910 and account blocker
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Stock 194910 launch (x86_64 emulator) | Crash | `SIGSEGV` in `split_config.arm64_v8a.apk!libpairipcore.so` (ARM translation); no login screen |
+| 194910 Morphe clone | Crash (inherited) | Same PairIP native crash; Morphe B reports `pairip-static-decrypt` deferred (no 194910 pack) |
+| 26.16.1 Morphe clone | Pass to login | `com.grindrapp.android.plus` installs and reaches the login screen |
+| Login with supplied lab account | Blocked | Stock Grindr also shows **Account Restricted / Additional Review Required**; not a clone/patch regression |
+| Settings toggle matrix on Morphe clone | Blocked | No authenticated session; matrix evidence remains the rooted run above |
+
+No credentials are stored in the repo or docs. PairIP 194910 needs a real ARM64 stock dump before a decrypt pack can be produced.
 
 
 

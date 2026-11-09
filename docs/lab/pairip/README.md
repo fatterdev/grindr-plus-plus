@@ -16,6 +16,10 @@ Canonical write-up of the Alloy PairIP campaign (successes, failures, confounds)
 
 On Play **26.19.0 / 185656**, Vector injection breaks real PairIP; stubbing PairIP reaches `init_ok` then **SIGILL inside `libsqliteJni!JNI_OnLoad`** (encrypted native). Alloy runtime bypass is **tombstoned**. Use non-PairIP hosts for Alloy green; use **Morphe B static decrypt** for PairIP Play.
 
+## 26.23.0 / 194910 update (2026-11-09)
+
+Stock 194910 crashes on the x86_64 API 36 emulator with **SIGSEGV in `split_config.arm64_v8a.apk!libpairipcore.so`** before the login screen; the clone inherits the same crash. This is a host/PairIP native issue, not a Grindr++ hook issue. No `pairip-decrypt/194910/` pack exists, so Morphe B reports `pairip-static-decrypt` deferred and the install still completes. A pack must be produced from a real ARM64 stock process (the emulator’s ARM translation is not a valid decrypt source).
+
 ## Quick links
 
 | Item | Path |

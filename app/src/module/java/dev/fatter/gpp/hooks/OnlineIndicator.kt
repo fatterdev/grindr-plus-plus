@@ -1,6 +1,9 @@
 package dev.fatter.gpp.hooks
 
+import dev.fatter.gpp.GrindrPlus
+import dev.fatter.gpp.alloy.AlloyDexKit
 import dev.fatter.gpp.core.Config
+import dev.fatter.gpp.core.DeliveryChannel
 import dev.fatter.gpp.core.loge
 import dev.fatter.gpp.core.logi
 import dev.fatter.gpp.core.mapping.MappingDictionary
@@ -24,6 +27,29 @@ class OnlineIndicator : Hook(
             MappingDictionary.resolve("OnlineIndicator.utils.shouldShowMethod", "u")
         if (utils.isEmpty() || shouldShowMethod.isEmpty()) {
             logi("OnlineIndicator: utils soft-skip (empty remap)")
+            // Alloy fallback: the tip DEX keeps the 600000ms comparison in a
+            // boolean method taking a long, even when the pack class is absent.
+            if (DeliveryChannel.current.isRootedModule &&
+                AlloyDexKit.ensureInitialized(GrindrPlus.context)
+            ) {
+                val method = AlloyDexKit.findMethod(
+                    numbers = listOf(600000),
+                    returnType = "Z",
+                    paramTypes = listOf("J"),
+                )
+                if (method != null) {
+                    runCatching {
+                        method.hook(HookStage.BEFORE) { param ->
+                            val lastSeen = param.arg<Long>(0)
+                            param.setResult(
+                                System.currentTimeMillis() - lastSeen <= savedDurationMillis
+                            )
+                        }
+                        hooked++
+                        logi("OnlineIndicator: DexKit fallback hooked ${method.declaringClass.name}#${method.name}")
+                    }.onFailure { loge("OnlineIndicator DexKit: ${it.message}") }
+                }
+            }
         } else {
             runCatching {
                 findClass(utils) // shouldShowOnlineIndicator() — was Vm.m0.a, now aq7.u

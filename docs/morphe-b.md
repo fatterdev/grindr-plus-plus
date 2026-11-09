@@ -18,7 +18,7 @@ select APKs
 
 `ApplyMorpheBStep` runs B before `SignClonedGrindrApk`; `PatchApkStep` then runs A. B failures are non-fatal (A continues). Running B after signing would invalidate the input signature LSPatch reads.
 
-Bytecode today is a **dexlib2 rewriter** inside the orchestrator (ADR 0007): MorpheApp-shaped `bytecodePatch` execute, marker class inject, fingerprint locate. Feature instruction recipes (Chat / Favorites) are next; Cascade data-class getters are not rewrite targets.
+Bytecode today is a **dexlib2 rewriter** inside the orchestrator (ADR 0007): MorpheApp-shaped `bytecodePatch` execute, marker class inject, fingerprint locate. A real feature recipe now stubs the forced-update deprecation dialog (`disable-updates-dialog`: locate the class that builds `market://details?id=com.grindrapp.android`, replace its `showDeprecatedDialog(AppCompatActivity)` with `return-void`). Chat / Favorites instruction recipes remain deferred because their tip-DEX surfaces (`chatMessageMetaData`, `FavoritesFragment`) are absent; Cascade data-class getters are not rewrite targets.
 
 ## Delivery modes
 

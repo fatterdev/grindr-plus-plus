@@ -9,6 +9,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction11n
 import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction10x
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11n
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11x
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction21c
@@ -68,6 +70,23 @@ class DexlibBytecodeBackendTest {
             assertTrue(text.contains("morphe-b-dex-marker"))
         }
         assertTrue(logs.any { it.contains("rewrite") })
+    }
+
+    @Test
+    fun stubsDisableUpdatesDialog() {
+        val dir = createTempDirectory("morpheb-updates").toFile()
+        val apk = File(dir, "base.apk")
+        writeApkWithDex(apk, fixtureUpdateManagerDex())
+
+        DexlibBytecodeBackend().applyBytecodePatches(apk) { }
+
+        val dex = loadFirstDex(apk)
+        val method = dex.classes
+            .first { it.type == "Lcom/example/UpdateManager;" }
+            .methods
+            .first { it.name == "showDeprecatedDialog" }
+        val first = method.implementation!!.instructions.first()
+        assertEquals(Opcode.RETURN_VOID, first.opcode)
     }
 
     @Test
@@ -164,6 +183,71 @@ class DexlibBytecodeBackendTest {
                 ByteArrayInputStream(bytes),
             )
         }
+    }
+
+    private fun fixtureUpdateManagerDex(): ByteArray {
+        val clinit = ImmutableMethod(
+            "Lcom/example/UpdateManager;",
+            "<clinit>",
+            emptyList(),
+            "V",
+            AccessFlags.STATIC.value,
+            emptySet(),
+            emptySet(),
+            ImmutableMethodImplementation(
+                1,
+                listOf(
+                    ImmutableInstruction21c(
+                        Opcode.CONST_STRING,
+                        0,
+                        ImmutableStringReference("market://details?id=com.grindrapp.android"),
+                    ),
+                    ImmutableInstruction10x(Opcode.RETURN_VOID),
+                ),
+                emptyList(),
+                emptyList(),
+            ),
+        )
+        val show = ImmutableMethod(
+            "Lcom/example/UpdateManager;",
+            "showDeprecatedDialog",
+            listOf(
+                ImmutableMethodParameter(
+                    "Landroidx/appcompat/app/AppCompatActivity;",
+                    emptySet(),
+                    "activity",
+                ),
+            ),
+            "V",
+            AccessFlags.PUBLIC.value,
+            emptySet(),
+            emptySet(),
+            ImmutableMethodImplementation(
+                2,
+                listOf(ImmutableInstruction10x(Opcode.RETURN_VOID)),
+                emptyList(),
+                emptyList(),
+            ),
+        )
+        val classDef = ImmutableClassDef(
+            "Lcom/example/UpdateManager;",
+            AccessFlags.PUBLIC.value,
+            "Ljava/lang/Object;",
+            emptyList(),
+            null,
+            emptySet(),
+            emptyList(),
+            emptyList(),
+            listOf(clinit),
+            listOf(show),
+        )
+        val dexFile = object : DexFile {
+            override fun getClasses() = setOf(classDef)
+            override fun getOpcodes() = Opcodes.getDefault()
+        }
+        val store = MemoryDataStore()
+        DexPool.writeTo(store, dexFile)
+        return store.data
     }
 
     private fun fixtureDexReturningFalse(): ByteArray {

@@ -75,6 +75,14 @@ object MorpheBCatalog {
             notes = "Material TabLayout\$TabView present",
         ),
         MorpheBPatchDescriptor(
+            id = "disable-updates",
+            title = "Disable updates",
+            replacesHookName = "Disable updates",
+            delivery = MorpheBDelivery.STATIC_RESOURCE,
+            notes = "Stubs the deprecation dialog in the class that builds " +
+                "market://details?id=com.grindrapp.android",
+        ),
+        MorpheBPatchDescriptor(
             id = "morphe-b-marker",
             title = "Morphe B applied marker",
             replacesHookName = null,

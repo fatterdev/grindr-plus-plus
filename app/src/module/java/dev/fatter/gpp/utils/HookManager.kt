@@ -234,6 +234,7 @@ class HookManager {
             "Favorites",
             "Keep Alive WebSocket",
             "Status Dialog",
+            "Online indicator",
         )
     }
 

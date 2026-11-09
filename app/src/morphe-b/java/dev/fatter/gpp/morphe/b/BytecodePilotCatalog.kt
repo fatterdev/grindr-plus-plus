@@ -32,5 +32,12 @@ object BytecodePilotCatalog {
                 "chatMessageMetaData",
             ),
         ),
+        BytecodeFingerprint(
+            id = "disable-updates-dialog",
+            patchId = "disable-updates",
+            needles = listOf(
+                "market://details?id=com.grindrapp.android",
+            ),
+        ),
     )
 }

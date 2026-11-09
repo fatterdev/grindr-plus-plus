@@ -42,22 +42,54 @@ object AlloyDexKit : Closeable {
         val kit = bridge ?: return null
         if (strings.isEmpty()) return null
         return try {
-            val hostLoader = try {
-                GrindrPlus.context.classLoader
-            } catch (_: Throwable) {
-                javaClass.classLoader
-            }
             val results = kit.findClass {
                 matcher {
                     usingStrings = strings.toList()
                 }
             }
             val data = results.singleOrNull() ?: results.firstOrNull() ?: return null
-            data.getInstance(hostLoader)
+            data.getInstance(hostLoader())
         } catch (t: Throwable) {
             Logger.w("AlloyDexKit findClassByStrings failed: ${t.message}", LogSource.MODULE)
             null
         }
+    }
+
+    /**
+     * Find a single method by string constants and/or numeric constants, with an
+     * optional return type / parameter signature filter (DEX type descriptors).
+     *
+     * Used as the Alloy fallback when a mapping pack class is absent. Soft-fail → null.
+     */
+    fun findMethod(
+        strings: List<String> = emptyList(),
+        numbers: List<Number> = emptyList(),
+        returnType: String? = null,
+        paramTypes: List<String> = emptyList(),
+    ): java.lang.reflect.Method? {
+        val kit = bridge ?: return null
+        if (strings.isEmpty() && numbers.isEmpty()) return null
+        return try {
+            val results = kit.findMethod {
+                matcher {
+                    if (strings.isNotEmpty()) usingStrings = strings
+                    if (numbers.isNotEmpty()) usingNumbers = numbers
+                    returnType?.let { this.returnType = it }
+                    if (paramTypes.isNotEmpty()) this.paramTypes = paramTypes
+                }
+            }
+            val data = results.singleOrNull() ?: results.firstOrNull() ?: return null
+            data.getMethodInstance(hostLoader())
+        } catch (t: Throwable) {
+            Logger.w("AlloyDexKit findMethod failed: ${t.message}", LogSource.MODULE)
+            null
+        }
+    }
+
+    private fun hostLoader(): ClassLoader = try {
+        GrindrPlus.context.classLoader
+    } catch (_: Throwable) {
+        javaClass.classLoader
     }
 
     override fun close() {
