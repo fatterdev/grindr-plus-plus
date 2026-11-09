@@ -1,6 +1,6 @@
 # ADR 0009: PairIP on Play hosts — static decrypt via Morphe B
 
-- **Status:** Accepted — phase 1 landed (native RX splice + integrity DEX stubs); 194910 pack blocked on real ARM64 dump
+- **Status:** Accepted — phase 1 landed (native RX splice + integrity DEX stubs); 194910 pack produced from Play-signed stock on ARM64 lab device
 - **Date:** 2026-10-08
 - **Related:** [0007-morphe-b-bytecodepatch.md](0007-morphe-b-bytecodepatch.md), [0005-dual-apk-morphe-alloy.md](0005-dual-apk-morphe-alloy.md), [0008-libxposed-api-102.md](0008-libxposed-api-102.md)
 - **Lab evidence:** [docs/lab/pairip/](../lab/pairip/) — start with [TOMBSTONE](../lab/pairip/TOMBSTONE.md) + [EXPERIMENT_LOG](../lab/pairip/EXPERIMENT_LOG.md)

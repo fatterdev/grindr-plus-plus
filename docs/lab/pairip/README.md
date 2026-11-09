@@ -18,7 +18,11 @@ On Play **26.19.0 / 185656**, Vector injection breaks real PairIP; stubbing Pair
 
 ## 26.23.0 / 194910 update (2026-11-09)
 
-Stock 194910 crashes on the x86_64 API 36 emulator with **SIGSEGV in `split_config.arm64_v8a.apk!libpairipcore.so`** before the login screen; the clone inherits the same crash. This is a host/PairIP native issue, not a Grindr++ hook issue. No `pairip-decrypt/194910/` pack exists, so Morphe B reports `pairip-static-decrypt` deferred and the install still completes. A pack must be produced from a real ARM64 stock process (the emulator’s ARM translation is not a valid decrypt source).
+Stock 194910 crashes on the x86_64 API 36 emulator with **SIGSEGV in `split_config.arm64_v8a.apk!libpairipcore.so`** before the login screen; the clone inherits the same crash. This is a host/PairIP native issue, not a Grindr++ hook issue.
+
+On the real ARM64 lab device (Mi A2 lite, LineageOS 22 / Android 15, rooted), the **Play Store install** of 194910 (original signature `823f5a17c33b16b4775480b31607e7df35d67af8`, installer `com.android.vending`) launches and logs in. `libsqliteJni.so` is not loaded by the login/home flow; it is loaded by the AndroidX bundled SQLite driver. Triggering `Runtime.loadLibrary0(appClassLoader, "sqliteJni")` through Frida (lab only) mapped the decrypted RX from `split_config.arm64_v8a.apk` at file offset `0x1578000` (two contiguous r-x maps, `0xb5000` total). `scripts/pairip_dump_natives.py` spliced it into `pairip-decrypt/194910/libsqliteJni.so` at `0x48778` (`RX@JNI-ish ff0301d1fd7b03a9…`, valid AArch64). The pack is committed; Morphe B now applies it instead of reporting `pairip-static-decrypt` deferred.
+
+The emulator remains unsuitable for PairIP native work; use the ARM64 device for dump and clone validation.
 
 ## Quick links
 
