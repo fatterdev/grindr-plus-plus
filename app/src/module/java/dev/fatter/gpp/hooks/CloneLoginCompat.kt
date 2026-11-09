@@ -27,14 +27,14 @@ class CloneLoginCompat : Hook(
             return
         }
 
-        val impl = MappingDictionary.resolve(
-            "CloneLoginCompat.isFeatureFlagEnabled",
-            MappingDictionary.resolve("FeatureGranting.isFeatureFlagEnabled", "iv6")
-        )
-        val method = MappingDictionary.resolve(
-            "CloneLoginCompat.isFeatureFlagEnabled.invokeMethod",
-            MappingDictionary.resolve("FeatureGranting.isFeatureFlagEnabled.invokeMethod", "a")
-        )
+        // MappingDictionary.resolve returns "" for an absent key even when a
+        // fallback is supplied (active pack path), so fall back explicitly.
+        val impl = MappingDictionary.resolve("CloneLoginCompat.isFeatureFlagEnabled", "")
+            .ifEmpty { MappingDictionary.resolve("FeatureGranting.isFeatureFlagEnabled", "iv6") }
+        val method = MappingDictionary.resolve("CloneLoginCompat.isFeatureFlagEnabled.invokeMethod", "")
+            .ifEmpty {
+                MappingDictionary.resolve("FeatureGranting.isFeatureFlagEnabled.invokeMethod", "a")
+            }
         if (impl.isEmpty() || method.isEmpty()) {
             logi("CloneLoginCompat: soft-skip (empty remap)")
             return

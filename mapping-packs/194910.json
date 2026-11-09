@@ -349,6 +349,14 @@
       "kind": "method",
       "name": "a"
     },
+    "CloneLoginCompat.isFeatureFlagEnabled": {
+      "kind": "class",
+      "name": "kdg"
+    },
+    "CloneLoginCompat.isFeatureFlagEnabled.invokeMethod": {
+      "kind": "method",
+      "name": "a"
+    },
     "FeatureGranting.alertParamsField": {
       "kind": "field",
       "name": "",
