@@ -41,7 +41,7 @@ Log sink: workspace `debug-5dd9df.log` (NDJSON, session `5dd9df`).
 | Clone launch | Pass | `com.grindrapp.android.plus` reaches the Grindr login screen; no `ExceptionInInitializerError` |
 | Modern embed module | Pass | LSPatch v1.2 logs `VectorModuleManager: Loaded module dev.fatter.gpp.morphe.payload successfully`; `GppXposedModule.onModuleLoaded` / `onPackageLoaded` / `onPackageReady` |
 | Pack + bridge init | Pass | `GrindrPlus.init` `hasPack=true`, `bridge_connect connected=true`, `init_ok initTimeMs=297` |
-| Settings toggle matrix | Blocked | Clone reaches login, but the supplied lab account is **Account Restricted / Additional Review Required**; login is rejected by Grindr before a session exists |
+| Settings toggle matrix | Pass (2026-11-09 retry) | 26.16.1 clone on the emulator with LSPatch `-l 1`; login reached Browse, toggle OFF/ON verified (see the clone E2E section below) |
 | Morphe B timing | Pass (optimized) | After dirty-DEX-only rewrite + stored-entry preservation, Create/Update reached the installer in under 60s and the full install completed in ~80s on the emulator |
 
 ## 2026-11-09 retry — 26.23.0 / 194910 and account blocker
@@ -52,8 +52,8 @@ Log sink: workspace `debug-5dd9df.log` (NDJSON, session `5dd9df`).
 | 194910 Morphe clone | Crash (inherited) | Same PairIP native crash; Morphe B reports `pairip-static-decrypt` deferred (no 194910 pack) |
 | 26.16.1 Morphe clone | Pass to login | `com.grindrapp.android.plus` installs and reaches the login screen |
 | Morphe B disable-updates recipe (26.16.1) | Pass | Manager log: `Morphe B bytecode: disable-updates-dialog located Lrc9;, Lxa0;`; re-patched clone still launches to login |
-| Login with supplied lab account | Blocked | Stock Grindr also shows **Account Restricted / Additional Review Required**; not a clone/patch regression |
-| Settings toggle matrix on Morphe clone | Blocked | No authenticated session; matrix evidence remains the rooted run above |
+| Login with supplied lab account | Pass (2026-11-09 retry) | The supplied lab account logged in on the 26.16.1 Morphe clone; the earlier “Account Restricted” state was not reproduced |
+| Settings toggle matrix on Morphe clone | Pass (2026-11-09 retry) | Toggle OFF/ON verified on the clone; see the clone E2E section below |
 
 No credentials are stored in the repo or docs. PairIP 194910 needs a real ARM64 stock dump before a decrypt pack can be produced.
 
@@ -85,6 +85,22 @@ Device: **Mi A2 lite** (`daisy`, Evolution X 10.14, Android 15 per `ro.build.ver
 | LSPatch `-l 1` Compose | Pass | `LSPatch: Signature bypass level: 1`; no `IncompatibleClassChangeError` / `DrawScope` crash |
 | 194910 clone launch | Blocked | Native `SIGSEGV` in `split_config.arm64_v8a.apk!libpairipcore.so` (`tombstone_23`, offset `0x470f4`, fault addr `0x005f5e3333841dda`) right after `libpairipcore.so` loads; no login screen. The decrypted `libsqliteJni.so` splice alone does not bypass the native anti-tamper |
 | Package installer | Blocked (ROM) | Same `NOT_TOUCHABLE` dialog; `adb install-multiple` of the 4 patched APKs succeeds |
+
+## 2026-11-09 Morphe clone 26.16.1 — login + Settings matrix
+
+Device: **Android 16 x86_64 emulator** (`sdk_gphone64_x86_64`), host **26.16.1 / 179451** from Play, manager debug `5.0.0-dev-90dc400`, LSPatch **`-l 1`**, pack 179451.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Repatch + install | Pass | Export base + `arm64_v8a` + `xxhdpi`; LSPatch `-l 1`; PackageInstaller update succeeds |
+| Clone launch | Pass | `LSPatch: Signature bypass level: 1`; no `IncompatibleClassChangeError`; reaches `LoginActivity` |
+| Clone login compatibility | Pass | `CloneLoginCompat: reCAPTCHA assignment flags forced off for clone`; `Initialized hook: Clone login compatibility` |
+| Login | Pass | Supplied lab account reaches Browse/Home (location + notification permissions accepted, AI consent declined) |
+| Pack + hook summary | Pass | `hasPack=true`, 83 symbols, 7 fingerprint soft-warnings; `enabled=19, partial=3, skipped=6, disabled=1, failed=0, total=29` |
+| Toggle OFF → runtime | Pass | Manager app selector **Clone: Grindr++** → “Allow screenshots” OFF; clone log `Hook Allow screenshots is disabled.`; summary `enabled=18, disabled=2` |
+| Toggle restore | Pass | “Allow screenshots” ON; summary `enabled=19, disabled=1` |
+
+The manager config is **per selected app**: toggling “Main Grindr App” does not change the clone. The app selector must show **Clone: Grindr++** for clone runtime changes; this is correct behavior but worth surfacing in the UI.
 
 
 

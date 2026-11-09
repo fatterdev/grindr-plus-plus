@@ -10,7 +10,7 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 | Fingerprint soft-validate + sanitizer | Done | `TargetFingerprint`, `StacktraceSanitizer`, `writeThrowable` |
 | Platform concurrency / backoff / circuit-breaker | Done | CHM maps, `TaskScheduler` backoff, `HookCircuitBreaker` |
 | Settings ↔ runtime truthfulness | Done | `runtimeStatus` + Settings subtitles; pack `hooks.status` consumed |
-| E2E Settings↔runtime | Device Done (lab) | [e2e-wave4-results.md](e2e-wave4-results.md); session `5dd9df` on Mi A2 lite |
+| E2E Settings↔runtime | Device Done (lab) | [e2e-wave4-results.md](e2e-wave4-results.md); session `5dd9df` on Mi A2 lite + 2026-11-09 Morphe clone 26.16.1 on the emulator (toggle OFF/ON verified) |
 | UI branding / News / clone icon | Done + E2E (lab) | Clone icon: adaptive XML remapped to brand layers, no duplicate ZIP entries, verified on launcher. News: HTML/entities sanitized in releases and `news.json`; user-facing “GrindrPlus” removed (upstream attribution kept) |
 | Morphe A path rootless | Done + E2E (lab) | `PatchBackend`, LSPatch **v1.2** pinned at `-l 1` (`-l 2` DEX rewrite corrupts Compose interface static methods); Create/Update Grindr++ installs and launches on emulator ([e2e-wave4-results.md](e2e-wave4-results.md)) |
 | Anonymous opt-in telemetry | Done | `AnonymousTelemetry` HTTP flush when `analytics_endpoint` set |
@@ -29,7 +29,7 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 3. Disable shuffle / Notification Alerts — product surface absent on tip DEX
 4. Optional: full SessionInstaller E2E of A+B patched APK on device
 5. ~~Play tip 26.23.0 / 194910 has no mapping pack~~ — pack added 2026-11-09; remaining 26.23.0 gaps are the explicit soft-skips in `mapping-packs/194910.json` (see [remote-mapping-packs.md](remote-mapping-packs.md))
-6. Morphe-clone Settings↔runtime matrix is blocked on the lab A2 Lite by the package-installer dialog being `NOT_TOUCHABLE` (`INSTALL_FAILED_ABORTED: User rejected permissions`); manual `adb install-multiple` bypasses it. The supplied account now logs in on stock 194910. The 194910 re-signed clone still crashes in the native PairIP anti-tamper (`libpairipcore.so` `SIGSEGV`) after the decrypted `libsqliteJni.so` splice; 26.16.1 / 179451 (no PairIP) is the working clone target. See [e2e-wave4-results.md](e2e-wave4-results.md)
+6. ~~Morphe-clone Settings↔runtime matrix blocked~~ — passed on the 26.16.1 / 179451 clone (emulator, LSPatch `-l 1`): login reached Browse, toggle OFF → `enabled=18, disabled=2`, restore → `enabled=19, disabled=1`. The lab A2 Lite still needs `adb install-multiple` because its package-installer dialog is `NOT_TOUCHABLE`. The 194910 re-signed clone still crashes in the native PairIP anti-tamper (`libpairipcore.so` `SIGSEGV`) after the decrypted `libsqliteJni.so` splice; 26.16.1 / 179451 (no PairIP) is the working clone target. See [e2e-wave4-results.md](e2e-wave4-results.md)
 
 ## Morphe B
 
