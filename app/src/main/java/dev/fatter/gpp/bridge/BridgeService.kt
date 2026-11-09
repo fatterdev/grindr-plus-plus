@@ -83,8 +83,13 @@ class BridgeService : Service() {
         }
 
         try {
-            val channelId = "bridge_service_channel"
+            // New id: Android never renames an existing channel, and deleting
+            // + recreating the same id restores the legacy name. The old
+            // "bridge_service_channel" is removed below.
+            val channelId = "bridge_service_channel_v2"
             createNotificationChannel(channelId, "Grindr++ Background Service", "Keeps Grindr++ running in background")
+            (getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)
+                ?.deleteNotificationChannel("bridge_service_channel")
 
             val notification = NotificationCompat.Builder(this, channelId)
                 .setContentTitle("Grindr++")
@@ -497,7 +502,7 @@ class BridgeService : Service() {
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val existing = notificationManager.getNotificationChannel(channelId)
-        val importance = existing?.importance ?: if (channelId == "bridge_service_channel") {
+        val importance = existing?.importance ?: if (channelId.startsWith("bridge_service_channel")) {
             NotificationManager.IMPORTANCE_MIN
         } else {
             NotificationManager.IMPORTANCE_DEFAULT
@@ -508,7 +513,7 @@ class BridgeService : Service() {
         // legacy "GrindrPlus" label in system settings.
         val channel = NotificationChannel(channelId, channelName, importance).apply {
             description = channelDescription
-            if (channelId == "bridge_service_channel") {
+            if (channelId.startsWith("bridge_service_channel")) {
                 setShowBadge(false)
                 setSound(null, null)
                 enableLights(false)
