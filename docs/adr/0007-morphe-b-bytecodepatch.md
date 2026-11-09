@@ -19,7 +19,7 @@ Morphe B today embeds a JSON marker and uses RUNTIME_REMAP. Tip-DEX residuals ne
 
 Default backend is [DexlibBytecodeBackend](../../app/src/morphe-b/java/dev/fatter/gpp/morphe/b/DexlibBytecodeBackend.kt): parses `classes*.dex` with `smali-dexlib2` (same writer as MorpheApp `bytecodePatch` / patches-template), locating [BytecodePilotCatalog](../../app/src/morphe-b/java/dev/fatter/gpp/morphe/b/BytecodePilotCatalog.kt) needles to class types, then executing in-process `MorpheBytecodePatch` blocks (`addInstructions`-style prepend + marker class inject). Invalid DEX falls back to `FingerprintScanBytecodeBackend`. Desktop `app.morphe:morphe-patcher` is **not** embedded (apktool/resource decode is too heavy for on-device Manager). Slim embed stays `compileOnly` for dexlib2.
 
-Pilot: marker class `Lcom/grindrplus/morphe/b/BytecodeApplied;` plus boolean-gate prepend and void-stub primitives. A verified feature recipe now stubs the forced-update deprecation dialog: the class that builds `market://details?id=com.grindrapp.android` has its `showDeprecatedDialog(AppCompatActivity)` replaced with `return-void` (`disable-updates-dialog`). Chat terminal / Favorites remain locate-only — JADX tip `FavoritesHeaderData` is a Cascade data class, not the layout Fragment hook (Settings stay RUNTIME_REMAP / honest skip).
+Pilot: marker class `Lcom/grindrplus/morphe/b/BytecodeApplied;` plus boolean-gate prepend and void-stub primitives. A feature recipe stubs the forced-update deprecation dialog: the class that builds `market://details?id=com.grindrapp.android` has its `showDeprecatedDialog(AppCompatActivity)` replaced with `return-void` (`disable-updates-dialog`). **The clone default is now no DEX rewrite**: dexlib2 `DexPool` corrupts Compose interface static methods (verified `DrawScope.drawRect-n-J9OG0$default` -> `IncompatibleClassChangeError`), so the recipe is lab/unit-test only and the runtime `Disable updates` hook is the production path. Chat terminal / Favorites remain locate-only - JADX tip `FavoritesHeaderData` is a Cascade data class, not the layout Fragment hook (Settings stay RUNTIME_REMAP / honest skip).
 
 Next: a verified feature recipe (Chat inbound processor or Favorites Fragment) once a safe boolean/const site is mapped.
 
@@ -29,5 +29,5 @@ Next: a verified feature recipe (Chat inbound processor or Favorites Fragment) o
 
 - [x] ≥1 static bytecode path applied in dry-run (fingerprint scan + report asset).
 - [x] Real instruction rewrite scaffold (dexlib2 mutate + marker class; MorpheApp-shaped `bytecodePatch` execute inside orchestrator).
-- [x] Feature-specific instruction recipe — `disable-updates-dialog` void-stub (verified by unit test); Chat/Favorites remain deferred until a safe tip-DEX target exists.
+- [x] Feature-specific instruction recipe — `disable-updates-dialog` void-stub (verified by unit test); **disabled in the clone default** because `DexPool` corrupts Compose interface static methods; runtime `Disable updates` hook is the production path. Chat/Favorites remain deferred until a safe tip-DEX target exists.
 - Slim embed still used; Settings truthfulness preserved.

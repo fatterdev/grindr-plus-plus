@@ -57,6 +57,21 @@ Log sink: workspace `debug-5dd9df.log` (NDJSON, session `5dd9df`).
 
 No credentials are stored in the repo or docs. PairIP 194910 needs a real ARM64 stock dump before a decrypt pack can be produced.
 
+## 2026-11-09 ARM64 lab — 194910 PairIP pack + Morphe B clone
+
+Device: **Mi A2 lite** (`daisy`, LineageOS 22 / Android 15, arm64, rooted Magisk + Zygisk Vector). The user reinstalled the lab apps after a clean wipe; stock Grindr 194910 was installed **from Play Store** (`installerPackageName=com.android.vending`, signer SHA-1 `823f5a17c33b16b4775480b31607e7df35d67af8`).
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Stock 194910 launch + login | Pass | Login with the supplied lab account reached `HomeActivityOriginal`; no PairIP crash |
+| `libsqliteJni` load | Pass (lab trigger) | The Play build does not expose the obfuscated `ti4` loader class to Frida; `Runtime.loadLibrary0(appClassLoader, "sqliteJni")` loaded the AndroidX bundled driver |
+| PairIP RX dump | Pass | Two contiguous r-x maps of `split_config.arm64_v8a.apk` at file offset `0x1578000`, total `0xb5000`; script spliced `libsqliteJni.so` at `0x48778` (`RX@JNI-ish ff0301d1fd7b03a9…`, valid AArch64) |
+| `pairip-decrypt/194910` pack | Pass | `libsqliteJni.so` + `pack.json` committed; Morphe B log: `Morphe B PairIP: detected`, `splice lib/arm64-v8a/libsqliteJni.so (1345696 bytes)`, `DEX integrity stubs=2` |
+| Morphe B disable-updates (194910) | Pass | Manager log: `disable-updates-dialog located Lsu1;`, `Lk96;`, `Lbh0;`, `Ld2o;`; marker + recipe applied |
+| Clone package install | Blocked by ROM UI | The LineageOS package installer dialog is `NOT_TOUCHABLE`; `InputDispatcher` drops taps as “untrusted touch due to occlusion”, so the manager's `SessionInstaller` gets `INSTALL_FAILED_ABORTED: User rejected permissions`. Manual `adb install-multiple` of the patched clone APKs is used for the lab instead of the UI path |
+
+The package-installer failure is a **device/ROM input issue**, not an APK validation failure: the dialog is visible and the patched APKs are produced, but its window is non-touchable while the manager task is on top. The manual install bypasses that UI. This must be documented as a lab workaround; the rootless product path still requires a touchable system installer on the user's device.
+
 
 
 - Behavioral ON/OFF asserts for every mapped Manage Hooks row’s *user-visible* effect (screenshots, albums, explorer, etc.).

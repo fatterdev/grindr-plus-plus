@@ -254,7 +254,14 @@ object MorpheBytecodePatches {
         }
     }
 
-    val defaults: List<MorpheBytecodePatch> = listOf(marker, disableUpdatesDialog)
+    /**
+     * Product default: no DEX rewrite. dexlib2 `DexPool` corrupts Compose
+     * interface static methods (e.g. `DrawScope.drawRect-n-J9OG0$default`) when
+     * it rewrites `classes.dex`, producing `IncompatibleClassChangeError` at
+     * draw time. The marker/recipes stay available for lab/unit tests; the
+     * clone uses the runtime hooks (`Disable updates`, etc.) instead.
+     */
+    val defaults: List<MorpheBytecodePatch> = emptyList()
 }
 
 class DexPatchContext(private val dex: ParsedDex) {

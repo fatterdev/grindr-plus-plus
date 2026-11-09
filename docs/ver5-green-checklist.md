@@ -16,10 +16,10 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 | Hot-reload packs | Done | `MappingDictionary.reloadForVersion` |
 | `vision.md` + README aligned | Done | [vision.md](vision.md), docs/README links |
 | Morphe B started | Done | `MorpheBPatchEngine` in `ApplyMorpheBStep` (before signing); runtime remaps; [morphe-b.md](morphe-b.md) |
-| Play tip pack 26.23.0 / 194910 | Static Done | `mapping-packs/194910.json` + assets mirror; 43/83 symbols soft-skipped honestly; `validate_mapping_packs.py --require-tip` passes; device E2E on 194910 still pending |
+| Play tip pack 26.23.0 / 194910 | Pack + PairIP dump Done | `mapping-packs/194910.json` + assets mirror; 43/83 symbols soft-skipped honestly; `validate_mapping_packs.py --require-tip` passes; `pairip-decrypt/194910/` produced from Play-signed ARM64 stock; Morphe B applies it (`splice libsqliteJni.so`, `DEX integrity stubs=2`). Clone launch still blocked by the lab ROM package-installer UI |
 | Dual APK Morphe / Alloy | Phase 1 Done | Flavors `morphe` / `alloy` / `embed`; [ADR 0005](adr/0005-dual-apk-morphe-alloy.md) |
 | Alloy DexKit | Implemented (device blocked) | [ADR 0006](adr/0006-alloy-dexkit-fingerprints.md); `AlloyDexKit` class + method fingerprint fallbacks; Favorites/OnlineIndicator wired; device login blocked by account restriction |
-| Morphe B bytecodePatch | Recipe landed | [ADR 0007](adr/0007-morphe-b-bytecodepatch.md); dexlib2 rewrite in `ApplyMorpheBStep` (before signing); `disable-updates-dialog` void-stub verified; Chat/Favorites deferred (surface absent) |
+| Morphe B bytecodePatch | Recipe landed (default off) | [ADR 0007](adr/0007-morphe-b-bytecodepatch.md); `disable-updates-dialog` void-stub implemented/unit-tested but disabled in the clone default because `DexPool` corrupts Compose interface static methods (`DrawScope`); runtime `Disable updates` hook is the path. Chat/Favorites deferred (surface absent) |
 
 ## Residual product debt (honest skips)
 
@@ -28,7 +28,7 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 3. Disable shuffle / Notification Alerts — product surface absent on tip DEX
 4. Optional: full SessionInstaller E2E of A+B patched APK on device
 5. ~~Play tip 26.23.0 / 194910 has no mapping pack~~ — pack added 2026-11-09; remaining 26.23.0 gaps are the explicit soft-skips in `mapping-packs/194910.json` (see [remote-mapping-packs.md](remote-mapping-packs.md))
-6. Morphe-clone Settings↔runtime matrix is blocked by the lab account being **Account Restricted / Additional Review Required**; 194910 is additionally blocked on the x86_64 emulator by a PairIP `libpairipcore.so` SIGSEGV. See [e2e-wave4-results.md](e2e-wave4-results.md)
+6. Morphe-clone Settings↔runtime matrix is blocked on the lab A2 Lite by the LineageOS package-installer dialog being `NOT_TOUCHABLE` (`INSTALL_FAILED_ABORTED: User rejected permissions`); manual `adb install-multiple` bypasses it. The supplied account now logs in on stock 194910. 194910 stock/clone still SIGSEGVs on the x86_64 emulator in `libpairipcore.so`. See [e2e-wave4-results.md](e2e-wave4-results.md)
 
 ## Morphe B
 

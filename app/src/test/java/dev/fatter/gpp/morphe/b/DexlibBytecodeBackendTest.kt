@@ -57,7 +57,8 @@ class DexlibBytecodeBackendTest {
         writeApkWithDex(apk, fixtureDexReturningFalse())
 
         val logs = mutableListOf<String>()
-        DexlibBytecodeBackend().applyBytecodePatches(apk) { logs += it }
+        DexlibBytecodeBackend(patches = listOf(MorpheBytecodePatches.marker))
+            .applyBytecodePatches(apk) { logs += it }
 
         val dex = loadFirstDex(apk)
         assertTrue(dex.classes.any { it.type == DexlibBytecodeBackend.MARKER_TYPE })
@@ -78,7 +79,8 @@ class DexlibBytecodeBackendTest {
         val apk = File(dir, "base.apk")
         writeApkWithDex(apk, fixtureUpdateManagerDex())
 
-        DexlibBytecodeBackend().applyBytecodePatches(apk) { }
+        DexlibBytecodeBackend(patches = listOf(MorpheBytecodePatches.disableUpdatesDialog))
+            .applyBytecodePatches(apk) { }
 
         val dex = loadFirstDex(apk)
         val method = dex.classes
