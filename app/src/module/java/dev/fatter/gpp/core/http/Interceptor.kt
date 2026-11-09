@@ -35,26 +35,51 @@ class Interceptor(
         if (isLoggedIn) {
             val authTokenFlowMethod =
                 MappingDictionary.resolve("http.userSession.authTokenFlowMethod", "x")
-            val authToken = if (authTokenFlowMethod.isEmpty()) {
-                Logger.i("HTTP: authTokenFlowMethod soft-skip (empty remap)", LogSource.HTTP)
-                ""
-            } else {
-                // search for 'return FlowKt.asStateFlow' in userSession (return type is StateFlow<String>)
-                val authTokenFlow = invokeMethodSafe(userSession, authTokenFlowMethod)
-                if (authTokenFlow != null) {
-                    invokeMethodSafe(authTokenFlow, "getValue") as? String ?: ""
-                } else {
+            val authTokenFlowField =
+                MappingDictionary.resolve("http.userSession.authTokenFlowField", "")
+            val authToken = when {
+                authTokenFlowMethod.isNotEmpty() -> {
+                    // search for 'return FlowKt.asStateFlow' in userSession (return type is StateFlow<String>)
+                    val authTokenFlow = invokeMethodSafe(userSession, authTokenFlowMethod)
+                    if (authTokenFlow != null) {
+                        invokeMethodSafe(authTokenFlow, "getValue") as? String ?: ""
+                    } else {
+                        ""
+                    }
+                }
+
+                authTokenFlowField.isNotEmpty() -> {
+                    // 26.23.0+ exposes the token StateFlow as a field (frv.B), not a getter.
+                    when (val flow = getFieldSafe(userSession, authTokenFlowField)) {
+                        is String -> flow
+                        null -> ""
+                        else -> invokeMethodSafe(flow, "getValue") as? String ?: ""
+                    }
+                }
+
+                else -> {
+                    Logger.i("HTTP: authTokenFlowMethod/Field soft-skip (empty remap)", LogSource.HTTP)
                     ""
                 }
             }
 
             val rolesMethod = MappingDictionary.resolve("http.userSession.rolesMethod", "E")
-            val roles = if (rolesMethod.isEmpty()) {
-                Logger.i("HTTP: rolesMethod soft-skip (empty remap)", LogSource.HTTP)
-                null
-            } else {
-                // Roles string for L-Grindr-Roles (was "F" on 25.20.0; UserSession.E() on 26.16.1)
-                invokeMethodSafe(userSession, rolesMethod) as? String ?: ""
+            val rolesField = MappingDictionary.resolve("http.userSession.rolesField", "")
+            val roles = when {
+                rolesMethod.isNotEmpty() -> {
+                    // Roles string for L-Grindr-Roles (was "F" on 25.20.0; UserSession.E() on 26.16.1)
+                    invokeMethodSafe(userSession, rolesMethod) as? String
+                }
+
+                rolesField.isNotEmpty() -> {
+                    // 26.23.0+ keeps the joined roles string in a field (frv.n).
+                    getFieldSafe(userSession, rolesField) as? String
+                }
+
+                else -> {
+                    Logger.i("HTTP: rolesMethod/Field soft-skip (empty remap)", LogSource.HTTP)
+                    null
+                }
             }
 
             if (authToken.isNotEmpty()) {

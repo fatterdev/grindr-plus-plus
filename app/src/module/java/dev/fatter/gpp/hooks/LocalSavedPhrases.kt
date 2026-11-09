@@ -1,6 +1,7 @@
 package dev.fatter.gpp.hooks
 
 import dev.fatter.gpp.GrindrPlus
+import dev.fatter.gpp.core.Obfuscation
 import dev.fatter.gpp.core.loge
 import dev.fatter.gpp.core.logd
 import dev.fatter.gpp.core.logi
@@ -32,7 +33,8 @@ class LocalSavedPhrases : Hook(
             "com.grindrapp.android.api.PhrasesRestService"
         ) // 'v3/me/prefs'
     private val createSuccessResult = RetrofitUtils.SUCCESS_CLASS_NAME // r84 'Success(successValue='
-    private val chatRestService = "com.grindrapp.android.chat.data.datasource.api.service.ChatRestService"
+    private val chatRestService: String
+        get() = Obfuscation.G.ChatIndicators.CHAT_REST_SERVICE
     // 26.16.1+ moved under chat.data.datasource.api.model (legacy chat.api.model path is gone).
     private val addSavedPhraseResponse: String
         get() = MappingDictionary.resolve(

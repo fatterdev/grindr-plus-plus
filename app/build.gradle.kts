@@ -86,6 +86,8 @@ android {
             // Morphe B DEX rewriter (ADR 0007)
             java.directories.add("src/morphe-b/java")
             kotlin.directories.add("src/morphe-b/java")
+            // Play download is pack-aware: it reads assets/mappings/index.json.
+            assets.directories.add("src/module/assets")
         }
         getByName("alloy") {
             java.directories.add("src/manager/java")

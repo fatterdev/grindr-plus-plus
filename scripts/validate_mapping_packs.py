@@ -16,7 +16,7 @@ from typing import Any
 
 REQUIRED_TOP = ("schemaVersion", "versionName", "versionCode", "symbols")
 ALLOWED_KINDS = frozenset({"class", "method", "field"})
-HOOK_STATUSES = frozenset({"mapped", "partial", "skipped", "failed"})
+HOOK_STATUSES = frozenset({"mapped", "partial", "skipped", "failed", "unverified"})
 
 
 def load_json(path: Path) -> Any:

@@ -10,7 +10,6 @@ import dev.fatter.gpp.core.Logger
 import dev.fatter.gpp.core.Utils.coordsToGeoHash
 import dev.fatter.gpp.persistence.model.TeleportLocationEntity
 import dev.fatter.gpp.utils.compat.XposedHelpers.callMethod
-import dev.fatter.gpp.utils.compat.XposedHelpers.getObjectField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -269,7 +268,10 @@ class Location(recipient: String, sender: String) : CommandModule("Location", re
 
             val provider = grindrLocationProviderInstance
                 ?: throw IllegalStateException("grindrLocationProvider instance missing")
-            val location = getObjectField(provider, "d")
+            val location = findLocationField(provider)
+                ?: throw IllegalStateException(
+                    "Location field missing on ${GrindrPlus.grindrLocationProvider}"
+                )
             val latitude = callMethod(location, "getLatitude") as Double
             val longitude = callMethod(location, "getLongitude") as Double
 
@@ -338,5 +340,14 @@ class Location(recipient: String, sender: String) : CommandModule("Location", re
             }
             else -> chromeVersions.random()
         }
+    }
+
+    /** The provider field name has changed across Grindr builds; find it by type. */
+    private fun findLocationField(provider: Any): Any? {
+        val field = provider.javaClass.declaredFields.firstOrNull {
+            it.type == android.location.Location::class.java
+        } ?: return null
+        field.isAccessible = true
+        return field.get(provider)
     }
 }

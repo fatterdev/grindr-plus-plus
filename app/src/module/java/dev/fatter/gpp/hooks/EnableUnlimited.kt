@@ -14,6 +14,7 @@ import dev.fatter.gpp.utils.Hook
 import dev.fatter.gpp.utils.HookStage
 import dev.fatter.gpp.utils.hook
 import dev.fatter.gpp.utils.compat.XposedHelpers.getObjectField
+import dev.fatter.gpp.utils.compat.XposedHelpers.setObjectField
 
 class EnableUnlimited : Hook(
     "Enable unlimited",
@@ -32,9 +33,12 @@ class EnableUnlimited : Hook(
 
         val rolesUpdatedMethod =
             MappingDictionary.resolve("EnableUnlimited.userSession.rolesUpdatedMethod", "Y")
+        val rolesField = MappingDictionary.resolve("http.userSession.rolesField", "")
         if (rolesUpdatedMethod.isEmpty()) {
             logi("EnableUnlimited: rolesUpdatedMethod soft-skip (empty remap)")
         } else {
+            // Keep the real joined-roles field for HTTP headers while granting features.
+            val originalRoles = java.util.WeakHashMap<Any, Any?>()
             userSessionClass.hook( // rolesUpdated() — was "W", now Y(List)
                 rolesUpdatedMethod, HookStage.BEFORE
             ) { param ->
@@ -50,7 +54,22 @@ class EnableUnlimited : Hook(
 
                 logd("Updating user roles to enable unlimited features")
 
+                if (rolesField.isNotEmpty()) {
+                    runCatching {
+                        originalRoles[param.thisObject()] =
+                            getObjectField(param.thisObject(), rolesField)
+                    }
+                }
                 param.setArg(0, allRoles)
+            }
+            if (rolesField.isNotEmpty()) {
+                userSessionClass.hook(rolesUpdatedMethod, HookStage.AFTER) { param ->
+                    originalRoles.remove(param.thisObject())?.let { original ->
+                        runCatching {
+                            setObjectField(param.thisObject(), rolesField, original)
+                        }
+                    }
+                }
             }
         }
 

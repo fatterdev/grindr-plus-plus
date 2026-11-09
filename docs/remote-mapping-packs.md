@@ -108,14 +108,22 @@ Devices with a module that includes remote fetch will pick up the new file on th
 
 Mismatches log warnings only; init continues (literals / soft-fail).
 
-## Play tip vs catalog (2026-11-08)
+## Play tip vs catalog (2026-11-09)
 
-Play currently serves Grindr **26.23.0 / 194910**, while the newest mapping pack is
-**26.19.0 / 185656**. [`latest_play.json`](../latest_play.json) tracks the Play tip for the
-`DisableUpdates` spoof; it is **not** a supported-version gate. `validate_mapping_packs.py
---require-tip` will report 194910 missing until a pack is published. The Manager's Play
-download soft-prefers the newest pack-known `versionCode` (185656) and only falls back to the
-Play tip when that delivery is unavailable; hooks then soft-skip on 194910 instead of aborting.
+Play currently serves Grindr **26.23.0 / 194910**, and the catalog now includes a
+**26.23.0 / 194910** pack generated from JADX of the Play base APK. [`latest_play.json`](../latest_play.json)
+tracks the Play tip for the `DisableUpdates` spoof; it is **not** a supported-version gate.
+
+The 194910 pack maps the core session/device/user-agent classes, Retrofit `Result` types,
+the REST services used by chat indicators / saved phrases / albums / ban management, and the
+stable FQCN hooks. Classes whose field or method shape changed on 26.23.0 are explicitly
+soft-skipped (empty `name`) instead of reusing 26.19.0 short names; their hooks are marked
+`partial` or `skipped` in `hooks`. 43 of 83 symbols are soft-skips.
+
+`validate_mapping_packs.py --require-tip` passes for 194910. The Manager's Play download now
+prefers 194910 (the newest pack-known `versionCode`) and no longer needs the 185656 fallback
+for the Play tip. The `morphe` flavor packages `src/module/assets` so
+`PlayGrindrDownloadStep.preferredPackVersionCode` can actually read `assets/mappings/index.json`.
 
 ## Related
 

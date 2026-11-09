@@ -16,6 +16,7 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 | Hot-reload packs | Done | `MappingDictionary.reloadForVersion` |
 | `vision.md` + README aligned | Done | [vision.md](vision.md), docs/README links |
 | Morphe B started | Done | `MorpheBPatchEngine` in `ApplyMorpheBStep` (before signing); runtime remaps; [morphe-b.md](morphe-b.md) |
+| Play tip pack 26.23.0 / 194910 | Static Done | `mapping-packs/194910.json` + assets mirror; 43/83 symbols soft-skipped honestly; `validate_mapping_packs.py --require-tip` passes; device E2E on 194910 still pending |
 | Dual APK Morphe / Alloy | Phase 1 Done | Flavors `morphe` / `alloy` / `embed`; [ADR 0005](adr/0005-dual-apk-morphe-alloy.md) |
 | Alloy DexKit | Started | [ADR 0006](adr/0006-alloy-dexkit-fingerprints.md); `AlloyDexKit` + Favorites pilot |
 | Morphe B bytecodePatch | Scaffold Done | [ADR 0007](adr/0007-morphe-b-bytecodepatch.md); dexlib2 rewrite in `ApplyMorpheBStep` (before signing) |
@@ -26,7 +27,7 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 2. Cascade V2 Favorites UI rewrite (`Favorites.FRAGMENT`)
 3. Disable shuffle / Notification Alerts — product surface absent on tip DEX
 4. Optional: full SessionInstaller E2E of A+B patched APK on device
-5. Play tip **26.23.0 / 194910** has no mapping pack yet; catalog newest is 26.19.0 / 185656 (soft-fail documented in [remote-mapping-packs.md](remote-mapping-packs.md))
+5. ~~Play tip 26.23.0 / 194910 has no mapping pack~~ — pack added 2026-11-09; remaining 26.23.0 gaps are the explicit soft-skips in `mapping-packs/194910.json` (see [remote-mapping-packs.md](remote-mapping-packs.md))
 
 ## Morphe B
 

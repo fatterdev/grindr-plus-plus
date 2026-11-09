@@ -5,6 +5,10 @@
   "confidence": "historical-git",
   "generatedFrom": "48d56cb Obfuscation.kt + GrindrPlus.kt + RetrofitUtils (pre-#63); + core.serverNotification + gap-fill soft-skips/AddSavedPhrase",
   "symbols": {
+    "UnlimitedAlbums.AlbumsRestService": {
+      "kind": "class",
+      "name": "com.grindrapp.android.api.albums.AlbumsRestService"
+    },
     "core.userAgent": {
       "kind": "class",
       "name": "Pb.e",

@@ -201,74 +201,92 @@ class ProfileDetails : Hook(
         }
 
         // iq3.c(double, approx, show, special, abbreviated, isFeet?) — isFeet null → SettingsPref.b()
-        findClass(Obfuscation.G.ProfileDetails.DISTANCE_UTILS)
-            .hook(Obfuscation.G.ProfileDetails.DISTANCE_UTILS_METHOD, HookStage.AFTER) { param ->
-            val distance = param.arg<Double>(0)
-            val isFeet = param.argNullable<Boolean>(5) ?: run {
-                val settingsPref = getObjectField(param.thisObject(), "b")
-                callMethod(settingsPref, "b") as Boolean
-            }
+        val distanceUtils = Obfuscation.G.ProfileDetails.DISTANCE_UTILS
+        if (distanceUtils.isEmpty()) {
+            logw("ProfileDetails DISTANCE_UTILS soft-skip (empty remap)")
+        } else {
+            runCatching {
+                findClass(distanceUtils)
+                    .hook(Obfuscation.G.ProfileDetails.DISTANCE_UTILS_METHOD, HookStage.AFTER) { param ->
+                        val distance = param.arg<Double>(0)
+                        val isFeet = param.argNullable<Boolean>(5) ?: run {
+                            val settingsPref = getObjectField(param.thisObject(), "b")
+                            callMethod(settingsPref, "b") as Boolean
+                        }
 
-            param.setResult(
-                if (isFeet) {
-                    val feet = (distance * 3.280839895).roundToInt()
-                    if (feet < 5280) {
-                        String.format("%d feet", feet)
-                    } else {
-                        String.format("%d miles %d feet", feet / 5280, feet % 5280)
+                        param.setResult(
+                            if (isFeet) {
+                                val feet = (distance * 3.280839895).roundToInt()
+                                if (feet < 5280) {
+                                    String.format("%d feet", feet)
+                                } else {
+                                    String.format("%d miles %d feet", feet / 5280, feet % 5280)
+                                }
+                            } else {
+                                val meters = distance.roundToInt()
+                                if (meters < 1000) {
+                                    String.format("%d meters", meters)
+                                } else {
+                                    String.format("%d km %d m", meters / 1000, meters % 1000)
+                                }
+                            }
+                        )
                     }
-                } else {
-                    val meters = distance.roundToInt()
-                    if (meters < 1000) {
-                        String.format("%d meters", meters)
-                    } else {
-                        String.format("%d km %d m", meters / 1000, meters % 1000)
-                    }
-                }
-            )
+            }.onFailure {
+                logw("ProfileDetails DISTANCE_UTILS hook skipped: ${it.message}")
+            }
         }
 
-        findClass(Obfuscation.G.ProfileDetails.PROFILE_VIEW_STATE).hook("getWeight", HookStage.AFTER) { param ->
-            if (Config.get("show_bmi_in_profile", true) as Boolean) {
-                val weight = param.getResult()
-                val height = callMethod(param.thisObject(), "getHeight")
+        val profileViewState = Obfuscation.G.ProfileDetails.PROFILE_VIEW_STATE
+        if (profileViewState.isEmpty()) {
+            logw("ProfileDetails PROFILE_VIEW_STATE soft-skip (empty remap)")
+        } else {
+            runCatching {
+                findClass(profileViewState).hook("getWeight", HookStage.AFTER) { param ->
+                    if (Config.get("show_bmi_in_profile", true) as Boolean) {
+                        val weight = param.getResult()
+                        val height = callMethod(param.thisObject(), "getHeight")
 
-                if (weight != null && height != null) {
-                    val BMI =
-                        calculateBMI(
-                            "kg" in weight.toString(),
-                            w2n("kg" in weight.toString(), weight.toString()),
-                            h2n("kg" in weight.toString(), height.toString())
-                        )
-                    if (Config.get("do_gui_safety_checks", true) as Boolean) {
-                        if (weight.toString().contains("(")) {
-                            logw("BMI details are already present?")
-                            return@hook
+                        if (weight != null && height != null) {
+                            val BMI =
+                                calculateBMI(
+                                    "kg" in weight.toString(),
+                                    w2n("kg" in weight.toString(), weight.toString()),
+                                    h2n("kg" in weight.toString(), height.toString())
+                                )
+                            if (Config.get("do_gui_safety_checks", true) as Boolean) {
+                                if (weight.toString().contains("(")) {
+                                    logw("BMI details are already present?")
+                                    return@hook
+                                }
+                            }
+                            val annotated =
+                                "$weight - ${String.format("%.1f", BMI)} (${
+                                    mapOf(
+                                        "Underweight" to 18.5,
+                                        "Normal weight" to 24.9,
+                                        "Overweight" to 29.9,
+                                        "Obese" to Double.MAX_VALUE
+                                    ).entries.first { it.value > BMI }.key
+                                })"
+                            // #region agent log
+                            AgentDebugLog.log(
+                                hypothesisId = "H21",
+                                location = "ProfileDetails.getWeight",
+                                message = "bmi_annotated",
+                                data = mapOf(
+                                    "bmiRounded" to String.format("%.1f", BMI),
+                                    "resultLen" to annotated.length,
+                                ),
+                                runId = "e2e-features",
+                            )
+                            // #endregion
+                            param.setResult(annotated)
                         }
                     }
-                    val annotated =
-                        "$weight - ${String.format("%.1f", BMI)} (${
-                            mapOf(
-                                "Underweight" to 18.5,
-                                "Normal weight" to 24.9,
-                                "Overweight" to 29.9,
-                                "Obese" to Double.MAX_VALUE
-                            ).entries.first { it.value > BMI }.key
-                        })"
-                    // #region agent log
-                    AgentDebugLog.log(
-                        hypothesisId = "H21",
-                        location = "ProfileDetails.getWeight",
-                        message = "bmi_annotated",
-                        data = mapOf(
-                            "bmiRounded" to String.format("%.1f", BMI),
-                            "resultLen" to annotated.length,
-                        ),
-                        runId = "e2e-features",
-                    )
-                    // #endregion
-                    param.setResult(annotated)
                 }
+            }.onFailure {
+                logw("ProfileDetails PROFILE_VIEW_STATE hook skipped: ${it.message}")
             }
         }
     }

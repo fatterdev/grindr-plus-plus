@@ -8,6 +8,7 @@ import dev.fatter.gpp.core.logd
 import dev.fatter.gpp.core.loge
 import dev.fatter.gpp.core.logi
 import dev.fatter.gpp.core.logw
+import dev.fatter.gpp.core.mapping.MappingDictionary
 import dev.fatter.gpp.persistence.mappers.asAlbumBriefToAlbumEntity
 import dev.fatter.gpp.persistence.mappers.asAlbumToAlbumEntity
 import dev.fatter.gpp.persistence.mappers.toAlbumContentEntity
@@ -38,7 +39,11 @@ import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 
 class UnlimitedAlbums : Hook("Unlimited albums", "Allow to be able to view unlimited albums") {
-    private val albumsService = "com.grindrapp.android.api.albums.AlbumsRestService" // 'v1/albums/red-dot'
+    private val albumsService: String
+        get() = MappingDictionary.resolve(
+            "UnlimitedAlbums.AlbumsRestService",
+            "com.grindrapp.android.api.albums.AlbumsRestService"
+        ) // 'v1/albums/red-dot'
     private val albumModel = "com.grindrapp.android.chat.domain.model.Album"
     private val filteredSpankBankAlbumContent =
         "com.grindrapp.android.albums.spankbank.domain.model.FilteredSpankBankAlbumContent"

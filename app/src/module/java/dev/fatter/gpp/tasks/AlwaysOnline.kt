@@ -8,7 +8,6 @@ import dev.fatter.gpp.core.loge
 import dev.fatter.gpp.core.logi
 import dev.fatter.gpp.utils.Task
 import dev.fatter.gpp.utils.compat.XposedHelpers.callMethod
-import dev.fatter.gpp.utils.compat.XposedHelpers.getObjectField
 
 class AlwaysOnline :
     Task(
@@ -30,7 +29,10 @@ class AlwaysOnline :
                         "Location provider ${GrindrPlus.grindrLocationProvider} not captured yet"
                     )
 
-            val location = getObjectField(grindrLocationProviderInstance, "d")
+            val location = findLocationField(grindrLocationProviderInstance)
+                ?: throw IllegalStateException(
+                    "Location field missing on ${GrindrPlus.grindrLocationProvider}"
+                )
             val latitude = callMethod(location, "getLatitude") as Double
             val longitude = callMethod(location, "getLongitude") as Double
             val geoHash = coordsToGeoHash(latitude, longitude)
@@ -68,5 +70,14 @@ class AlwaysOnline :
             loge("Error in AlwaysOnline task: ${e.message}")
             Logger.writeThrowable(e)
         }
+    }
+
+    /** The provider field name has changed across Grindr builds; find it by type. */
+    private fun findLocationField(provider: Any): Any? {
+        val field = provider.javaClass.declaredFields.firstOrNull {
+            it.type == android.location.Location::class.java
+        } ?: return null
+        field.isAccessible = true
+        return field.get(provider)
     }
 }

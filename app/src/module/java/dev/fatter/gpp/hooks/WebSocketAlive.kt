@@ -90,12 +90,20 @@ class WebSocketAlive : Hook(
 
     private fun hookWebSocketFactory(): Int {
         return try {
-            findClass(webSocketFactory).hook("a", HookStage.AFTER) { param ->
-                if (param.args().isNotEmpty()) {
-                    logd("WebSocket connection created")
+            val factory = findClass(webSocketFactory)
+            var hooked = 0
+            // 26.16.1 used a(); 26.23.0 exposes the same factory as e(String, String, client).
+            listOf("a", "e").forEach { method ->
+                runCatching {
+                    val handles = factory.hook(method, HookStage.AFTER) { param ->
+                        if (param.args().isNotEmpty()) {
+                            logd("WebSocket connection created")
+                        }
+                    }
+                    if (handles.isNotEmpty()) hooked++
                 }
             }
-            1
+            hooked
         } catch (e: Exception) {
             loge("Failed to hook WebSocket factory: $e")
             0
