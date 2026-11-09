@@ -51,6 +51,7 @@ Log sink: workspace `debug-5dd9df.log` (NDJSON, session `5dd9df`).
 | Stock 194910 launch (x86_64 emulator) | Crash | `SIGSEGV` in `split_config.arm64_v8a.apk!libpairipcore.so` (ARM translation); no login screen |
 | 194910 Morphe clone | Crash (inherited) | Same PairIP native crash; Morphe B reports `pairip-static-decrypt` deferred (no 194910 pack) |
 | 26.16.1 Morphe clone | Pass to login | `com.grindrapp.android.plus` installs and reaches the login screen |
+| Morphe B disable-updates recipe (26.16.1) | Pass | Manager log: `Morphe B bytecode: disable-updates-dialog located Lrc9;, Lxa0;`; re-patched clone still launches to login |
 | Login with supplied lab account | Blocked | Stock Grindr also shows **Account Restricted / Additional Review Required**; not a clone/patch regression |
 | Settings toggle matrix on Morphe clone | Blocked | No authenticated session; matrix evidence remains the rooted run above |
 
