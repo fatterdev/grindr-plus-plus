@@ -59,7 +59,7 @@ No credentials are stored in the repo or docs. PairIP 194910 needs a real ARM64 
 
 ## 2026-11-09 ARM64 lab — 194910 PairIP pack + Morphe B clone
 
-Device: **Mi A2 lite** (`daisy`, LineageOS 22 / Android 15, arm64, rooted Magisk + Zygisk Vector). The user reinstalled the lab apps after a clean wipe; stock Grindr 194910 was installed **from Play Store** (`installerPackageName=com.android.vending`, signer SHA-1 `823f5a17c33b16b4775480b31607e7df35d67af8`).
+Device: **Mi A2 lite** (`daisy`, Evolution X 10.14 / Android 15, arm64, rooted Magisk + Zygisk Vector). The user reinstalled the lab apps after a clean wipe; stock Grindr 194910 was installed **from Play Store** (`installerPackageName=com.android.vending`, signer SHA-1 `823f5a17c33b16b4775480b31607e7df35d67af8`).
 
 | Check | Result | Evidence |
 | --- | --- | --- |
