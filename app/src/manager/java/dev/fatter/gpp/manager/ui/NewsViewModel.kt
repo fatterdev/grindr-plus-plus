@@ -78,7 +78,7 @@ class NewsViewModel : ViewModel() {
                 release.getString("tag_name")
             }
             val description = if (!release.isNull("body")) {
-                release.getString("body")
+                ReleaseNotes.toPlainText(release.getString("body"))
             } else {
                 "No description"
             }

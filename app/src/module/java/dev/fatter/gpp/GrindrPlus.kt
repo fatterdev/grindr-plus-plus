@@ -125,7 +125,7 @@ object GrindrPlus {
     fun init(modulePath: String, application: Application) {
 
         if (isInitialized) {
-            Logger.d("GrindrPlus already initialized, skipping", LogSource.MODULE)
+            Logger.d("Grindr++ already initialized, skipping", LogSource.MODULE)
             return
         }
 
@@ -136,7 +136,7 @@ object GrindrPlus {
         BridgeAccess.client = this.bridgeClient
 
         Logger.initialize(context, bridgeClient, true)
-        Logger.i("Initializing GrindrPlus...", LogSource.MODULE)
+        Logger.i("Initializing Grindr++...", LogSource.MODULE)
 
         val versionCode = installedVersionCode(application)
         val hasPack = loadMappingPack(modulePath, application, versionCode)
@@ -468,7 +468,7 @@ object GrindrPlus {
             return
         }
 
-        Logger.i("Initializing GrindrPlus core...", LogSource.MODULE)
+        Logger.i("Initializing Grindr++ core...", LogSource.MODULE)
 
         if ((Config.get("reset_database", false) as Boolean)) {
             Logger.i("Resetting database...", LogSource.MODULE)

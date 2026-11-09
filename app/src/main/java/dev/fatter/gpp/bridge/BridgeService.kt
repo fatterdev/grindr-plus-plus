@@ -84,10 +84,10 @@ class BridgeService : Service() {
 
         try {
             val channelId = "bridge_service_channel"
-            createNotificationChannel(channelId, "GrindrPlus Background Service", "Keeps GrindrPlus running in background")
+            createNotificationChannel(channelId, "Grindr++ Background Service", "Keeps Grindr++ running in background")
 
             val notification = NotificationCompat.Builder(this, channelId)
-                .setContentTitle("GrindrPlus")
+                .setContentTitle("Grindr++")
                 .setContentText("Background service active")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setPriority(NotificationCompat.PRIORITY_MIN)
@@ -496,25 +496,31 @@ class BridgeService : Service() {
         val notificationManager: NotificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (notificationManager.getNotificationChannel(channelId) == null) {
-            val importance = if (channelId == "bridge_service_channel") {
-                NotificationManager.IMPORTANCE_MIN
-            } else {
-                NotificationManager.IMPORTANCE_DEFAULT
-            }
-
-            val channel = NotificationChannel(channelId, channelName, importance).apply {
-                description = channelDescription
-                if (channelId == "bridge_service_channel") {
-                    setShowBadge(false)
-                    setSound(null, null)
-                    enableLights(false)
-                    enableVibration(false)
-                }
-            }
-            notificationManager.createNotificationChannel(channel)
-            Logger.d("Notification channel created: $channelId", LogSource.BRIDGE)
+        val existing = notificationManager.getNotificationChannel(channelId)
+        val importance = existing?.importance ?: if (channelId == "bridge_service_channel") {
+            NotificationManager.IMPORTANCE_MIN
+        } else {
+            NotificationManager.IMPORTANCE_DEFAULT
         }
+
+        // Recreate even when the channel exists: Android updates the
+        // user-visible name/description, so older installs stop showing the
+        // legacy "GrindrPlus" label in system settings.
+        val channel = NotificationChannel(channelId, channelName, importance).apply {
+            description = channelDescription
+            if (channelId == "bridge_service_channel") {
+                setShowBadge(false)
+                setSound(null, null)
+                enableLights(false)
+                enableVibration(false)
+            }
+        }
+        notificationManager.createNotificationChannel(channel)
+        Logger.d(
+            if (existing == null) "Notification channel created: $channelId"
+            else "Notification channel updated: $channelId",
+            LogSource.BRIDGE,
+        )
     }
 
     private fun createActionIntent(actionType: String, actionData: String): Intent {

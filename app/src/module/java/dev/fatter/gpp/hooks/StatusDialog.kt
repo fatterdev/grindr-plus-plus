@@ -27,7 +27,7 @@ import java.util.WeakHashMap
 
 class StatusDialog : Hook(
     "Status Dialog",
-    "Check whether GrindrPlus is alive or not"
+    "Check whether Grindr++ is alive or not"
 ) {
     private val tabView = "com.google.android.material.tabs.TabLayout\$TabView"
     private val homeActivity = "com.grindrapp.android.ui.home.HomeActivity"
@@ -226,7 +226,7 @@ class StatusDialog : Hook(
                     }
 
                     val message = buildString {
-                        appendLine("GrindrPlus is active and running")
+                        appendLine("Grindr++ is active and running")
                         appendLine()
                         appendLine("App Information:")
                         appendLine("• Version: $appVersionName ($appVersionCode)")
@@ -234,7 +234,7 @@ class StatusDialog : Hook(
                         appendLine("• Android ID: $androidDeviceIdStatus")
                         appendLine()
                         appendLine("Module Information:")
-                        appendLine("• GrindrPlus: $moduleVersion")
+                        appendLine("• Grindr++: $moduleVersion")
                         appendLine("• Bridge Status: $bridgeStatus")
                         if (GrindrPlus.bridgeClient.isConnected()) {
                             appendLine("• Vector/Xposed: $isLSPosed")
@@ -250,7 +250,7 @@ class StatusDialog : Hook(
 
                     GrindrPlus.runOnMainThread {
                         AlertDialog.Builder(context)
-                            .setTitle("GrindrPlus")
+                            .setTitle("Grindr++")
                             .setMessage(message)
                             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                             .setNegativeButton("Restart") { dialog, _ ->
@@ -264,8 +264,8 @@ class StatusDialog : Hook(
                 } catch (e: Exception) {
                     GrindrPlus.runOnMainThread {
                         AlertDialog.Builder(context)
-                            .setTitle("GrindrPlus")
-                            .setMessage("GrindrPlus is active and running\n\nError retrieving details: ${e.message}")
+                            .setTitle("Grindr++")
+                            .setMessage("Grindr++ is active and running\n\nError retrieving details: ${e.message}")
                             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                             .show()
                     }

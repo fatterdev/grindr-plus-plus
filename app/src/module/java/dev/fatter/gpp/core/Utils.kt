@@ -277,7 +277,7 @@ object Utils {
             if (favoritesFile.exists() && blocksFile.exists()) {
                 showWarningDialog(
                     context = activity,
-                    message = "Favorites and Blocks import files detected. GrindrPlus will process the favorites list first. " +
+                    message = "Favorites and Blocks import files detected. Grindr++ will process the favorites list first. " +
                             "Blocks import will be done on the next app restart.",
                     onConfirm = {
                         val threshold = (Config.get("favorites_import_threshold", "500") as String).toInt()

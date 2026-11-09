@@ -30,7 +30,7 @@ Log sink: workspace `debug-5dd9df.log` (NDJSON, session `5dd9df`).
 | --- | --- |
 | Host | Grindr `26.16.1` / `versionCode` `179451` installed from Play |
 | Manager | `dev.fatter.gpp.morphe` `5.0.0-dev-83b7261` |
-| Patcher | JingMatrix LSPatch **v1.2** (`-l 2` + slim embed) |
+| Patcher | JingMatrix LSPatch **v1.2** (`-l 1` + slim embed; `-l 2` rewrites DEX and corrupts Compose interface static methods) |
 | Pack | `mapping-packs/179451.json` |
 | Device | `Medium_Phone_API_36.1` emulator (x86_64, Play image, ARM translation) |
 
@@ -71,6 +71,20 @@ Device: **Mi A2 lite** (`daisy`, LineageOS 22 / Android 15, arm64, rooted Magisk
 | Clone package install | Blocked by ROM UI | The LineageOS package installer dialog is `NOT_TOUCHABLE`; `InputDispatcher` drops taps as “untrusted touch due to occlusion”, so the manager's `SessionInstaller` gets `INSTALL_FAILED_ABORTED: User rejected permissions`. Manual `adb install-multiple` of the patched clone APKs is used for the lab instead of the UI path |
 
 The package-installer failure is a **device/ROM input issue**, not an APK validation failure: the dialog is visible and the patched APKs are produced, but its window is non-touchable while the manager task is on top. The manual install bypasses that UI. This must be documented as a lab workaround; the rootless product path still requires a touchable system installer on the user's device.
+
+## 2026-11-09 UI defects + LSPatch level 1 (ARM64 lab)
+
+Device: **Mi A2 lite** (`daisy`, Evolution X 10.14, Android 15 per `ro.build.version.release`, arm64, Magisk root). Manager `5.0.0-dev-c4c0594` (debug), embed `5c84c0e`, host 26.23.0 / 194910 from Play.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Clone icon injection | Pass | Patched APK has **0 duplicate ZIP entries**; `res/mipmap-anydpi-v21/ic_launcher.xml` / `ic_launcher_round.xml` refs remapped `0x7f100037/38/39` (brand p35 background/foreground/monochrome); legacy + p35 assets byte-identical to `app/src/main/assets/brand/`; launcher shows the cream/phoenix icon, padded (no zoom/crop) |
+| Icon root cause | Fixed | `ZipWriter.writeEntry` appends; the previous step created duplicate names so Android kept the stock entry. Replacement now uses `deleteEntry(fillVoid=true)` + `writeEntry` |
+| News HTML | Pass | `ReleaseNotes` sanitizes release bodies (HTML → text, entities, Markdown preview) and `news.json`; unit tests `ReleaseNotesTest`; News tab shows no raw tags |
+| Product naming | Pass | User-facing “GrindrPlus/GrindPlus” removed from Install labels, Settings, dialogs, status dialog, bridge notification channel, Location/import messages; upstream `R0rt1z2/GrindrPlus` attribution intentionally kept |
+| LSPatch `-l 1` Compose | Pass | `LSPatch: Signature bypass level: 1`; no `IncompatibleClassChangeError` / `DrawScope` crash |
+| 194910 clone launch | Blocked | Native `SIGSEGV` in `split_config.arm64_v8a.apk!libpairipcore.so` (`tombstone_23`, offset `0x470f4`, fault addr `0x005f5e3333841dda`) right after `libpairipcore.so` loads; no login screen. The decrypted `libsqliteJni.so` splice alone does not bypass the native anti-tamper |
+| Package installer | Blocked (ROM) | Same `NOT_TOUCHABLE` dialog; `adb install-multiple` of the 4 patched APKs succeeds |
 
 
 

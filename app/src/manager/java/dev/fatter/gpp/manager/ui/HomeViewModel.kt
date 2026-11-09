@@ -79,7 +79,7 @@ class HomeViewModel : ViewModel() {
             val name = if (!release.isNull("name"))
                 release.getString("name") else release.getString("tag_name")
             val description = if (!release.isNull("body"))
-                release.getString("body") else "No description provided"
+                ReleaseNotes.toMarkdown(release.getString("body")) else "No description provided"
             val authorObj = release.getJSONObject("author")
             val author = authorObj.getString("login")
             val avatarUrl = authorObj.getString("avatar_url")

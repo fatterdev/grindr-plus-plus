@@ -31,7 +31,7 @@ class Location(recipient: String, sender: String) : CommandModule("Location", re
                 AlertDialog.Builder(activity)
                     .setTitle("Teleportation disabled")
                     .setMessage(
-                        "GrindrPlus is currently using forced coordinates. " +
+                        "Grindr++ is currently using forced coordinates. " +
                                 "Please disable it to use teleportation."
                     )
                     .setPositiveButton("OK", null)

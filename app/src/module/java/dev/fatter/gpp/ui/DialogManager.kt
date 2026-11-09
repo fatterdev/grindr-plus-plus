@@ -45,10 +45,10 @@ object DialogManager {
             }
 
             val dialog = AlertDialog.Builder(activity)
-                .setTitle("GrindrPlus: Limited Features")
+                .setTitle("Grindr++: Limited Features")
                 .setMessage(
                     "No mapping pack for versionCode $versionCode — features may be limited.\n\n" +
-                        "GrindrPlus will keep running with compile-time fallbacks where possible. " +
+                        "Grindr++ will keep running with compile-time fallbacks where possible. " +
                         "This is an awareness notice only; the module is not disabled."
                 )
                 .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
@@ -105,18 +105,18 @@ object DialogManager {
                 .setTitle("Age Verification Required")
                 .setMessage("You are accessing Grindr from the UK where age verification is legally mandated.\n\n" +
                         "LEGAL COMPLIANCE NOTICE:\n" +
-                        "GrindrPlus does NOT bypass, disable, or interfere with age verification systems. Any attempt to circumvent age verification requirements is illegal under UK law and is strictly prohibited.\n\n" +
+                        "Grindr++ does NOT bypass, disable, or interfere with age verification systems. Any attempt to circumvent age verification requirements is illegal under UK law and is strictly prohibited.\n\n" +
                         "MANDATORY REQUIREMENTS:\n" +
                         "1. Complete age verification using the official Grindr application\n" +
                         "2. Comply with all UK legal verification processes\n" +
-                        "3. Install GrindrPlus only after successful verification through official channels\n\n" +
+                        "3. Install Grindr++ only after successful verification through official channels\n\n" +
                         "WARNING:\n" +
                         "The developers of this module are not responsible for any legal consequences resulting from non-compliance with age verification requirements.")
                 .setPositiveButton("I Understand") { dialog, _ ->
                     activity.finish()
                     dialog.dismiss()
                     Utils.showToast(Toast.LENGTH_LONG,
-                        "Please complete age verification in the official Grindr app first, then reinstall GrindrPlus", activity)
+                        "Please complete age verification in the official Grindr app first, then reinstall Grindr++", activity)
                 }
                 .setNegativeButton("Exit App") { dialog, _ ->
                     dialog.dismiss()
@@ -132,7 +132,7 @@ object DialogManager {
         } catch (e: Exception) {
             Logger.e("Failed to show age verification dialog: ${e.message}", LogSource.MODULE)
             Utils.showToast(Toast.LENGTH_LONG,
-                "Age verification required. Please use official Grindr app to verify, then reinstall GrindrPlus.", activity)
+                "Age verification required. Please use official Grindr app to verify, then reinstall Grindr++.", activity)
             activity.finish()
         }
     }
@@ -146,8 +146,8 @@ object DialogManager {
                         "1. Create a Google Cloud project at console.cloud.google.com\n" +
                         "2. Enable: Maps SDK for Android, Geocoding API, Maps JavaScript API\n" +
                         "3. Create API key with NO restrictions\n" +
-                        "4. Add key to GrindrPlus settings\n" +
-                        "5. REINSTALL GrindrPlus (restart won't work)\n\n" +
+                        "4. Add key to Grindr++ settings\n" +
+                        "5. REINSTALL Grindr++ (restart won't work)\n\n" +
                         "Note: Google may request credit card for free tier.")
                 .setPositiveButton("Open Console") { dialog, _ ->
                     dialog.dismiss()

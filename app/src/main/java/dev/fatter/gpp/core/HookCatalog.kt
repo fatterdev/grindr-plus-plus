@@ -34,7 +34,7 @@ object HookCatalog {
         Entry("Profile details", "Add extra fields and details to profiles"),
         Entry("Profile views", "Don't let others know you viewed their profile"),
         Entry("Quick block", "Ability to block users quickly"),
-        Entry("Status Dialog", "Check whether GrindrPlus is alive or not"),
+        Entry("Status Dialog", "Check whether Grindr++ is alive or not"),
         Entry("Timber Logging", "Forces Timber to log messages even if no tree is planted"),
         Entry("Unlimited albums", "Allow to be able to view unlimited albums"),
         Entry("Unlimited profiles", "Allow unlimited profiles"),

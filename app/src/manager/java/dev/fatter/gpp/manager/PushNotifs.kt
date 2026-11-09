@@ -9,6 +9,7 @@ import com.google.gson.JsonParser
 import dev.fatter.gpp.R
 import dev.fatter.gpp.core.Config
 import dev.fatter.gpp.core.Logger
+import dev.fatter.gpp.manager.ui.ReleaseNotes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
@@ -76,7 +77,8 @@ suspend fun fetchNotifs(context: Context) = withContext(Dispatchers.IO) {
             if (Config.get("last_push_id", "") != msg.id) {
                 Config.put("last_push_id", msg.id)
                 if (msg.content.contains("#push")) {
-                    sendNotification(context, msg.content.replace("#push", "").trim())
+                    val text = ReleaseNotes.toPlainText(msg.content.replace("#push", "").trim())
+                    sendNotification(context, text)
                 } else {
                     sendNotification(context)
                 }

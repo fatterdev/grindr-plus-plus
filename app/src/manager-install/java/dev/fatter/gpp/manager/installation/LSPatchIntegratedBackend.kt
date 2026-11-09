@@ -79,7 +79,10 @@ class LSPatchIntegratedBackend : PatchBackend {
             val cli = LSPatch(
                 *apkFilePaths,
                 "-o", outputDir.absolutePath,
-                "-l", "2",
+                // Level 2's DEX rewrite corrupts Compose interface static
+                // methods (DrawScope) on 26.16.1; level 1 keeps the clone
+                // launchable while still spoofing the package signature.
+                "-l", "1",
                 "-f",
                 "-v",
                 "-m", modFile.absolutePath,
