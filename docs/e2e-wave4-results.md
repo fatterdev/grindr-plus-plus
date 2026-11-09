@@ -102,7 +102,17 @@ Device: **Android 16 x86_64 emulator** (`sdk_gphone64_x86_64`), host **26.16.1 /
 
 The manager config is **per selected app**: toggling “Main Grindr App” does not change the clone. The app selector must show **Clone: Grindr++** for clone runtime changes; this is correct behavior but worth surfacing in the UI.
 
+## 2026-11-09 late — Razr rootless clone + A2 Lite Alloy
 
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Razr stock | Auto-updated | `com.grindrapp.android` is now 26.23.0 / 194910 (Play update at 21:48); the rootless clone must stay on 26.16.1 until the native PairIP blocker is solved |
+| Razr 26.16.1 clone | Pass (lab) | Installed the 26.16.1 patched APKs (base + `arm64_v8a` + `xxhdpi`, LSPatch `-l 1`); `Signature bypass level: 1`; no Compose crash; login reaches AI consent/profile; stock remains 194910 |
+| A2 Lite rooted path | Pass (lab) | Stock downgraded to 26.16.1 / 179451 (Play-signed); Alloy installed; Vector CLI `modules enable dev.fatter.gpp.alloy` + `scope add ... com.grindrapp.android/0`; login reaches Browse; hook summary `enabled=20, partial=3, skipped=5, disabled=1, failed=0, total=29` |
+| Alloy on 194910 | Blocked | Native PairIP under Vector (`libpairipcore.so` `SIGSEGV`), or Firebase `ExceptionInInitializerError` when the early bypass redirects the native lib; keep Alloy on 26.16.1 |
+| Paywall dialog | Fixed (UX) | `EnableUnlimited` suppressed the paywall but showed a blocking “Paywalled Feature Detected — server-enforced” dialog; the profile opens after OK. `567c8d3` replaces it with a one-time “Paywall suppressed” toast + log. The limit remains server-enforced and is documented honestly |
+| Maps API key | Config only | Key stored in the manager `maps_api_key`; never committed. The Explore map `View Profiles` button was unresponsive in the quick test; the location sweep needs the fresh-session tool |
+| Local lab release | Lab only | `python -m http.server 8765 --bind 127.0.0.1 --directory …` + `adb reverse tcp:8765 tcp:8765`; the local manifest points to `gpp-embed-debug.apk`. The current local APK is `5.0.0-dev-ebc810e` (old); rebuild `assembleEmbedDebug` from `567c8d3` before use |
 
 - Behavioral ON/OFF asserts for every mapped Manage Hooks row’s *user-visible* effect (screenshots, albums, explorer, etc.).
 - Partial-hook remaining sites (ban UI details, boost upsells, profile detail fields).
