@@ -46,7 +46,13 @@ object PairIpStaticDecrypt {
         }
         print("Morphe B PairIP: detected")
 
-        val packDir = resolvePackDir(inputApks, base)
+        val hostVersionCode = readVersionCode(base)
+        if (hostVersionCode != null) {
+            print("Morphe B PairIP: host versionCode=$hostVersionCode")
+        } else {
+            print("Morphe B PairIP: host versionCode unknown (manifest parse failed)")
+        }
+        val packDir = resolvePackDir(inputApks, base, hostVersionCode, print)
         var natives = emptyList<String>()
         var packApplied = false
         if (packDir != null) {
@@ -77,6 +83,7 @@ object PairIpStaticDecrypt {
             natives = natives,
             dexStubs = dexStubs,
             packDir = packDir?.absolutePath,
+            hostVersionCode = hostVersionCode,
         )
     }
 
@@ -105,41 +112,177 @@ object PairIpStaticDecrypt {
         return false
     }
 
-    private fun resolvePackDir(inputApks: List<File>, base: File): File? {
+    private fun resolvePackDir(
+        inputApks: List<File>,
+        base: File,
+        hostVersionCode: Int?,
+        print: Print,
+    ): File? {
+        val roots = linkedSetOf<File>()
         val parents = (inputApks.mapNotNull { it.parentFile } + base.parentFile).filterNotNull().distinct()
         for (parent in parents) {
-            val direct = File(parent, "pairip-decrypt")
-            if (direct.isDirectory) {
-                // Prefer nested versionCode dirs; else pack.json in direct
-                direct.listFiles()?.filter { it.isDirectory }?.forEach { child ->
-                    if (File(child, "pack.json").isFile || File(child, "libsqliteJni.so").isFile) {
-                        return child
-                    }
-                }
-                if (File(direct, "libsqliteJni.so").isFile) return direct
-            }
-            // repo-style: <repo>/pairip-decrypt/185656 next to workspace when parent is tmp
-            val sibling = File(parent.parentFile ?: parent, "pairip-decrypt")
-            if (sibling.isDirectory) {
-                sibling.listFiles()?.filter { it.isDirectory }?.forEach { child ->
-                    if (File(child, "libsqliteJni.so").isFile) return child
-                }
-            }
+            roots += File(parent, "pairip-decrypt")
+            parent.parentFile?.let { roots += File(it, "pairip-decrypt") }
         }
         // Walk up a few levels for repo root pairip-decrypt/
         var walk: File? = base.parentFile
         repeat(6) {
             val cand = walk ?: return@repeat
-            val rootPack = File(cand, "pairip-decrypt")
-            if (rootPack.isDirectory) {
-                rootPack.listFiles()?.filter { it.isDirectory }?.forEach { child ->
-                    if (File(child, "libsqliteJni.so").isFile) return child
+            roots += File(cand, "pairip-decrypt")
+            walk = cand.parentFile
+        }
+        val candidates = roots
+            .filter { it.isDirectory }
+            .flatMap { root -> packCandidates(root) }
+            .distinctBy { it.absolutePath }
+        if (candidates.isEmpty()) return null
+        val chosen = selectPackDir(candidates, hostVersionCode)
+        if (chosen == null) {
+            print(
+                "Morphe B PairIP: pack selection ambiguous " +
+                    "(versionCode=$hostVersionCode, candidates=${candidates.joinToString { it.name }})",
+            )
+        }
+        return chosen
+    }
+
+    /** A pack candidate is a dir holding `pack.json` or at least one `.so`. */
+    private fun packCandidates(root: File): List<File> {
+        val out = mutableListOf<File>()
+        if (File(root, "pack.json").isFile || root.listFiles()?.any { it.isFile && it.name.endsWith(".so") } == true) {
+            out += root
+        }
+        root.listFiles()
+            ?.filter { it.isDirectory }
+            ?.sortedBy { it.name }
+            ?.forEach { child ->
+                if (File(child, "pack.json").isFile || child.listFiles()?.any { it.isFile && it.name.endsWith(".so") } == true) {
+                    out += child
                 }
             }
-            walk = cand.parentFile
+        return out
+    }
+
+    /**
+     * Deterministic pack choice: exact `versionCode` directory, else a pack whose
+     * `pack.json` declares the host version, else the only candidate (back-compat).
+     * Ambiguous inputs fail soft (no pack) instead of splicing a wrong-version image.
+     */
+    internal fun selectPackDir(candidates: List<File>, hostVersionCode: Int?): File? {
+        if (candidates.isEmpty()) return null
+        if (hostVersionCode != null) {
+            candidates.firstOrNull { it.name == hostVersionCode.toString() }?.let { return it }
+            candidates.firstOrNull { packVersionCode(it) == hostVersionCode }?.let { return it }
+        }
+        return candidates.singleOrNull()
+    }
+
+    /** Minimal `pack.json` scan (no org.json so JVM unit tests stay dependency-free). */
+    internal fun packVersionCode(packDir: File): Int? {
+        val meta = File(packDir, "pack.json")
+        if (!meta.isFile) return null
+        val text = runCatching { meta.readText() }.getOrNull() ?: return null
+        return Regex("\"versionCode\"\\s*:\\s*(\\d+)").find(text)?.groupValues?.get(1)?.toIntOrNull()
+    }
+
+    /** Reads `android:versionCode` from the base APK's binary `AndroidManifest.xml`. */
+    internal fun readVersionCode(apk: File): Int? {
+        if (!apk.isFile) return null
+        return try {
+            ZipFile(apk).use { zip ->
+                val entry = zip.getEntry("AndroidManifest.xml") ?: return null
+                val bytes = zip.getInputStream(entry).use { it.readBytes() }
+                parseManifestVersionCode(bytes)
+            }
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    /** Binary XML (AXML) scan for the `<manifest android:versionCode>` attribute. */
+    internal fun parseManifestVersionCode(xml: ByteArray): Int? {
+        if (xml.size < 8 || u16(xml, 0) != 0x0003) return null
+        val end = minOf(xml.size, u32(xml, 4))
+        var off = u16(xml, 2)
+        var strings = emptyList<String>()
+        while (off + 8 <= end) {
+            val chunkType = u16(xml, off)
+            val headerSize = u16(xml, off + 2)
+            val chunkSize = u32(xml, off + 4)
+            if (chunkSize < 8 || off + chunkSize > end) break
+            when (chunkType) {
+                0x0001 -> strings = parseStringPool(xml, off, chunkSize)
+                0x0102 -> {
+                    if (headerSize < 16) {
+                        off += chunkSize
+                        continue
+                    }
+                    val nameIdx = u32(xml, off + 20)
+                    if (strings.getOrNull(nameIdx) == "manifest") {
+                        val attrStart = u16(xml, off + 24)
+                        val attrSize = u16(xml, off + 26)
+                        val attrCount = u16(xml, off + 28)
+                        var attr = off + 16 + attrStart
+                        repeat(attrCount) {
+                            if (attr + 20 > end) return null
+                            val attrName = strings.getOrNull(u32(xml, attr + 4))
+                            if (attrName == "versionCode") {
+                                return u32(xml, attr + 16)
+                            }
+                            attr += if (attrSize >= 20) attrSize else 20
+                        }
+                    }
+                }
+            }
+            off += chunkSize
         }
         return null
     }
+
+    private fun parseStringPool(xml: ByteArray, chunkStart: Int, chunkSize: Int): List<String> {
+        if (chunkSize < 28) return emptyList()
+        val count = u32(xml, chunkStart + 8)
+        val flags = u32(xml, chunkStart + 16)
+        val stringsStart = u32(xml, chunkStart + 20)
+        val dataStart = chunkStart + stringsStart
+        val utf8 = (flags and 0x100) != 0
+        val out = ArrayList<String>(count)
+        for (i in 0 until count) {
+            val offsetPos = chunkStart + 28 + i * 4
+            if (offsetPos + 4 > chunkStart + chunkSize) break
+            var p = dataStart + u32(xml, offsetPos)
+            if (p >= xml.size) break
+            if (utf8) {
+                var len = xml[p].toInt() and 0xff
+                p++
+                if (len and 0x80 != 0) {
+                    len = ((len and 0x7f) shl 8) or (xml[p].toInt() and 0xff)
+                    p++
+                }
+                val bytes = if (p + len <= xml.size) xml.copyOfRange(p, p + len) else ByteArray(0)
+                out += String(bytes, Charsets.UTF_8)
+            } else {
+                var len = u16(xml, p)
+                p += 2
+                if (len and 0x8000 != 0) {
+                    len = ((len and 0x7fff) shl 16) or u16(xml, p)
+                    p += 2
+                }
+                val n = minOf(len * 2, maxOf(0, xml.size - p))
+                out += String(xml, p, n, Charsets.UTF_16LE)
+            }
+        }
+        return out
+    }
+
+    private fun u16(b: ByteArray, off: Int): Int =
+        (b[off].toInt() and 0xff) or ((b[off + 1].toInt() and 0xff) shl 8)
+
+    private fun u32(b: ByteArray, off: Int): Int =
+        (b[off].toInt() and 0xff) or
+            ((b[off + 1].toInt() and 0xff) shl 8) or
+            ((b[off + 2].toInt() and 0xff) shl 16) or
+            ((b[off + 3].toInt() and 0xff) shl 24)
 
     private fun spliceNatives(arm64Apk: File, packDir: File, print: Print): List<String> {
         val updates = linkedMapOf<String, ByteArray>()
@@ -290,4 +433,5 @@ data class PairIpDecryptReport(
     val natives: List<String>,
     val dexStubs: Int,
     val packDir: String? = null,
+    val hostVersionCode: Int? = null,
 )
