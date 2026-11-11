@@ -37,7 +37,6 @@ Real `libpairipcore` under Vector also dies (SIGILL/SIGSEGV). Hooking `System.lo
 ## Estate (what survivors keep)
 
 - Full experiment log: [EXPERIMENT_LOG.md](EXPERIMENT_LOG.md)
-- Tombstone dump: [tombstone_20_sigill.txt](tombstone_20_sigill.txt)
 - Soft-fail detector / diagnostic hooks: `PairIpEarlyBypass.kt` (not a product fix)
 - Stub SO sources: `native/pairip-stub/`
 - Inventory helper: `scripts/pairip_inventory.py`

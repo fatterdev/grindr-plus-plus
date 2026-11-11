@@ -10,7 +10,7 @@ Sequence: **Morphe A (in Ver.5) → green → Morphe B**
 | Fingerprint soft-validate + sanitizer | Done | `TargetFingerprint`, `StacktraceSanitizer`, `writeThrowable` |
 | Platform concurrency / backoff / circuit-breaker | Done | CHM maps, `TaskScheduler` backoff, `HookCircuitBreaker` |
 | Settings ↔ runtime truthfulness | Done | `runtimeStatus` + Settings subtitles; pack `hooks.status` consumed |
-| E2E Settings↔runtime | Device Done (lab) | [e2e-wave4-results.md](e2e-wave4-results.md); session `5dd9df` on Mi A2 lite + 2026-11-09 Morphe clone 26.16.1 on the emulator (toggle OFF/ON verified) |
+| E2E Settings↔runtime | Device Done (lab) | [e2e-wave4-results.md](e2e-wave4-results.md) on lab device + 2026-11-09 Morphe clone 26.16.1 on the emulator (toggle OFF/ON verified) |
 | UI branding / News / clone icon | Done + E2E (lab) | Clone icon: adaptive XML remapped to brand layers, no duplicate ZIP entries, verified on launcher. News: HTML/entities sanitized in releases and `news.json`; user-facing “GrindrPlus” removed (upstream attribution kept) |
 | Morphe A path rootless | Done + E2E (lab) | `PatchBackend`, LSPatch **v1.2** pinned at `-l 1` (`-l 2` DEX rewrite corrupts Compose interface static methods); Create/Update Grindr++ installs and launches on emulator ([e2e-wave4-results.md](e2e-wave4-results.md)) |
 | Razr rootless 26.16.1 clone | Done + E2E (lab) | Stock 194910; 26.16.1 patched APKs (`-l 1`) installed on the Razr; no Compose/PairIP crash; login reaches AI consent/profile |

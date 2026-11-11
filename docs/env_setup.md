@@ -17,8 +17,7 @@ an update and will not reload the module. You can find this option in the
 
 ### JDK for Gradle / unit tests
 Use **JDK 17 or 21** as the Gradle JVM (`JAVA_HOME`). **JDK 25 breaks Robolectric**
-(`ClassReader` / `NoClassDefFoundError` on Shadows). CI uses Temurin 17. Lab machines
-with Studio under `C:\devbin` can point at `C:\devbin\android-studio\jbr` (JDK 21).
+(`ClassReader` / `NoClassDefFoundError` on Shadows). CI uses Temurin 17. Android Studio's bundled JBR (JDK 21) also works.
 
 
 ## Grindr apk
@@ -111,7 +110,7 @@ but every change to the patch code will require you build a patched Grindr app a
 instead of just installing GrindrPlus and force-stopping Grindr.
 
 ### Android emulator / VM (lab)
-Lab SDK: `C:\devbin\android-sdk` (adb). Create/start an AVD from Android Studio or:
+Use the Android SDK platform-tools (adb). Create/start an AVD from Android Studio or:
 
 ```text
 emulator -list-avds
@@ -126,5 +125,5 @@ For Morphe / LSPatch, a normal Google APIs image + Shizuku is enough.
 JADX GUI and Frida remain the primary reverse-engineering tools (see HTTP / Frida notes above).
 If you use an AI-assisted JADX or Frida helper in this lab, set **`GEMINI_API_KEY`**
 in the environment (do not commit the key). Prefer a **Machine** or **User** Windows env
-var and restart Cursor so agent shells inherit it. Working smoke-test model (2026-10):
+var and restart your shell/IDE so it is inherited. Working smoke-test model (2026-10):
 `gemini-3.1-flash-lite` via Generative Language API `generateContent`.

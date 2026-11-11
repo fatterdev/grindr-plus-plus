@@ -7,13 +7,12 @@
 |--|--|
 | Host | Grindr Play **26.19.0** / `versionCode` **185656** (splits: base + arm64 + it + xxhdpi) |
 | Module | `com.gpp.alloy` (Vector / libxposed API 102) |
-| Device | Xiaomi Mi A2 lite (`daisy`), Evolution X, Magisk + Zygisk Vector |
-| Sessions | Cursor chat [GPP Alloy Vector103 A2](https://cursor.com) id `9ee7128e-16eb-47dc-8482-05faec536c40`; follow-up PairIP report chat |
+| Device | rooted ARM64 lab device, Magisk + Zygisk Vector |
 | Dates | 2026-10-08 |
 | Mapping pack | `185656` loads (`hasPack=true`) |
 | Control | Non-PairIP **26.16.1 / 179451**: StatusDialog + profile details E2E **PASS** (same Alloy stack) |
 
-Artifacts: [README](README.md) · [tombstone summary](tombstone_20_sigill_summary.md) · [full tombstone](tombstone_20_sigill.txt) · [DBG summaries](debug-9ee712.log) · stub `native/pairip-stub/` · code `PairIpEarlyBypass.kt`
+Artifacts: [README](README.md) · [tombstone summary](tombstone_20_sigill_summary.md) · stub `native/pairip-stub/` · code `PairIpEarlyBypass.kt`
 
 ---
 
@@ -25,7 +24,6 @@ Artifacts: [README](README.md) · [tombstone summary](tombstone_20_sigill_summar
 | Autofill | Blocks unattended login | `settings put secure autofill_service null` for lab |
 | Magisk | `VectorModToggle` `cliReady=false` | Magisk policy **allow (2)** for `com.gpp.alloy` |
 | Play updates | Device bumps back to 26.19 | Pin / freeze store for non-PairIP A/B tests |
-| `adb reverse` | DBG ingest | `adb reverse tcp:7460 tcp:7460` when using `AgentDebugLog` |
 
 ---
 
@@ -60,7 +58,7 @@ Legend: **PASS** partial progress · **FAIL** blocked · **CONFOUND** not PairIP
 | Ver | Hypothesis | Technique | Result | Evidence / next |
 |-----|------------|-----------|--------|-----------------|
 | v1–v5 | Block / stub PairIP Java early | Hook `VMRunner` / block `pairipcore` load; special-call trampolines | FAIL | NPE / incomplete launch; RecordTag / HomeActivity Method-null (queue notes) |
-| v6 | Null `Method` trampolines after VM stub | Wire synthetic `onCreate$00x` / `onResume$00x` | PASS (partial) | `wired=5`, pack `hasPack=true` (`debug-9ee712` H30) |
+| v6 | Null `Method` trampolines after VM stub | Wire synthetic `onCreate$00x` / `onResume$00x` | PASS (partial) | `wired=5`, pack `hasPack=true` (H30) |
 | v7 | String bags null after stub | Observe Firebase Perf / `StringBuilder(null)` | FAIL (expected) | Confirmed StartupLauncher VM also fills strings |
 | v8 | Seed critical string bags | Room DB name seed + inbox keys; blank-fill log prefixes; Room `xi4.B` fallback | PASS (partial) | Past Hilt/Room seed (`public_grindr_assignments.db`) |
 | v9 | Maybe real `pairipcore` works under Vector | Allow real native | FAIL | **SIGILL `ILL_ILLOPC`** under Vector (anti-tamper) |
@@ -80,7 +78,7 @@ signal 4 (SIGILL), code 1 (ILL_ILLOPC)
 - Stub `gpp_libpairipcore_stub.so` is mapped; crash is **not** inside the stub.
 - Earlier hypothesis “encrypted Java method bodies need `executeVM`” was **too narrow**: at least some **native** `.text` (sqlite JNI) also depends on the real PairIP integrity/decrypt path.
 
-Full dump: [`tombstone_20_sigill.txt`](tombstone_20_sigill.txt).
+Full dump not kept in repo.
 
 ---
 
@@ -118,16 +116,15 @@ Full dump: [`tombstone_20_sigill.txt`](tombstone_20_sigill.txt).
 # stub at /data/local/tmp/gpp_libpairipcore_stub.so, swap optional but recommended
 
 adb shell su -c '/data/adb/modules/zygisk_vector/cli modules enable com.gpp.alloy'
-adb reverse tcp:7460 tcp:7460
 adb logcat -c
 adb shell am force-stop com.grindrapp.android
 adb shell monkey -p com.grindrapp.android -c android.intent.category.LAUNCHER 1
 # wait ~20–25s — expect init_ok then Fatal signal 4
 adb shell su -c 'ls -lt /data/tombstones | head'
-# pull newest tombstone_* (see docs/lab/pairip/tombstone_20_sigill.txt)
+# pull newest tombstone_*
 ```
 
-DBG tag used in session: `DBG9EE712` / `AgentDebugLog`.
+Logcat tag: `GPP-Debug` (`AgentDebugLog`).
 
 ---
 

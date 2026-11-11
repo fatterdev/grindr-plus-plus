@@ -21,5 +21,5 @@
 - Mapping is pack-driven by Grindr `versionCode`; soft-fail on missing packs.
 - Artifact naming uses **gpp** and must not embed the Grindr host version in `versionName`; module version line is **5.x** (pre-release/dev format: `5.0.0-dev-<sha>`).
 - Settings↔runtime truthfulness is a Ver.5 pillar; anonymous opt-in telemetry via Manager analytics.
-- Lab Android SDK/Studio under `C:\devbin`; unit tests need JDK 17/21 (lab JBR); JDK 25 breaks Robolectric.
+- Unit tests need JDK 17/21 (lab JBR); JDK 25 breaks Robolectric.
 - Legacy name **GrindrMod** (XDA) is unrelated; About should disclaim. Not Modr++.

@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- GrindMod: full brand mask + gear badge (slight BR overlap). Safe zone via adaptive crop. -->
+<!-- GrindMod: same 108dp foreground as Grindr++ (face inside safe zone) + gear badge. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:drawable="@drawable/ic_brand_mask"
-        android:gravity="center"
-        android:width="72dp"
-        android:height="72dp" />
+        android:drawable="@drawable/ic_brand_foreground"
+        android:gravity="fill" />
     <item
         android:drawable="@drawable/ic_gear_badge"
         android:gravity="bottom|end"
         android:width="22dp"
         android:height="22dp"
-        android:right="14dp"
-        android:bottom="14dp" />
+        android:right="30dp"
+        android:bottom="30dp" />
 </layer-list>

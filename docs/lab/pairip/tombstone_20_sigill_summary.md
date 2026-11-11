@@ -1,7 +1,7 @@
 # Tombstone summary — SIGILL post Alloy init
 
-Source: [`tombstone_20_sigill.txt`](tombstone_20_sigill.txt)  
-Device: Mi A2 lite / Evolution X · Timestamp: 2026-10-08 13:42:57 +0200  
+Source: raw tombstone (removed from repo)  
+Device: rooted ARM64 lab device · Timestamp: 2026-10-08 13:42:57 +0200  
 Process: `com.grindrapp.android` pid **18330**, tid **20333** (`DefaultDispatch`) · uptime 24s
 
 ```
