@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- GrindMod: same 108dp foreground as Grindr++ (face inside safe zone) + gear badge. -->
+<!-- GrindMod: same 108dp foreground as Grindr++ (face inside safe zone) + corner gear badge. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:drawable="@drawable/ic_brand_foreground"
@@ -7,8 +7,8 @@
     <item
         android:drawable="@drawable/ic_gear_badge"
         android:gravity="bottom|end"
-        android:width="22dp"
-        android:height="22dp"
-        android:right="30dp"
-        android:bottom="30dp" />
+        android:width="20dp"
+        android:height="20dp"
+        android:right="24dp"
+        android:bottom="24dp" />
 </layer-list>
