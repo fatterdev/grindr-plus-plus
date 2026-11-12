@@ -46,6 +46,26 @@
       "name": "com.grindrapp.android.network.websocket.model.WebSocketNotification$ServerNotification",
       "fingerprint": "ServerNotification"
     },
+    "MapTeleport.exploreMapView": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved on this build; map teleport soft-skips"
+    },
+    "MapTeleport.exploreMapView.currentLocationField": {
+      "kind": "field",
+      "name": "",
+      "note": "not resolved on this build; soft-skip"
+    },
+    "MapTeleport.exploreMapLocation.latitudeField": {
+      "kind": "field",
+      "name": "",
+      "note": "not resolved on this build; soft-skip"
+    },
+    "MapTeleport.exploreMapLocation.longitudeField": {
+      "kind": "field",
+      "name": "",
+      "note": "not resolved on this build; soft-skip"
+    },
     "retrofit.fail": {
       "kind": "class",
       "name": "Yf.a$a",

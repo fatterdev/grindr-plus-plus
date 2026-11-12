@@ -3,7 +3,7 @@
   "versionName": "26.19.0",
   "versionCode": 185656,
   "confidence": "static-jadx",
-  "generatedFrom": "JADX decompile of device tip APK 26.19.0/185656 + fingerprint remap from 179451 pack (2026-10-06). Unresolved R8 sites soft-skipped (empty name) — do not reuse 26.16.1 short names (collisions).",
+  "generatedFrom": "JADX decompile of device tip APK 26.19.0/185656 + fingerprint remap from 179451 pack (2026-10-06). Unresolved R8 sites soft-skipped (empty name) — do not reuse 26.16.1 short names (collisions). + MapTeleport keys 2026-11-12",
   "symbols": {
     "core.userAgent": {
       "kind": "class",
@@ -38,13 +38,33 @@
     },
     "core.browseExploreActivity": {
       "kind": "class",
-      "name": "",
-      "note": "BrowseExploreMapActivity FQN absent on 26.19.0"
+      "name": "com.grindrapp.android.ui.browse.presentation.ui.BrowseExploreMapActivity",
+      "note": "corrected: class is present under ui.browse.presentation.ui"
     },
     "core.serverNotification": {
       "kind": "class",
       "name": "com.grindrapp.android.network.websocket.model.WebSocketNotification$ServerNotification",
       "fingerprint": "ServerNotification"
+    },
+    "MapTeleport.exploreMapView": {
+      "kind": "class",
+      "name": "ffe",
+      "method": "g0",
+      "fingerprint": "view_explore_map + view_nearby_profiles + ExploreMapLocation",
+      "note": "Explore Here button handler; hook BEFORE + setResult(null) suppresses ExploreCascadeArgs navigation"
+    },
+    "MapTeleport.exploreMapView.currentLocationField": {
+      "kind": "field",
+      "name": "currentLocation",
+      "note": "ExploreMapLocation selected by camera idle / center pin"
+    },
+    "MapTeleport.exploreMapLocation.latitudeMethod": {
+      "kind": "method",
+      "name": "getLatitude"
+    },
+    "MapTeleport.exploreMapLocation.longitudeMethod": {
+      "kind": "method",
+      "name": "getLongitude"
     },
     "retrofit.fail": {
       "kind": "class",

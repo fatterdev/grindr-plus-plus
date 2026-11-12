@@ -97,6 +97,26 @@
       "name": "com.grindrapp.android.chat.data.datasource.api.model.AddSavedPhraseResponse",
       "fingerprint": "chat.data.datasource.api.model"
     },
+    "MapTeleport.exploreMapView": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved on this build; map teleport soft-skips"
+    },
+    "MapTeleport.exploreMapView.currentLocationField": {
+      "kind": "field",
+      "name": "",
+      "note": "not resolved on this build; soft-skip"
+    },
+    "MapTeleport.exploreMapLocation.latitudeField": {
+      "kind": "field",
+      "name": "",
+      "note": "not resolved on this build; soft-skip"
+    },
+    "MapTeleport.exploreMapLocation.longitudeField": {
+      "kind": "field",
+      "name": "",
+      "note": "not resolved on this build; soft-skip"
+    },
     "retrofit.fail": {
       "kind": "class",
       "name": "z34",

@@ -595,6 +595,25 @@ class BridgeClient(private val context: Context) {
         }
     }
 
+    suspend fun setForcedLocation(packageName: String, coordinates: String) {
+        if (!isBound.get()) {
+            if (ensureConnection(3000)) {
+                Logger.d("Connected to service on-demand for setForcedLocation", LogSource.BRIDGE)
+            } else {
+                Logger.w("Cannot set forced location, service not bound", LogSource.BRIDGE)
+                return
+            }
+        }
+
+        try {
+            withContext(Dispatchers.IO) {
+                bridgeService?.setForcedLocation(packageName, coordinates)
+            }
+        } catch (e: Exception) {
+            Logger.e("Error setting forced location: ${e.message}", LogSource.BRIDGE)
+        }
+    }
+
     suspend fun isRooted(): Boolean {
         if (!isBound.get()) {
             if (ensureConnection(3000)) {

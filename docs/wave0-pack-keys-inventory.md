@@ -217,6 +217,27 @@ Suggested Ver.5 follow-up statuses once keys land:
 
 ---
 
+## Map teleport keys (new in `feat/map-teleport`)
+
+These keys are consumed by `hooks/MapTeleport.kt` and `core/TeleportController.kt`.
+They are present with resolved values on 179451 / 185656 / 194910 and explicit
+empty soft-skip entries on the older packs.
+
+| Key | Kind | 179451 | 185656 | 194910 |
+| --- | --- | --- | --- | --- |
+| `MapTeleport.exploreMapView` | class + `method` | `pj4` / `l` | `ffe` / `g0` | `ffe` / `g0` |
+| `MapTeleport.exploreMapView.currentLocationField` | field | `p` | `currentLocation` | `currentLocation` |
+| `MapTeleport.exploreMapLocation.latitudeField` | field | `f7730a` | - | - |
+| `MapTeleport.exploreMapLocation.longitudeField` | field | `b` | - | - |
+| `MapTeleport.exploreMapLocation.latitudeMethod` | method | - | `getLatitude` | `d` |
+| `MapTeleport.exploreMapLocation.longitudeMethod` | method | - | `getLongitude` | `e` |
+
+Also corrected: `core.browseExploreActivity` on 179451 and 185656 now points to
+`com.grindrapp.android.ui.browse.presentation.ui.BrowseExploreMapActivity`
+(the previous 179451 FQCN does not exist; 185656 was marked absent by mistake).
+
+---
+
 ## Out of scope (this document)
 
 - Product Kotlin migration / `MappingDictionary.resolve` wiring.

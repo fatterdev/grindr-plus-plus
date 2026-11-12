@@ -239,7 +239,7 @@ class Client(interceptor: Interceptor) {
         }
     }
 
-    fun updateLocation(geohash: String) {
+    fun updateLocation(geohash: String, silent: Boolean = false) {
         val body = JSONObject().apply {
             put("geohash", geohash)
         }.toString()
@@ -252,10 +252,14 @@ class Client(interceptor: Interceptor) {
                 headers = mapOf("Content-Type" to "application/json; charset=UTF-8")
             )
             if (response.isSuccessful) {
-                showToast(Toast.LENGTH_LONG, "Location updated successfully")
+                if (!silent) {
+                    showToast(Toast.LENGTH_LONG, "Location updated successfully")
+                }
             } else {
                 response.useBody { errorBody ->
-                    showToast(Toast.LENGTH_LONG, "Failed to update location: $errorBody")
+                    if (!silent) {
+                        showToast(Toast.LENGTH_LONG, "Failed to update location: $errorBody")
+                    }
                 }
             }
         }

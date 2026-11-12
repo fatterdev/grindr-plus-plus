@@ -3,7 +3,7 @@
   "versionName": "26.16.1",
   "versionCode": 179451,
   "confidence": "static-jadx",
-  "generatedFrom": "Obfuscation.kt + GrindrPlus.kt + RetrofitUtils + JADX 1.5.1 gap-fill (AddSavedPhraseResponse path) + soft-skips + Morphe B remaps 2026-10-05",
+  "generatedFrom": "Obfuscation.kt + GrindrPlus.kt + RetrofitUtils + JADX 1.5.1 gap-fill (AddSavedPhraseResponse path) + soft-skips + Morphe B remaps 2026-10-05 + MapTeleport keys (map selection -> real teleport) 2026-11-12",
   "symbols": {
     "core.userAgent": {
       "kind": "class",
@@ -37,12 +37,33 @@
     },
     "core.browseExploreActivity": {
       "kind": "class",
-      "name": "com.grindrapp.android.ui.browse.BrowseExploreMapActivity"
+      "name": "com.grindrapp.android.ui.browse.presentation.ui.BrowseExploreMapActivity",
+      "note": "corrected: ui.browse.presentation.ui (the ui.browse FQCN does not exist on 179451)"
     },
     "core.serverNotification": {
       "kind": "class",
       "name": "com.grindrapp.android.network.websocket.model.WebSocketNotification$ServerNotification",
       "fingerprint": "ServerNotification"
+    },
+    "MapTeleport.exploreMapView": {
+      "kind": "class",
+      "name": "pj4",
+      "method": "l",
+      "fingerprint": "view_explore_map + view_nearby_profiles + ExploreMapLocation",
+      "note": "Explore Here button handler; hook BEFORE + setResult(null) suppresses ExploreCascadeArgs navigation"
+    },
+    "MapTeleport.exploreMapView.currentLocationField": {
+      "kind": "field",
+      "name": "p",
+      "note": "ExploreMapLocation selected by camera idle / center pin"
+    },
+    "MapTeleport.exploreMapLocation.latitudeField": {
+      "kind": "field",
+      "name": "f7730a"
+    },
+    "MapTeleport.exploreMapLocation.longitudeField": {
+      "kind": "field",
+      "name": "b"
     },
     "retrofit.fail": {
       "kind": "class",

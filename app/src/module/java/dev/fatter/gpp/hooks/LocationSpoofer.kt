@@ -26,6 +26,7 @@ import androidx.core.graphics.toColorInt
 import androidx.core.view.children
 import dev.fatter.gpp.GrindrPlus
 import dev.fatter.gpp.core.Config
+import dev.fatter.gpp.core.TeleportController
 import dev.fatter.gpp.core.logw
 import dev.fatter.gpp.persistence.model.TeleportLocationEntity
 import dev.fatter.gpp.ui.Utils
@@ -196,7 +197,13 @@ class LocationSpoofer : Hook(
                 } else {
                     val coordinates = "${location.latitude}, ${location.longitude}"
                     coroutineScope.launch {
-                        Config.put("current_location", coordinates)
+                        TeleportController.apply(
+                            latitude = location.latitude,
+                            longitude = location.longitude,
+                            displayName = location.name,
+                            source = "dialog",
+                            notify = false,
+                        )
                         GrindrPlus.showToast(Toast.LENGTH_LONG, "Teleported to $coordinates")
                     }
                 }
@@ -240,13 +247,16 @@ class LocationSpoofer : Hook(
                     coroutineScope.launch {
                         val location = getSelectedLocation(radioGroup)
                         if (location == null) {
-                            Config.put("current_location", "")
-                            Config.put("current_location_name", "")
+                            TeleportController.clear(source = "dialog", notify = false)
                             GrindrPlus.showToast(Toast.LENGTH_SHORT, "Teleporting stopped")
                         } else {
-                            val coordinates = "${location.latitude}, ${location.longitude}"
-                            Config.put("current_location", coordinates)
-                            Config.put("current_location_name", location.name)
+                            TeleportController.apply(
+                                latitude = location.latitude,
+                                longitude = location.longitude,
+                                displayName = location.name,
+                                source = "dialog",
+                                notify = false,
+                            )
                             GrindrPlus.showToast(Toast.LENGTH_LONG, "Teleported to ${location.name}")
                         }
                     }

@@ -482,6 +482,19 @@ class BridgeService : Service() {
             }
         }
 
+        override fun setForcedLocation(packageName: String, coordinates: String) {
+            checkCaller()
+            val trimmed = coordinates.trim()
+            val parts = trimmed.split(",")
+            if (parts.size != 2 || parts.any { it.trim().toDoubleOrNull() == null }) {
+                Logger.w("Rejected invalid forced location payload: $trimmed", LogSource.BRIDGE)
+                return
+            }
+            val coordinatesFile = File(getExternalFilesDir(null), "$packageName.location")
+            coordinatesFile.writeText(trimmed)
+            Logger.d("Forced location updated for $packageName", LogSource.BRIDGE)
+        }
+
         override fun isRooted(): Boolean {
             checkCaller()
             return DeviceFlags.isRooted(applicationContext)

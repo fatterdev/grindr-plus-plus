@@ -1,13 +1,11 @@
 package dev.fatter.gpp.commands
 
-import android.app.AlertDialog
 import android.net.Uri
 import android.widget.Toast
 import dev.fatter.gpp.GrindrPlus
-import dev.fatter.gpp.GrindrPlus.packageName
 import dev.fatter.gpp.core.Config
 import dev.fatter.gpp.core.Logger
-import dev.fatter.gpp.core.Utils.coordsToGeoHash
+import dev.fatter.gpp.core.TeleportController
 import dev.fatter.gpp.persistence.model.TeleportLocationEntity
 import dev.fatter.gpp.utils.compat.XposedHelpers.callMethod
 import kotlinx.coroutines.CoroutineScope
@@ -24,42 +22,18 @@ class Location(recipient: String, sender: String) : CommandModule("Location", re
     @Command(name = "teleport", aliases = ["tp"], help = "Teleport to a location")
     fun teleport(args: List<String>) {
         /**
-         * If the user is currently used forced coordinates, don't allow teleportation.
-         */
-        if (Config.get("forced_coordinates", "") as String != "") {
-            GrindrPlus.runOnMainThreadWithCurrentActivity { activity ->
-                AlertDialog.Builder(activity)
-                    .setTitle("Teleportation disabled")
-                    .setMessage(
-                        "Grindr++ is currently using forced coordinates. " +
-                                "Please disable it to use teleportation."
-                    )
-                    .setPositiveButton("OK", null)
-                    .setNegativeButton("Disable") { _, _ ->
-                        coroutineScope.launch {
-                            Config.put("forced_coordinates", "")
-                            GrindrPlus.bridgeClient.deleteForcedLocation(packageName)
-                            GrindrPlus.showToast(
-                                Toast.LENGTH_LONG,
-                                "Forced coordinates disabled"
-                            )
-                        }
-                    }
-                    .show()
-            }
-
-            return;
-        }
-
-        /**
          * This command is also used to toggle the teleportation feature. If the user hasn't
          * provided any arguments, just toggle teleport.
+         *
+         * `forced_coordinates` is the persistent teleport target written by both `/tp` and
+         * the map selection; it is not a separate lock anymore.
          */
         if (args.isEmpty()) {
-            val status = (Config.get("current_location", "") as String).isEmpty()
-            if (!status) {
+            val hasCurrent = (Config.get("current_location", "") as String).isNotEmpty()
+            val hasForced = (Config.get("forced_coordinates", "") as String).isNotEmpty()
+            if (hasCurrent || hasForced) {
                 coroutineScope.launch {
-                    Config.put("current_location", "")
+                    TeleportController.clear(source = "command", notify = false)
                     GrindrPlus.showToast(Toast.LENGTH_LONG, "Teleportation disabled")
                 }
                 return
@@ -79,7 +53,7 @@ class Location(recipient: String, sender: String) : CommandModule("Location", re
         coroutineScope.launch {
             when {
                 args.size == 1 && args[0] == "off" -> {
-                    Config.put("current_location", "")
+                    TeleportController.clear(source = "command", notify = false)
                     GrindrPlus.showToast(Toast.LENGTH_LONG, "Teleportation disabled")
                 }
                 args.size == 1 && args[0].contains(",") -> {
@@ -128,7 +102,8 @@ class Location(recipient: String, sender: String) : CommandModule("Location", re
             val location =
                 when {
                     args.size == 1 -> {
-                        val currentAppliedLocation = Config.get("current_location", "") as String
+                        val currentAppliedLocation =
+                            Config.get("forced_coordinates", Config.get("current_location", "")) as String
                         currentAppliedLocation.ifEmpty { getGpsLocation() }
                     }
                     args.size == 2 && args[1].contains(",") -> args[1]
@@ -283,16 +258,12 @@ class Location(recipient: String, sender: String) : CommandModule("Location", re
     }
 
     private suspend fun teleportToCoordinates(lat: Double, lon: Double, silent: Boolean = false) {
-        Config.put("current_location", "$lat,$lon")
-        val geohash = coordsToGeoHash(lat, lon)
-
-        GrindrPlus.executeAsync {
-            try {
-                GrindrPlus.httpClient.updateLocation(geohash)
-            } catch (e: Exception) {
-                Logger.e("Error sending geohash to API: ${e.message}")
-            }
-        }
+        TeleportController.apply(
+            latitude = lat,
+            longitude = lon,
+            source = "command",
+            notify = false,
+        )
 
         if (!silent)
             GrindrPlus.showToast(Toast.LENGTH_LONG, "Teleported to $lat, $lon")

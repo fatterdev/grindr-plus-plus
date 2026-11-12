@@ -19,4 +19,6 @@ interface IBridgeService {
                                     String channelName, String channelDescription,
                                     in String[] actionLabels, in String[] actionIntents, in String[] actionData);
 
+    void setForcedLocation(String packageName, String coordinates);
+
 }
