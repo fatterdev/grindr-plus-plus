@@ -3,7 +3,7 @@
   "versionName": "26.24.0",
   "versionCode": 195444,
   "confidence": "static-jadx-remap",
-  "generatedFrom": "JADX decompile of Play 26.24.0/195444 (px_9a, minSdk 32) on 2026-11-12. First-pass name/fingerprint remap from 194910: short R8 names are never trusted (collisions), FQCNs are kept only when present in DEX, and every other symbol is resolved by a unique fingerprint or explicit soft-skipped. Manual review resolved core.userSession=yaw, core.deviceInfo=zd9, ChatIndicators=fm6, LocalSavedPhrases=ezl, DisableUpdates=iz1. 37/85 symbols named after stale-member cleanup. Hooks are unverified until runtime E2E; this pack does not claim clone boot.",
+  "generatedFrom": "JADX decompile of Play 26.24.0/195444 (px_9a, minSdk 32) on 2026-11-12, refined 2026-11-12 against class_defs and call sites. Short R8 names are never trusted (collisions); FQCNs are kept only when present in DEX; every other symbol is resolved by a unique shape/fingerprint or explicitly soft-skipped. Refinement resolved FeatureGranting/CloneLoginCompat flag evaluator (qtg.a), WebSocketAlive factory (uiu.e), core.serverDrivenCascadeRepo (eq5.a) and DisableUpdates version field (ev1.f), and confirmed ProfileBarView/QuickBlock blockViewModel are gone (Cascade V2 Compose). 44/85 symbols named. Hooks are not runtime-verified; this pack does not claim clone boot.",
   "symbols": {
     "core.userAgent": {
       "kind": "class",
@@ -30,9 +30,9 @@
     },
     "core.serverDrivenCascadeRepo": {
       "kind": "class",
-      "name": "",
-      "note": "method a(double,double,boolean,Double,Double,Double,Double,Integer,Continuation) | no unique fingerprint match on 26.24.0; candidates=0",
-      "fingerprint": "a(double,double,...)->CascadePage"
+      "name": "eq5",
+      "note": "a(double,double,boolean,Double,Double,Double,Double,Integer,Continuation) -> nm5 (CascadePage wrapper); uses tr5 @t8d(\"v4/cascade\") + CascadeDatabase cache + mp5. Unique 9-arg signature; DI ctor in kk8.",
+      "fingerprint": "Failed to fetch profiles for location"
     },
     "core.ageVerificationActivity": {
       "kind": "class",
@@ -76,12 +76,13 @@
       "kind": "class",
       "name": "hvb",
       "fingerprint": "FabUiModel(isVisible=",
-      "note": "FabUiModel field renamed to a; hook expects isVisible | remapped by fingerprint"
+      "note": "FabUiModel; boolean field renamed to a (hook sets isVisible, so it needs a code fix) | remapped by fingerprint"
     },
     "DisableBoosting.RIGHT_NOW_MICROS_FAB_UI_MODEL": {
       "kind": "class",
-      "name": "",
-      "note": "RightNowMicrosFabUiModel (enp) field shape changed | no unique fingerprint match on 26.24.0; no fingerprint"
+      "name": "c0q",
+      "fingerprint": "RightNowMicrosFabUiModel(",
+      "note": "fields d=isFabVisible, e=isRightNowFabClickEnabled, f=isBoostFabClickEnabled, g=loading; no isBoostFabVisible, so hook field names need update"
     },
     "DisableBoosting.BOOST_STATE_CLASS": {
       "kind": "class",
@@ -137,7 +138,7 @@
     "ProfileDetails.PROFILE_VIEW_HOLDER": {
       "kind": "class",
       "name": "",
-      "note": "profile view holder not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+      "note": "no View-based profile holder on 26.24.0 (Cascade V2 Compose); no holder with a viewBinding+toolbar menu. Hook needs redesign."
     },
     "ProfileDetails.DISTANCE_UTILS": {
       "kind": "class",
@@ -148,13 +149,13 @@
     "ProfileDetails.PROFILE_BAR_VIEW": {
       "kind": "class",
       "name": "",
-      "note": "no unique fingerprint match on 26.24.0; no fingerprint"
+      "note": "FQCN com.grindrapp.android.ui.profileV2.ProfileBarView absent; no setProfile(...) method anywhere in DEX. Profile screen is Compose (m2x profile UiModel + f2x Loaded state); no replacement view."
     },
     "ProfileDetails.PROFILE_VIEW_STATE": {
       "kind": "class",
       "name": "",
       "fingerprint": "ProfileViewState(profileId=",
-      "note": "mbn has public fields, no getWeight/getHeight | no unique fingerprint match on 26.24.0; candidates=0"
+      "note": "no UI state with getProfileId/getWeight/getHeight/isChatPaywalled on 26.24.0; only ProfileApiModel/BaseProfile carries getWeight/getHeight (API model, not UI state). View-based profile bar is gone; candidates=0"
     },
     "ProfileDetails.SERVER_DRIVEN_CASCADE_CACHED_STATE": {
       "kind": "class",
@@ -165,18 +166,18 @@
       "kind": "class",
       "name": "np5",
       "fingerprint": "CascadeProfileUiData(profileId=",
-      "note": "wj5 has public fields, no isBoosting()/getProfileId() | remapped by fingerprint"
+      "note": "CascadeProfileUiData; public fields a=profileId (String), f=isBoosting — no getters, so hook isBoosting()/getProfileId() must switch to field access | remapped by fingerprint"
     },
     "ProfileDetails.CASCADE_PROFILE_UI_DATA": {
       "kind": "class",
       "name": "np5",
       "fingerprint": "CascadeProfileUiData(profileId=",
-      "note": "wj5 has public fields, no isBoosting()/getProfileId() | remapped by fingerprint"
+      "note": "CascadeProfileUiData; public fields a=profileId (String), f=isBoosting — no getters, so hook isBoosting()/getProfileId() must switch to field access | remapped by fingerprint"
     },
     "ChatIndicators.CHAT_REST_SERVICE": {
       "kind": "class",
       "name": "fm6",
-      "fingerprint": "v4/chatstatus/typing + v3/me/prefs/phrases",
+      "fingerprint": "v4/chatstatus/typing",
       "note": "v4/chatstatus/typing + v3/me/prefs/phrases"
     },
     "LocalSavedPhrases.AddSavedPhraseResponse": {
@@ -188,7 +189,7 @@
       "kind": "class",
       "name": "ezl",
       "fingerprint": "v3/me/prefs",
-      "note": "v3/me/prefs -> PhrasesResponse"
+      "note": "GET v3/me/prefs -> PhrasesResponse. Same path prefix also on fm6 (phrases POST/DELETE) and zrr (v3/me/prefs/settings) — do not confuse."
     },
     "UnlimitedAlbums.AlbumsRestService": {
       "kind": "class",
@@ -282,17 +283,19 @@
     "QuickBlock.blockViewModel": {
       "kind": "class",
       "name": "",
-      "note": "I(Context,xco,analytics) shows block dialog | no unique fingerprint match on 26.24.0; no fingerprint"
+      "note": "no ViewModel showDialog method remains. Profile block dialog is Compose state f2x.h (isShowingConfirmBlockDialog) owned by a3x; vyw.a OnBlockClicked sets it, wyw.a OnBlockConfirmed runs t2x -> byf.R. Chat block dialog is built inline in s76 case 3 with dm3 as VM. Hook needs redesign."
     },
     "FeatureGranting.isFeatureFlagEnabled": {
       "kind": "class",
-      "name": "",
-      "note": "implements jdg | no unique fingerprint match on 26.24.0; no fingerprint"
+      "name": "qtg",
+      "fingerprint": "implements ptg",
+      "note": "only ptg impl; a(b42) compares assignment variant to \"on\". Login reCAPTCHA call site hf2: ((qtg) y).a(ujo.a) for RecaptchaFirstPartyFeatureFlag."
     },
     "CloneLoginCompat.isFeatureFlagEnabled": {
       "kind": "class",
-      "name": "",
-      "note": "no unique fingerprint match on 26.24.0; no fingerprint"
+      "name": "qtg",
+      "fingerprint": "implements ptg",
+      "note": "same evaluator as FeatureGranting; forces RecaptchaFirstParty/ThirdParty assignment flags off on clones"
     },
     "OnlineIndicator.utils": {
       "kind": "class",
@@ -316,13 +319,14 @@
     "WebSocketAlive.CLIENT": {
       "kind": "class",
       "name": "com.grindrapp.android.network.websocket.a",
-      "fingerprint": "extends okhttp3.WebSocketListener"
+      "fingerprint": "ws.connection.established",
+      "note": "extends obfuscated mrg (not okhttp3.WebSocketListener directly); callbacks are E/F/G/H/I/S"
     },
     "WebSocketAlive.FACTORY": {
       "kind": "class",
-      "name": "",
-      "fingerprint": "e(String,String,websocket.a)->g7o",
-      "note": "no unique fingerprint match on 26.24.0; candidates=0"
+      "name": "uiu",
+      "fingerprint": "Grindr3 %s",
+      "note": "e() is the only factory with a websocket.a param; sets Authorization \"Grindr3 %s\" and returns okhttp WebSocket (njo). uiu is multi-role, so hook e() only (a() overloads are unrelated)."
     },
     "Favorites.FRAGMENT": {
       "kind": "class",
@@ -332,12 +336,12 @@
     "retrofit.successValue": {
       "kind": "field",
       "name": "a",
-      "note": "R8 field on ona"
+      "note": "field a on zya (Success)"
     },
     "retrofit.failValue": {
       "kind": "field",
       "name": "a",
-      "note": "R8 field on nna"
+      "note": "field a on yya (Fail)"
     },
     "DisableBoosting.SHOW_TAPS_AND_VIEWED_ME_POPUP_METHOD": {
       "kind": "method",
@@ -347,7 +351,7 @@
     "http.userSession.isLoggedInMethod": {
       "kind": "method",
       "name": "s",
-      "note": "frv.s() = jwt length > 0"
+      "note": "yaw.s() = jwt length > 0"
     },
     "http.userSession.authTokenFlowMethod": {
       "kind": "method",
@@ -362,12 +366,12 @@
     "http.deviceInfo.lazyField": {
       "kind": "field",
       "name": "d",
-      "note": "kotlin.Lazy on d49"
+      "note": "ldu (kotlin.Lazy) field d on zd9"
     },
     "http.userAgent.stringMethod": {
       "kind": "method",
       "name": "a",
-      "note": "tpv.a() User-Agent string"
+      "note": "j9w.a() returns the User-Agent string"
     },
     "EnableUnlimited.paywallUtils.showMethod": {
       "kind": "method",
@@ -382,12 +386,12 @@
     "EnableUnlimited.userSession.rolesUpdatedMethod": {
       "kind": "method",
       "name": "I",
-      "note": "synchronized I(List) updates granted roles; restores header field n"
+      "note": "yaw.I(List) synchronized updates granted roles; restores header field n"
     },
     "QuickBlock.blockViewModel.showDialogMethod": {
       "kind": "method",
       "name": "",
-      "note": "owner class soft-skipped"
+      "note": "no showDialog method remains (Compose dialog state a3x/f2x.h; chat dialog inline in s76)"
     },
     "QuickBlock.profileViewHolder.bindMethod": {
       "kind": "method",
@@ -406,13 +410,13 @@
     },
     "FeatureGranting.isFeatureFlagEnabled.invokeMethod": {
       "kind": "method",
-      "name": "",
-      "note": "owner class soft-skipped"
+      "name": "a",
+      "note": "qtg.a(b42) -> boolean; flag.toString() is the assignment key (e.g. RecaptchaFirstPartyFeatureFlag)"
     },
     "CloneLoginCompat.isFeatureFlagEnabled.invokeMethod": {
       "kind": "method",
-      "name": "",
-      "note": "owner class soft-skipped"
+      "name": "a",
+      "note": "qtg.a(b42) -> boolean (shared evaluator)"
     },
     "FeatureGranting.alertParamsField": {
       "kind": "field",
@@ -432,17 +436,17 @@
     "DisableUpdates.appUpgradeManager.showDeprecatedDialogMethod": {
       "kind": "method",
       "name": "a",
-      "note": "o(AppCompatActivity) builds deprecation dialog"
+      "note": "iz1.a(AppCompatActivity) builds the deprecation_message dialog"
     },
     "DisableUpdates.appConfiguration.versionField": {
       "kind": "field",
-      "name": "",
-      "note": "AppConfiguration class moved; hook still hardcodes old FQCN | member not proven on 26.24.0"
+      "name": "f",
+      "note": "AppConfiguration moved to ev1 (defpackage); f = version string 26.24.0.195444. Hook hardcodes absent FQCN com.grindrapp.android.platform.config.AppConfiguration."
     },
     "http.userSession.authTokenFlowField": {
       "kind": "field",
       "name": "B",
-      "note": "v5o StateFlow<String>; use when authTokenFlowMethod is empty"
+      "note": "cio (StateFlow wrapper) field B; use when authTokenFlowMethod is empty"
     },
     "http.userSession.rolesField": {
       "kind": "field",
@@ -452,88 +456,88 @@
   },
   "hooks": {
     "DisableBoosting": {
-      "status": "unverified",
-      "reason": "26.24.0 static remap; runtime E2E pending"
+      "status": "partial",
+      "reason": "radar gdo + RightNow c0q mapped; FAB hvb boolean field is a (hook sets isVisible); RightNow hook sets absent isBoostFabVisible; navbar needs SmallPersistentVector; Subscribe/Taps unresolved"
     },
     "AntiBlock": {
       "status": "skipped",
-      "reason": "inbox/delete-plugin/unblock remaps unresolved on 26.23.0 | 26.24.0 static remap"
+      "reason": "inbox/delete-plugin/unblock remaps unresolved on 26.24.0; only ConversationDeleteNotification FQCN mapped"
     },
     "ProfileDetails": {
       "status": "partial",
-      "reason": "cascade profile np5 mapped; ProfileBarView absent on 26.24.0"
+      "reason": "cascade profile np5 mapped but exposes public fields a/f, no isBoosting()/getProfileId(); ProfileBarView/ProfileViewHolder/ProfileViewState/DistanceUtils absent (Cascade V2 Compose)"
     },
     "ChatIndicators": {
-      "status": "unverified",
-      "reason": "26.24.0 static remap; runtime E2E pending"
+      "status": "skipped",
+      "reason": "fm6 mapped, but hook hardcodes retrofit2.Retrofit and retrofit2.http.POST, both obfuscated out of the 26.24.0 DEX; needs Retrofit remap"
     },
     "DisableShuffle": {
       "status": "skipped",
-      "reason": "fingerprint absent on this DEX (Cascade V2) | 26.24.0 static remap"
+      "reason": "fingerprint absent on this DEX (Cascade V2)"
     },
     "EmptyCalls": {
       "status": "unverified",
-      "reason": "26.24.0 static remap; runtime E2E pending"
+      "reason": "VideoCallHasNotChattedException + ChatIndividualFragment FQCNs present; runtime E2E pending"
     },
     "NotificationAlerts": {
       "status": "skipped",
-      "reason": "notification_reminder_time absent | 26.24.0 static remap"
+      "reason": "notification_reminder_time absent"
     },
     "ChatTerminal": {
       "status": "skipped",
-      "reason": "chatMessageMetaData absent | 26.24.0 static remap"
+      "reason": "chatMessageMetaData absent"
     },
     "LocalSavedPhrases": {
-      "status": "unverified",
-      "reason": "26.24.0 static remap; runtime E2E pending"
+      "status": "skipped",
+      "reason": "AddSavedPhraseResponse + PhrasesRestService ezl mapped, but hook needs retrofit2.Retrofit (obfuscated out); PhrasesResponse/Phrase FQCNs still present"
     },
     "BanManagement": {
-      "status": "unverified",
-      "reason": "26.24.0 static remap; runtime E2E pending"
+      "status": "skipped",
+      "reason": "LoginRestService pji + BannedArgs t23 mapped; deviceUtility unresolved; hookService needs retrofit2.Retrofit (obfuscated out)"
     },
     "EnableUnlimited": {
-      "status": "unverified",
-      "reason": "26.24.0 static remap; runtime E2E pending"
+      "status": "partial",
+      "reason": "rolesUpdated yaw.I + rolesField n mapped; paywallUtils/interstitialCollectors/viewsToHide unresolved; PROFILE_VIEW_STATE absent"
     },
     "QuickBlock": {
-      "status": "partial",
-      "reason": "blockViewModel unresolved; other QuickBlock symbols absent"
+      "status": "skipped",
+      "reason": "View-based profile holder and ViewModel showDialog method are gone; profile block dialog is Compose state f2x.h in a3x, chat dialog inline in s76"
     },
     "FeatureGranting": {
       "status": "partial",
-      "reason": "settingDistanceVisibilityViewModel=apr mapped; isFeatureFlagEnabled unresolved (R8 collision/API change)"
+      "reason": "flag evaluator qtg.a + distance VM apr mapped; alertParamsField unresolved; hardcoded Feature/Tap/TapsInboxEntity FQCNs absent (Feature enum moved to hyb)"
     },
     "OnlineIndicator": {
-      "status": "skipped",
-      "reason": "utils + ProfileUtilsV2 unresolved | 26.24.0 static remap"
+      "status": "partial",
+      "reason": "flag evaluator qtg.a mapped; utils + ProfileUtilsV2 absent (DexKit fallback is Alloy-only)"
     },
     "DisableUpdates": {
-      "status": "unverified",
-      "reason": "26.24.0 static remap; runtime E2E pending"
+      "status": "skipped",
+      "reason": "iz1.a + version field ev1.f mapped, but hook aborts on absent Play Core AppUpdateInfo/zzm and hardcodes absent AppConfiguration FQCN"
     },
     "ExpiringMedia": {
       "status": "skipped",
-      "reason": "ChatMessageBodyUiModel.ExpiringImage absent on 26.23.0 | 26.24.0 static remap"
+      "reason": "ExpiringImage jb6 mapped (public field b), but hook hardcodes absent ChatMessageBodyUiModel$ExpiringImage and ExpiringVideoBody; needs redesign"
     },
     "UnlimitedAlbums": {
       "status": "skipped",
-      "reason": "SpankBankAlbum model removed; hook needs adaptation | 26.24.0 static remap"
+      "reason": "AlbumsRestService c31 mapped; SpankBankAlbum models removed; hookService needs retrofit2.Retrofit (obfuscated out)"
     },
     "Favorites": {
       "status": "skipped",
-      "reason": "FavoritesFragment absent (Cascade V2) | 26.24.0 static remap"
+      "reason": "FavoritesFragment absent (Cascade V2)"
     },
     "WebSocketAlive": {
       "status": "partial",
-      "reason": "client mapped; factory unresolved on 26.24.0"
+      "reason": "client com.grindrapp.android.network.websocket.a + factory uiu.e mapped; client callbacks are E/F/G/H/I/S (hook hardcodes onClosed/onFailure) and uiu.a overloads are unrelated"
     },
     "StatusDialog": {
       "status": "unverified",
-      "reason": "26.24.0 static remap; runtime E2E pending"
+      "reason": "no pack symbols; runtime E2E pending"
     },
     "CloneLoginCompat": {
-      "status": "skipped",
-      "reason": "isFeatureFlagEnabled unresolved on 26.24.0 (R8 collision); needs fingerprint"
+      "status": "unverified",
+      "reason": "flag evaluator qtg.a mapped; forces RecaptchaFirstParty/ThirdParty off; runtime E2E pending"
     }
   }
 }

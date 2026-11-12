@@ -4,6 +4,17 @@
   "updatedAt": "2026-11-12",
   "versions": [
     {
+      "versionCode": 195444,
+      "versionName": "26.24.0",
+      "download": "aurora",
+      "patch": "mapping+pairip",
+      "pairip": true,
+      "morphe": "untested",
+      "alloy": "untested",
+      "verifiedAt": "2026-11-12",
+      "notes": "Play 26.24.0. Native decrypt pack produced from a Play-signed stock RX dump (libsqliteJni 0x48778..0x54f28, 50 933 B). Clone E2E pending; stock on the rooted A2 Lite requires the Magisk denylist because Vector/LSPosed injection trips native PairIP."
+    },
+    {
       "versionCode": 194910,
       "versionName": "26.23.0",
       "download": "aurora",

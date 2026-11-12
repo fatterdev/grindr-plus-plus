@@ -1,0 +1,8 @@
+{
+  "versionCode": 195444,
+  "package": "com.grindrapp.android",
+  "libs": [
+    "libsqliteJni.so"
+  ],
+  "note": "Stock in-memory RX dump (Play 26.24.0/195444); PairIP decrypted .text"
+}
