@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,16 +42,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.fatter.gpp.core.Config
 import dev.fatter.gpp.core.Constants.GRINDR_PACKAGE_NAME
 import dev.fatter.gpp.core.DeviceFlags
+import dev.fatter.gpp.manager.AVAILABILITY_URL
 import dev.fatter.gpp.manager.DATA_URL
 import dev.fatter.gpp.manager.ManagerBridge
 import dev.fatter.gpp.manager.TAG
 import dev.fatter.gpp.manager.activityScope
+import dev.fatter.gpp.manager.installation.DownloadSource
+import dev.fatter.gpp.manager.installation.GrindrVersion
+import dev.fatter.gpp.manager.installation.InstallStatus
 import dev.fatter.gpp.manager.installation.Installation
 import dev.fatter.gpp.manager.installation.steps.Print
 import dev.fatter.gpp.manager.ui.components.BannerType
 import dev.fatter.gpp.manager.ui.components.FileDialog
+import dev.fatter.gpp.manager.ui.components.GrindrVersionSelector
 import dev.fatter.gpp.manager.ui.components.MessageBanner
-import dev.fatter.gpp.manager.ui.components.VersionSelector
 import dev.fatter.gpp.manager.utils.ErrorHandler
 import dev.fatter.gpp.manager.utils.StorageUtils
 import kotlinx.coroutines.Dispatchers
@@ -69,9 +74,14 @@ fun InstallPage(
 ) {
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
-    val versionData = viewModel.versionData
+    val moduleBuild by viewModel.moduleBuild.collectAsState()
+    val versions by viewModel.versions.collectAsState()
+    val availability by viewModel.availability.collectAsState()
+    val installedVersionCode by viewModel.installedVersionCode.collectAsState()
+    val installedVersionName by viewModel.installedVersionName.collectAsState()
 
-    var selectedVersion by remember { mutableStateOf<Data?>(null) }
+    var selectedVersion by remember { mutableStateOf<GrindrVersion?>(null) }
+    var pendingNotWorking by remember { mutableStateOf<GrindrVersion?>(null) }
     var isWorking by remember { mutableStateOf(false) }
     var success by remember { mutableStateOf(false) }
     var warningBannerVisible by remember { mutableStateOf(true) }
@@ -89,17 +99,21 @@ fun InstallPage(
     }
 
     val manifestUrl = (Config.get("custom_manifest", DATA_URL) as String).ifBlank { DATA_URL }
+    val availabilityUrl = (Config.get("custom_availability", AVAILABILITY_URL) as String)
+        .ifBlank { AVAILABILITY_URL }
 
     LaunchedEffect(Unit) {
-        viewModel.loadVersionData(manifestUrl.toString())
+        viewModel.loadData(manifestUrl, availabilityUrl, context)
     }
 
-    LaunchedEffect(versionData.size) {
-        if (selectedVersion == null && versionData.isNotEmpty()) {
-            selectedVersion = versionData.first()
-            addLog("Module build: ${selectedVersion?.modVer}", LogType.INFO)
+    LaunchedEffect(versions) {
+        if (selectedVersion == null && versions.isNotEmpty()) {
+            selectedVersion = versions.first()
+            addLog("Host: ${selectedVersion?.label}", LogType.INFO)
         }
     }
+
+    val installedEntry = availability?.installedVersion(installedVersionCode)
 
     val print: Print = { output ->
         val logType = ConsoleLogger.parseLogType(output)
@@ -129,13 +143,13 @@ fun InstallPage(
         when {
             isLoading -> LoadingScreen()
             errorMessage != null -> ErrorScreen(errorMessage!!) {
-                viewModel.loadVersionData(manifestUrl.toString())
+                viewModel.loadData(manifestUrl, availabilityUrl, context)
             }
             else -> {
                 MessageBanner(
-                    text = "• Creates Grindr++ from the Grindr APK already installed from Play\n" +
-                        "• Stock Grindr stays untouched; Grindr++ is a separate clone\n" +
-                        "• After a Play update, tap again to re-patch with mapping packs\n" +
+                    text = "• Installed Grindr is the primary path: Grindr++ is a separate clone\n" +
+                        "• If the installed host has no working patch, pick a downloadable version below\n" +
+                        "• Status comes from the server-side APK + patch matrix\n" +
                         "• Don't close GrindMod mid-patch",
                     isVisible = warningBannerVisible,
                     isPulsating = isWorking,
@@ -159,8 +173,32 @@ fun InstallPage(
 
                 if (!grindrInstalled) {
                     MessageBanner(
-                        text = "Install Grindr from the Play Store first, then return here " +
-                            "to create Grindr++.",
+                        text = "Grindr is not installed. Choose a downloadable host version below; " +
+                            "GrindMod will fetch and patch it without touching stock Grindr.",
+                        isVisible = true,
+                        isPulsating = false,
+                        modifier = Modifier.fillMaxWidth(),
+                        type = BannerType.WARNING,
+                        onDismiss = {},
+                    )
+                }
+
+                if (installedVersionCode != null && installedEntry == null) {
+                    MessageBanner(
+                        text = "No patch entry for installed ${installedVersionName ?: ""} " +
+                            "($installedVersionCode). Choose a working version below.",
+                        isVisible = true,
+                        isPulsating = false,
+                        modifier = Modifier.fillMaxWidth(),
+                        type = BannerType.ERROR,
+                        onDismiss = {},
+                    )
+                } else if (installedEntry?.status == InstallStatus.NOT_WORKING) {
+                    MessageBanner(
+                        text = "Installed ${installedEntry.label} is marked " +
+                            "${installedEntry.status.label.lowercase()}" +
+                            (if (installedEntry.pairip) " (PairIP)" else "") +
+                            ". Choose a working version below.",
                         isVisible = true,
                         isPulsating = false,
                         modifier = Modifier.fillMaxWidth(),
@@ -171,16 +209,26 @@ fun InstallPage(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                VersionSelector(
-                    versions = versionData,
-                    selectedVersion = selectedVersion,
-                    onVersionSelected = { selected ->
+                Text(
+                    text = "Module build: ${moduleBuild?.modVer ?: "unavailable"}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                GrindrVersionSelector(
+                    versions = versions,
+                    selected = selectedVersion,
+                    onSelected = { selected ->
                         selectedVersion = selected
-                        addLog("Module build ${selected.modVer}", LogType.INFO)
+                        // A new selection starts a new operation: leave the
+                        // post-success "Open Grindr++" state.
+                        success = false
+                        addLog("Host: ${selected.label} (${selected.status.label})", LogType.INFO)
                     },
                     isEnabled = !isWorking,
                     modifier = Modifier.fillMaxWidth(),
-                    customOption = null,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -208,7 +256,7 @@ fun InstallPage(
                                         StorageUtils.cleanupOldInstallationFiles(
                                             context,
                                             true,
-                                            selectedVersion?.modVer,
+                                            moduleBuild?.modVer,
                                         )
                                     }
                                     addLog("Cleaned up old files", LogType.SUCCESS)
@@ -225,6 +273,8 @@ fun InstallPage(
 
                     Spacer(modifier = Modifier.width(16.dp))
 
+                    val host = selectedVersion
+                    val build = moduleBuild
                     Button(
                         onClick = {
                             when {
@@ -233,8 +283,12 @@ fun InstallPage(
                                     Installation.PRODUCT_CLONE_PACKAGE,
                                     "Grindr++",
                                 )
-                                else -> startCreateGrindrPlus(
-                                    version = selectedVersion,
+                                host == null -> Unit
+                                host.status == InstallStatus.NOT_WORKING ->
+                                    pendingNotWorking = host
+                                build != null -> startCreateGrindrPlus(
+                                    host = host,
+                                    moduleBuild = build,
                                     context = context,
                                     print = print,
                                     onStarted = { isWorking = true },
@@ -245,17 +299,22 @@ fun InstallPage(
                                 )
                             }
                         },
-                        enabled = (selectedVersion != null || success) &&
-                            !isWorking &&
-                            (grindrInstalled || success),
+                        enabled = (
+                            success || (
+                                host != null && build != null &&
+                                    (host.installed || host.canDownload)
+                                )
+                            ) && !isWorking,
                         modifier = Modifier.weight(1f),
                     ) {
                         Text(
                             text = when {
                                 isWorking -> "Patching…"
                                 success -> "Open Grindr++"
-                                cloneInstalled -> "Update Grindr++"
-                                else -> "Create Grindr++"
+                                host?.installed == true ->
+                                    if (cloneInstalled) "Update Grindr++" else "Create Grindr++"
+                                host != null -> "Download & patch ${host.versionName}"
+                                else -> "Select a version"
                             },
                             modifier = Modifier.padding(vertical = 8.dp),
                         )
@@ -323,6 +382,48 @@ fun InstallPage(
             }
         }
     }
+
+    pendingNotWorking?.let { host ->
+        AlertDialog(
+            onDismissRequest = { pendingNotWorking = null },
+            title = { Text("Version marked not working") },
+            text = {
+                Text(
+                    buildString {
+                        append("${host.label} is marked ${host.status.label.lowercase()}")
+                        if (host.pairip) append(" (PairIP)")
+                        append(".\n\n")
+                        if (!host.notes.isNullOrBlank()) append(host.notes).append("\n\n")
+                        append("Continue anyway?")
+                    },
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        pendingNotWorking = null
+                        val build = moduleBuild
+                        if (build != null) {
+                            startCreateGrindrPlus(
+                                host = host,
+                                moduleBuild = build,
+                                context = context,
+                                print = print,
+                                onStarted = { isWorking = true },
+                                onCompleted = { ok ->
+                                    isWorking = false
+                                    success = ok
+                                },
+                            )
+                        }
+                    },
+                ) { Text("Continue") }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingNotWorking = null }) { Text("Cancel") }
+            },
+        )
+    }
 }
 
 @Composable
@@ -367,40 +468,61 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
 }
 
 private fun startCreateGrindrPlus(
-    version: Data?,
+    host: GrindrVersion,
+    moduleBuild: Data,
     context: Activity,
     print: Print,
     onStarted: () -> Unit,
     onCompleted: (Boolean) -> Unit,
 ) {
-    if (version == null || version.modUrl.isBlank()) {
+    if (moduleBuild.modUrl.isBlank()) {
         addLog("Manifest entry missing mod URL.", LogType.ERROR)
         showToast(context, "Missing module download URL.")
         onCompleted(false)
         return
     }
-    if (!isPackageInstalled(context, GRINDR_PACKAGE_NAME)) {
-        addLog("Grindr is not installed from Play.", LogType.ERROR)
+    if (host.installed && !isPackageInstalled(context, GRINDR_PACKAGE_NAME)) {
+        addLog("Installed host selected, but Grindr is not installed.", LogType.ERROR)
         showToast(context, "Install Grindr from Play Store first.")
+        onCompleted(false)
+        return
+    }
+    if (!host.installed && !host.canDownload) {
+        addLog("No download source for ${host.label}.", LogType.ERROR)
+        showToast(context, "No download source for ${host.label}.")
         onCompleted(false)
         return
     }
 
     onStarted()
-    addLog("Creating/updating Grindr++ from installed Grindr…", LogType.INFO)
-    addLog("Module: ${version.modVer}", LogType.INFO)
+    addLog(
+        "Host: ${host.label} " +
+            "(${if (host.installed) "installed" else host.download.name.lowercase()})",
+        LogType.INFO,
+    )
+    addLog("Module: ${moduleBuild.modVer}", LogType.INFO)
 
     activityScope.launch {
         try {
             val mapsApiKey = (Config.get("maps_api_key", "") as String).ifBlank { null }
             val installation = Installation(
                 context,
-                version.modVer,
-                version.modUrl,
+                moduleBuild.modVer,
+                moduleBuild.modUrl,
                 mapsApiKey,
+                grindrVersionCode = if (host.installed) null else host.versionCode,
             )
             withContext(Dispatchers.IO) {
-                installation.createOrUpdateGrindrPlus(print)
+                if (host.installed) {
+                    installation.createOrUpdateGrindrPlus(print)
+                } else {
+                    installation.createFromVersion(
+                        versionCode = host.versionCode,
+                        source = host.download,
+                        apkUrl = host.apkUrl,
+                        print = print,
+                    )
+                }
             }
             addLog("Grindr++ ready!", LogType.SUCCESS)
             showToast(context, "Grindr++ installed")

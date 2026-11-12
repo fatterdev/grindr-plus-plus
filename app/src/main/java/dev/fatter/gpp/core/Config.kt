@@ -21,6 +21,7 @@ object Config {
         "debug_mode",
         "disable_permission_checks",
         "custom_manifest",
+        "custom_availability",
         "maps_api_key",
         "vector_modding_enabled",
     )

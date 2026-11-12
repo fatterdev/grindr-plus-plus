@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "moduleBuild": "5.0.0-dev-187cccf",
+  "updatedAt": "2026-11-11",
+  "versions": [
+    {
+      "versionCode": 194910,
+      "versionName": "26.23.0",
+      "download": "aurora",
+      "patch": "mapping+pairip",
+      "pairip": true,
+      "morphe": "not_working",
+      "alloy": "not_working",
+      "verifiedAt": "2026-11-09",
+      "notes": "Native PairIP anti-tamper blocks the re-signed clone. Stock 194910 is fine; use 26.16.1 for the rootless clone."
+    },
+    {
+      "versionCode": 185656,
+      "versionName": "26.19.0",
+      "download": "unavailable",
+      "patch": "mapping+pairip",
+      "pairip": true,
+      "morphe": "untested",
+      "alloy": "not_working",
+      "verifiedAt": "2026-11-09",
+      "notes": "PairIP host. Alloy runtime bypass is tombstoned; the rootless static pack exists but clone boot is not proven."
+    },
+    {
+      "versionCode": 179451,
+      "versionName": "26.16.1",
+      "download": "aurora",
+      "patch": "mapping",
+      "pairip": false,
+      "morphe": "working",
+      "alloy": "working",
+      "verifiedAt": "2026-11-09",
+      "notes": "Rootless clone target. Login + Settings toggle matrix passed on the lab clone (LSPatch -l 1)."
+    },
+    {
+      "versionCode": 174557,
+      "versionName": "26.15.1",
+      "download": "unavailable",
+      "patch": "mapping",
+      "pairip": false,
+      "morphe": "untested",
+      "alloy": "untested",
+      "verifiedAt": "",
+      "notes": "Mapping pack exists; download and patch not verified yet."
+    },
+    {
+      "versionCode": 173835,
+      "versionName": "26.15.0",
+      "download": "unavailable",
+      "patch": "mapping",
+      "pairip": false,
+      "morphe": "untested",
+      "alloy": "untested",
+      "verifiedAt": "",
+      "notes": "Mapping pack exists; download and patch not verified yet."
+    },
+    {
+      "versionCode": 166504,
+      "versionName": "26.10.0",
+      "download": "unavailable",
+      "patch": "mapping",
+      "pairip": false,
+      "morphe": "untested",
+      "alloy": "untested",
+      "verifiedAt": "",
+      "notes": "Mapping pack exists; download and patch not verified yet."
+    },
+    {
+      "versionCode": 164876,
+      "versionName": "26.9.2",
+      "download": "unavailable",
+      "patch": "mapping",
+      "pairip": false,
+      "morphe": "untested",
+      "alloy": "untested",
+      "verifiedAt": "",
+      "notes": "Mapping pack exists; download and patch not verified yet."
+    },
+    {
+      "versionCode": 158308,
+      "versionName": "26.6.0",
+      "download": "unavailable",
+      "patch": "mapping",
+      "pairip": false,
+      "morphe": "untested",
+      "alloy": "untested",
+      "verifiedAt": "",
+      "notes": "Mapping pack exists; download and patch not verified yet."
+    },
+    {
+      "versionCode": 147239,
+      "versionName": "25.20.0",
+      "download": "unavailable",
+      "patch": "mapping",
+      "pairip": false,
+      "morphe": "untested",
+      "alloy": "untested",
+      "verifiedAt": "",
+      "notes": "Historical mapping pack; download and patch not verified yet."
+    }
+  ]
+}

@@ -100,6 +100,9 @@ internal const val TAG = "GrindMod"
 internal const val DATA_URL =
     "https://raw.githubusercontent.com/fatterdev/grindr-plus-plus/refs/heads/master/manifest.json"
 
+internal const val AVAILABILITY_URL =
+    "https://raw.githubusercontent.com/fatterdev/grindr-plus-plus/refs/heads/master/install-availability.json"
+
 open class MainNavItem(
     val icon: ImageVector? = null,
     var title: String,
