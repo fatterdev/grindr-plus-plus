@@ -17,7 +17,7 @@ android {
         // applicationId set per delivery flavor (ADR 0005)
         minSdk = 26
         targetSdk = 34
-        versionCode = 16
+        versionCode = 17
         versionName = "5.0.0-dev-$gitCommitHash"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -31,6 +31,7 @@ This module is **not** affiliated with Grindr LLC. Use at your own risk.
 ## State now
 
 - Dual APK: **Morphe** (GrindMod Manager + Install → Grindr++ clone — not a Vector module) and **Alloy** (GrindMod + Vector; Settings modding toggle).
+- Install screen driven by a server-side **availability matrix**: installed host first, downloadable versions below, honest working / not-working states per delivery.
 - Remote mapping packs so version jumps do not always need a new APK.
 - In-app **News** = wiki CTA + GitHub Releases (no Telegram feed).
 - Soft-fail hooks: missing DEX fingerprints skip instead of crashing the host.
@@ -48,6 +49,8 @@ Free mod, no warranty. We are not responsible for lost chats, bans, or other iss
 
 Compatibility is **pack-driven** per installed Grindr `versionCode` (catalog: `mapping-packs/index.json`).
 
+**Which file to download:** release assets are signed APKs built from the tag — `gpp_v5.0.0-dev-<sha>-morphe-release.apk` (rootless Manager), `...-alloy-release.apk` (rooted module) and `...-embed-release.apk` (Manager payload, not a user app). Debug APKs are CI artifacts only; do not use them to update an installed app.
+
 ## Installation
 
 > **Migration note (Ver.5 namespace change):** GrindMod APKs now use the `dev.fatter.gpp.*` applicationIds (`dev.fatter.gpp.morphe`, `dev.fatter.gpp.alloy`). The new app id means the system treats it as a different app: **uninstall the old `com.gpp.*` build before installing the new one** — this also deletes the old app's local data (settings, block log, saved phrases, and the cache-held clone-signing key), so back up anything you need first. Existing Morphe clones stay bound to the old Manager (bridge + signing key) and cannot be updated by the new one: after installing the new Manager, **recreate the Grindr++ clone** via GrindMod → **Install**. For Alloy (Vector/LSPosed), re-open the module manager afterwards and re-confirm Grindr is in scope for `dev.fatter.gpp.alloy`.
@@ -55,8 +58,8 @@ Compatibility is **pack-driven** per installed Grindr `versionCode` (catalog: `m
 ### Rootless (Ver.5 / Morphe A — recommended product path)
 
 1. Install **stock Grindr** from the Play Store.
-2. Install **`gpp-morphe-*.apk`** (GrindMod) from [Releases](https://github.com/fatterdev/grindr-plus-plus/releases).
-3. Open GrindMod → **Install** → **Create Grindr++** (copies the installed Play APK, clones as `com.grindrapp.android.plus`, LSPatch embed).
+2. Install the **Morphe** release APK (`gpp_v5.0.0-dev-<sha>-morphe-release.apk`) from [Releases](https://github.com/fatterdev/grindr-plus-plus/releases).
+3. Open GrindMod → **Install** → **Create Grindr++** (copies the installed Play APK, clones as `com.grindrapp.android.plus`, LSPatch embed). If the installed host has no working patch, pick a downloadable version from the list — the status column tells you what is verified.
 4. Open **Grindr++** for the modded app; stock **Grindr** stays for Play updates. Re-run Create/Update after Store updates.
 
 Details: [docs/morphe-a.md](docs/morphe-a.md), [docs/manager-ui-lspatch.md](docs/manager-ui-lspatch.md).
@@ -65,7 +68,7 @@ Details: [docs/morphe-a.md](docs/morphe-a.md), [docs/manager-ui-lspatch.md](docs
 
 **Requirements:** Magisk / KernelSU + [JingMatrix/Vector](https://github.com/JingMatrix/Vector) (API 102 / Vector ≥ 2.2).
 
-1. Install **`gpp-alloy-*.apk`** (GrindMod Alloy) from [Releases](https://github.com/fatterdev/grindr-plus-plus/releases).
+1. Install the **Alloy** release APK (`gpp_v5.0.0-dev-<sha>-alloy-release.apk`) from [Releases](https://github.com/fatterdev/grindr-plus-plus/releases).
 2. Install stock Grindr (mapping pack required for your `versionCode`).
 3. Enable modding in GrindMod **Settings → Modding active** (root + Vector CLI) *or* enable the module in Vector with Grindr in scope.
 4. Open Grindr and verify.
