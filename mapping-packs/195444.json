@@ -1,0 +1,536 @@
+{
+  "schemaVersion": 2,
+  "versionName": "26.24.0",
+  "versionCode": 195444,
+  "confidence": "static-jadx-remap",
+  "generatedFrom": "JADX decompile of Play 26.24.0/195444 (px_9a, minSdk 32) on 2026-11-12. First-pass name/fingerprint remap from 194910: short R8 names are never trusted (collisions), FQCNs are kept only when present in DEX, and every other symbol is resolved by a unique fingerprint or explicit soft-skipped. Manual review resolved core.userSession=yaw, core.deviceInfo=zd9, ChatIndicators=fm6, LocalSavedPhrases=ezl, DisableUpdates=iz1. Hooks are unverified until runtime E2E; this pack does not claim clone boot.",
+  "symbols": {
+    "core.userAgent": {
+      "kind": "class",
+      "name": "j9w",
+      "fingerprint": "grindr3/",
+      "note": "remapped by fingerprint"
+    },
+    "core.userSession": {
+      "kind": "class",
+      "name": "yaw",
+      "note": "impl of w9w (UserSession); s() = jwt length > 0; B = token StateFlow; n = roles"
+    },
+    "core.deviceInfo": {
+      "kind": "class",
+      "name": "zd9",
+      "fingerprint": "field AdvertisingIdClient.Info",
+      "note": "AdvertisingIdClient.Info + lazy field d; used by Grindr request interceptor"
+    },
+    "core.grindrLocationProvider": {
+      "kind": "class",
+      "name": "fde",
+      "fingerprint": "system settings insufficient for location request, attempting to resolve",
+      "note": "location field moved from d to e; hooks find it by type | remapped by fingerprint"
+    },
+    "core.serverDrivenCascadeRepo": {
+      "kind": "class",
+      "name": "",
+      "note": "method a(double,double,boolean,Double,Double,Double,Double,Integer,Continuation) | no unique fingerprint match on 26.24.0; candidates=0",
+      "fingerprint": "a(double,double,...)->CascadePage"
+    },
+    "core.ageVerificationActivity": {
+      "kind": "class",
+      "name": "com.grindrapp.android.ageverification.presentation.ui.AgeVerificationActivity"
+    },
+    "core.browseExploreActivity": {
+      "kind": "class",
+      "name": "com.grindrapp.android.ui.browse.presentation.ui.BrowseExploreMapActivity",
+      "note": "moved from ui.browse.BrowseExploreMapActivity"
+    },
+    "core.serverNotification": {
+      "kind": "class",
+      "name": "com.grindrapp.android.network.websocket.model.WebSocketNotification$ServerNotification",
+      "fingerprint": "ServerNotification"
+    },
+    "retrofit.fail": {
+      "kind": "class",
+      "name": "yya",
+      "fingerprint": "Fail(failValue=",
+      "note": "remapped by fingerprint"
+    },
+    "retrofit.success": {
+      "kind": "class",
+      "name": "zya",
+      "fingerprint": "Success(successValue=",
+      "note": "remapped by fingerprint"
+    },
+    "DisableBoosting.DRAWER_PROFILE_UI_STATE": {
+      "kind": "class",
+      "name": "",
+      "fingerprint": "DrawerProfileUiState(showBoostMeButton=",
+      "note": "DrawerProfileUiState absent on 26.23.0 | no unique fingerprint match on 26.24.0; candidates=0"
+    },
+    "DisableBoosting.RADAR_UI_MODEL": {
+      "kind": "class",
+      "name": "gdo",
+      "fingerprint": "RadarUiModel(roamButton=",
+      "note": "remapped by fingerprint"
+    },
+    "DisableBoosting.FAB_UI_MODEL": {
+      "kind": "class",
+      "name": "hvb",
+      "fingerprint": "FabUiModel(isVisible=",
+      "note": "FabUiModel field renamed to a; hook expects isVisible | remapped by fingerprint"
+    },
+    "DisableBoosting.RIGHT_NOW_MICROS_FAB_UI_MODEL": {
+      "kind": "class",
+      "name": "",
+      "note": "RightNowMicrosFabUiModel (enp) field shape changed | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "DisableBoosting.BOOST_STATE_CLASS": {
+      "kind": "class",
+      "name": "",
+      "note": "MicrosDrawerItemState absent | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "DisableBoosting.NAVBAR_CLASS": {
+      "kind": "class",
+      "name": "l7f",
+      "fingerprint": "HomeScreenBottomNavigationUiModel(",
+      "note": "HomeScreenBottomNavigationUiModel routes field is shf, not List | remapped by fingerprint"
+    },
+    "DisableBoosting.SMALL_PERSISTENT_VECTOR": {
+      "kind": "class",
+      "name": "",
+      "note": "SmallPersistentVector absent | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "DisableBoosting.SUBSCRIBE_FOR_BOOST_REDEEM": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "DisableBoosting.SHOW_TAPS_AND_VIEWED_ME_POPUP": {
+      "kind": "class",
+      "name": "",
+      "note": "flow collector not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "AntiBlock.CHAT_DELETE_CONVERSATION_PLUGIN": {
+      "kind": "class",
+      "name": "",
+      "note": "'Deleting conversations' owner unresolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "AntiBlock.INBOX_FRAGMENT_V2_DELETE_CONVERSATIONS": {
+      "kind": "class",
+      "name": "",
+      "fingerprint": "chat_read_receipt + deleteConversationUseCase",
+      "note": "chat_read_receipt helper not confirmed as inbox delete path | no unique fingerprint match on 26.24.0; candidates=0"
+    },
+    "AntiBlock.INDIVIDUAL_UNBLOCK_ACTIVITY_VIEW_MODEL": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "AntiBlock.CONVERSATION_DELETE_NOTIFICATION": {
+      "kind": "class",
+      "name": "com.grindrapp.android.chat.model.ConversationDeleteNotification"
+    },
+    "ProfileDetails.BLOCKED_PROFILES_OBSERVER": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "ProfileDetails.PROFILE_VIEW_HOLDER": {
+      "kind": "class",
+      "name": "",
+      "note": "profile view holder not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "ProfileDetails.DISTANCE_UTILS": {
+      "kind": "class",
+      "name": "",
+      "method": "c",
+      "note": "pxf/sl9 merged; old 6-arg c() and settings field b are gone | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "ProfileDetails.PROFILE_BAR_VIEW": {
+      "kind": "class",
+      "name": "",
+      "note": "no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "ProfileDetails.PROFILE_VIEW_STATE": {
+      "kind": "class",
+      "name": "",
+      "fingerprint": "ProfileViewState(profileId=",
+      "note": "mbn has public fields, no getWeight/getHeight | no unique fingerprint match on 26.24.0; candidates=0"
+    },
+    "ProfileDetails.SERVER_DRIVEN_CASCADE_CACHED_STATE": {
+      "kind": "class",
+      "name": "",
+      "note": "removed; use CascadeProfileUiData | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "ProfileDetails.SERVER_DRIVEN_CASCADE_CACHED_PROFILE": {
+      "kind": "class",
+      "name": "np5",
+      "fingerprint": "CascadeProfileUiData(profileId=",
+      "note": "wj5 has public fields, no isBoosting()/getProfileId() | remapped by fingerprint"
+    },
+    "ProfileDetails.CASCADE_PROFILE_UI_DATA": {
+      "kind": "class",
+      "name": "np5",
+      "fingerprint": "CascadeProfileUiData(profileId=",
+      "note": "wj5 has public fields, no isBoosting()/getProfileId() | remapped by fingerprint"
+    },
+    "ChatIndicators.CHAT_REST_SERVICE": {
+      "kind": "class",
+      "name": "fm6",
+      "fingerprint": "v4/chatstatus/typing + v3/me/prefs/phrases",
+      "note": "v4/chatstatus/typing + v3/me/prefs/phrases"
+    },
+    "LocalSavedPhrases.AddSavedPhraseResponse": {
+      "kind": "class",
+      "name": "com.grindrapp.android.chat.data.datasource.api.model.AddSavedPhraseResponse",
+      "fingerprint": "chat.data.datasource.api.model"
+    },
+    "LocalSavedPhrases.PhrasesRestService": {
+      "kind": "class",
+      "name": "ezl",
+      "fingerprint": "v3/me/prefs",
+      "note": "v3/me/prefs -> PhrasesResponse"
+    },
+    "UnlimitedAlbums.AlbumsRestService": {
+      "kind": "class",
+      "name": "c31",
+      "fingerprint": "v1/albums/red-dot",
+      "note": "remapped by fingerprint"
+    },
+    "BanManagement.LoginRestService": {
+      "kind": "class",
+      "name": "pji",
+      "fingerprint": "v3/users/password-validation",
+      "note": "remapped by fingerprint"
+    },
+    "BanManagement.bannedArgs": {
+      "kind": "class",
+      "name": "t23",
+      "fingerprint": "BannedArgs(bannedType=",
+      "note": "remapped by fingerprint"
+    },
+    "BanManagement.deviceUtility": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "ExpiringMedia.ExpiringImage": {
+      "kind": "class",
+      "name": "jb6",
+      "fingerprint": "ExpiringImage(text=",
+      "note": "remapped by fingerprint"
+    },
+    "ExpiringMedia.ExpiringPhotoStatusResponse": {
+      "kind": "class",
+      "name": "com.grindrapp.android.chat.data.datasource.api.model.ExpiringPhotoStatusResponse"
+    },
+    "FeatureGranting.settingDistanceVisibilityViewModel": {
+      "kind": "class",
+      "name": "apr",
+      "fingerprint": "UiState(distanceVisibility=",
+      "note": "remapped by fingerprint"
+    },
+    "EnableUnlimited.paywallUtils": {
+      "kind": "class",
+      "name": "",
+      "note": "R8 collision / not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.persistentAdBannerContainer": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.interstitialCollector.show": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.interstitialCollector.o39": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.interstitialCollector.d12": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.interstitialCollector.chatActivity": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.interstitialCollector.profilesActivity": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.viewsToHide.profileTagCascade": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.viewsToHide.drawerProfile": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "EnableUnlimited.viewsToHide.fragmentRadar": {
+      "kind": "class",
+      "name": "",
+      "note": "not resolved | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "QuickBlock.blockViewModel": {
+      "kind": "class",
+      "name": "",
+      "note": "I(Context,xco,analytics) shows block dialog | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "FeatureGranting.isFeatureFlagEnabled": {
+      "kind": "class",
+      "name": "",
+      "note": "implements jdg | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "CloneLoginCompat.isFeatureFlagEnabled": {
+      "kind": "class",
+      "name": "",
+      "note": "no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "OnlineIndicator.utils": {
+      "kind": "class",
+      "name": "",
+      "note": "shouldShowOnlineIndicator absent | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "DisableUpdates.appUpgradeManager": {
+      "kind": "class",
+      "name": "iz1",
+      "fingerprint": "deprecation_message",
+      "note": "deprecation_message dialog; a(AppCompatActivity)"
+    },
+    "EmptyCalls.VIDEO_CALL_HAS_NOT_CHATTED": {
+      "kind": "class",
+      "name": "com.grindrapp.android.exception.VideoCallHasNotChattedException"
+    },
+    "EmptyCalls.CHAT_INDIVIDUAL_FRAGMENT": {
+      "kind": "class",
+      "name": "com.grindrapp.android.chat.presentation.ui.individual.ChatIndividualFragment"
+    },
+    "WebSocketAlive.CLIENT": {
+      "kind": "class",
+      "name": "com.grindrapp.android.network.websocket.a",
+      "fingerprint": "extends okhttp3.WebSocketListener"
+    },
+    "WebSocketAlive.FACTORY": {
+      "kind": "class",
+      "name": "",
+      "fingerprint": "e(String,String,websocket.a)->g7o",
+      "note": "no unique fingerprint match on 26.24.0; candidates=0"
+    },
+    "Favorites.FRAGMENT": {
+      "kind": "class",
+      "name": "",
+      "note": "FavoritesFragment absent on Cascade V2 | no unique fingerprint match on 26.24.0; no fingerprint"
+    },
+    "retrofit.successValue": {
+      "kind": "field",
+      "name": "a",
+      "note": "R8 field on ona"
+    },
+    "retrofit.failValue": {
+      "kind": "field",
+      "name": "a",
+      "note": "R8 field on nna"
+    },
+    "DisableBoosting.SHOW_TAPS_AND_VIEWED_ME_POPUP_METHOD": {
+      "kind": "method",
+      "name": "",
+      "note": "member not proven on 26.24.0"
+    },
+    "http.userSession.isLoggedInMethod": {
+      "kind": "method",
+      "name": "s",
+      "note": "frv.s() = jwt length > 0"
+    },
+    "http.userSession.authTokenFlowMethod": {
+      "kind": "method",
+      "name": "",
+      "note": "no getter on 26.23.0; token StateFlow is field B | member not proven on 26.24.0"
+    },
+    "http.userSession.rolesMethod": {
+      "kind": "method",
+      "name": "",
+      "note": "no getter on 26.23.0; joined roles are field n | member not proven on 26.24.0"
+    },
+    "http.deviceInfo.lazyField": {
+      "kind": "field",
+      "name": "d",
+      "note": "kotlin.Lazy on d49"
+    },
+    "http.userAgent.stringMethod": {
+      "kind": "method",
+      "name": "a",
+      "note": "tpv.a() User-Agent string"
+    },
+    "EnableUnlimited.paywallUtils.showMethod": {
+      "kind": "method",
+      "name": "",
+      "note": "member not proven on 26.24.0"
+    },
+    "EnableUnlimited.persistentAdBannerContainer.bindMethod": {
+      "kind": "method",
+      "name": "",
+      "note": "member not proven on 26.24.0"
+    },
+    "EnableUnlimited.userSession.rolesUpdatedMethod": {
+      "kind": "method",
+      "name": "I",
+      "note": "synchronized I(List) updates granted roles; restores header field n"
+    },
+    "QuickBlock.blockViewModel.showDialogMethod": {
+      "kind": "method",
+      "name": "I"
+    },
+    "QuickBlock.profileViewHolder.bindMethod": {
+      "kind": "method",
+      "name": "",
+      "note": "member not proven on 26.24.0"
+    },
+    "QuickBlock.profileViewHolder.viewBindingField": {
+      "kind": "field",
+      "name": "",
+      "note": "member not proven on 26.24.0"
+    },
+    "QuickBlock.profileViewHolder.toolbarField": {
+      "kind": "field",
+      "name": "",
+      "note": "member not proven on 26.24.0"
+    },
+    "FeatureGranting.isFeatureFlagEnabled.invokeMethod": {
+      "kind": "method",
+      "name": "a"
+    },
+    "CloneLoginCompat.isFeatureFlagEnabled.invokeMethod": {
+      "kind": "method",
+      "name": "a"
+    },
+    "FeatureGranting.alertParamsField": {
+      "kind": "field",
+      "name": "",
+      "note": "not resolved | member not proven on 26.24.0"
+    },
+    "OnlineIndicator.utils.shouldShowMethod": {
+      "kind": "method",
+      "name": "",
+      "note": "member not proven on 26.24.0"
+    },
+    "OnlineIndicator.profileUtilsV2.thresholdMethod": {
+      "kind": "method",
+      "name": "",
+      "note": "ProfileUtilsV2 absent | member not proven on 26.24.0"
+    },
+    "DisableUpdates.appUpgradeManager.showDeprecatedDialogMethod": {
+      "kind": "method",
+      "name": "a",
+      "note": "o(AppCompatActivity) builds deprecation dialog"
+    },
+    "DisableUpdates.appConfiguration.versionField": {
+      "kind": "field",
+      "name": "",
+      "note": "AppConfiguration class moved; hook still hardcodes old FQCN | member not proven on 26.24.0"
+    },
+    "http.userSession.authTokenFlowField": {
+      "kind": "field",
+      "name": "B",
+      "note": "v5o StateFlow<String>; use when authTokenFlowMethod is empty"
+    },
+    "http.userSession.rolesField": {
+      "kind": "field",
+      "name": "n",
+      "note": "joined L-Grindr-Roles string; restore after EnableUnlimited role injection"
+    }
+  },
+  "hooks": {
+    "DisableBoosting": {
+      "status": "unverified",
+      "reason": "26.24.0 static remap; runtime E2E pending"
+    },
+    "AntiBlock": {
+      "status": "skipped",
+      "reason": "inbox/delete-plugin/unblock remaps unresolved on 26.23.0 | 26.24.0 static remap"
+    },
+    "ProfileDetails": {
+      "status": "partial",
+      "reason": "cascade profile np5 mapped; ProfileBarView absent on 26.24.0"
+    },
+    "ChatIndicators": {
+      "status": "unverified",
+      "reason": "26.24.0 static remap; runtime E2E pending"
+    },
+    "DisableShuffle": {
+      "status": "skipped",
+      "reason": "fingerprint absent on this DEX (Cascade V2) | 26.24.0 static remap"
+    },
+    "EmptyCalls": {
+      "status": "unverified",
+      "reason": "26.24.0 static remap; runtime E2E pending"
+    },
+    "NotificationAlerts": {
+      "status": "skipped",
+      "reason": "notification_reminder_time absent | 26.24.0 static remap"
+    },
+    "ChatTerminal": {
+      "status": "skipped",
+      "reason": "chatMessageMetaData absent | 26.24.0 static remap"
+    },
+    "LocalSavedPhrases": {
+      "status": "unverified",
+      "reason": "26.24.0 static remap; runtime E2E pending"
+    },
+    "BanManagement": {
+      "status": "unverified",
+      "reason": "26.24.0 static remap; runtime E2E pending"
+    },
+    "EnableUnlimited": {
+      "status": "unverified",
+      "reason": "26.24.0 static remap; runtime E2E pending"
+    },
+    "QuickBlock": {
+      "status": "partial",
+      "reason": "blockViewModel unresolved; other QuickBlock symbols absent"
+    },
+    "FeatureGranting": {
+      "status": "partial",
+      "reason": "settingDistanceVisibilityViewModel=apr mapped; isFeatureFlagEnabled unresolved (R8 collision/API change)"
+    },
+    "OnlineIndicator": {
+      "status": "skipped",
+      "reason": "utils + ProfileUtilsV2 unresolved | 26.24.0 static remap"
+    },
+    "DisableUpdates": {
+      "status": "unverified",
+      "reason": "26.24.0 static remap; runtime E2E pending"
+    },
+    "ExpiringMedia": {
+      "status": "skipped",
+      "reason": "ChatMessageBodyUiModel.ExpiringImage absent on 26.23.0 | 26.24.0 static remap"
+    },
+    "UnlimitedAlbums": {
+      "status": "skipped",
+      "reason": "SpankBankAlbum model removed; hook needs adaptation | 26.24.0 static remap"
+    },
+    "Favorites": {
+      "status": "skipped",
+      "reason": "FavoritesFragment absent (Cascade V2) | 26.24.0 static remap"
+    },
+    "WebSocketAlive": {
+      "status": "partial",
+      "reason": "client mapped; factory unresolved on 26.24.0"
+    },
+    "StatusDialog": {
+      "status": "unverified",
+      "reason": "26.24.0 static remap; runtime E2E pending"
+    },
+    "CloneLoginCompat": {
+      "status": "skipped",
+      "reason": "isFeatureFlagEnabled unresolved on 26.24.0 (R8 collision); needs fingerprint"
+    }
+  }
+}
