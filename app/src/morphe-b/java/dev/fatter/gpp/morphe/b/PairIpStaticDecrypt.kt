@@ -253,6 +253,16 @@ object PairIpStaticDecrypt {
             var p = dataStart + u32(xml, offsetPos)
             if (p >= xml.size) break
             if (utf8) {
+                // AXML UTF-8 strings carry TWO length prefixes: the UTF-16 code
+                // unit count, then the UTF-8 byte count. Each is 1 or 2 bytes
+                // (high bit = continuation). Skipping only the first prefix
+                // shifts every string and makes the manifest scan miss names.
+                var utf16Len = xml[p].toInt() and 0xff
+                p++
+                if (utf16Len and 0x80 != 0) {
+                    utf16Len = ((utf16Len and 0x7f) shl 8) or (xml[p].toInt() and 0xff)
+                    p++
+                }
                 var len = xml[p].toInt() and 0xff
                 p++
                 if (len and 0x80 != 0) {

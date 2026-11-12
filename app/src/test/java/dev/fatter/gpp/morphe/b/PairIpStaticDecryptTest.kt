@@ -90,6 +90,19 @@ class PairIpStaticDecryptTest {
     }
 
     @Test
+    fun parseManifestVersionCode_utf8PoolWithLongString() {
+        // Long strings use the two-byte AXML pool length prefix. The clone
+        // step rewrites the manifest with a UTF-8 pool, so this must parse.
+        val longNamespace = "http://schemas.android.com/apk/res/android/" + "x".repeat(300)
+        assertEquals(
+            195444,
+            PairIpStaticDecrypt.parseManifestVersionCode(
+                axmlManifest(195444, namespace = longNamespace),
+            ),
+        )
+    }
+
+    @Test
     fun selectPackDir_prefersHostVersion() {
         val dir = createTempDirectory(prefix = "pairip-select-").toFile()
         val old = pack(dir, 185656, 0x55)
@@ -187,12 +200,15 @@ class PairIpStaticDecryptTest {
 
     // --- minimal binary AndroidManifest (AXML) with android:versionCode ---
 
-    private fun axmlManifest(versionCode: Int): ByteArray {
+    private fun axmlManifest(
+        versionCode: Int,
+        namespace: String = "http://schemas.android.com/apk/res/android",
+    ): ByteArray {
         val strings = listOf(
             "versionCode",
             "manifest",
             "android",
-            "http://schemas.android.com/apk/res/android",
+            namespace,
         )
         val body = stringPool(strings) + startElementManifest(
             nameIdx = 1,
@@ -210,8 +226,11 @@ class PairIpStaticDecryptTest {
 
     private fun stringPool(strings: List<String>): ByteArray {
         val encoded = strings.map { s ->
+            val utf16 = s.toByteArray(Charsets.UTF_16LE)
             val bytes = s.toByteArray(Charsets.UTF_8)
-            byteArrayOf(bytes.size.toByte()) + bytes + byteArrayOf(0)
+            // AXML UTF-8 pool: UTF-16 unit count, then UTF-8 byte count.
+            encodePoolLength(utf16.size / 2) + encodePoolLength(bytes.size) + bytes +
+                byteArrayOf(0)
         }
         val stringsStart = 28 + strings.size * 4
         val size = stringsStart + encoded.sumOf { it.size }
@@ -234,6 +253,14 @@ class PairIpStaticDecryptTest {
         }
         return out
     }
+
+    /** AXML pool length: 1 byte, or 2 bytes with the high bit on the first. */
+    private fun encodePoolLength(length: Int): ByteArray =
+        if (length <= 0x7f) {
+            byteArrayOf(length.toByte())
+        } else {
+            byteArrayOf((0x80 or (length ushr 8)).toByte(), (length and 0xff).toByte())
+        }
 
     private fun startElementManifest(
         nameIdx: Int,
