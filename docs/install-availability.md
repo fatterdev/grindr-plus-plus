@@ -44,9 +44,8 @@ server-side matrix instead of assuming the Play tip works.
 
 - 26.16.1 / 179451: working rootless clone target (no PairIP).
 - 26.24.0 / 195444: Play serves it via explicit delivery (the Play tip is
-  still 194910). A first-pass mapping pack is published for lab use, but the
-  matrix row is deferred until the PairIP native decrypt pack exists; the
-  clone is untested.
+  still 194910). The refined mapping pack and the native PairIP decrypt pack
+  are published; the matrix row is `untested` until the clone E2E.
 - 26.23.0 / 194910: download + patch + install complete, launch blocked by
   native PairIP (`libpairipcore.so` SIGSEGV) — matches the matrix.
 - Older packs: mapping present, download/patch untested.
