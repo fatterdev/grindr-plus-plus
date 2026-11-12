@@ -12,7 +12,7 @@ select APKs
          · DexlibBytecodeBackend (dexlib2 rewrite + scan fallback)
               → mutated classes*.dex + assets/grindrplus/bytecode_scan.json
          · marker → assets/grindrplus/morphe_b.json
-    → Morphe A LSPatchIntegratedBackend (-l 2 + slim embed)
+    → Morphe A LSPatchIntegratedBackend (-l 1 + slim embed)
     → SessionInstaller
 ```
 

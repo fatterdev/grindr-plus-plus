@@ -4,6 +4,8 @@
 - **Date:** 2026-10-05
 - **Related:** [0004-morphe-b.md](0004-morphe-b.md), [0005-dual-apk-morphe-alloy.md](0005-dual-apk-morphe-alloy.md)
 
+> **Update (2026-11-12):** LSPatch in the pipeline runs **`-l 1`** (see the ADR 0003 update).
+
 ## Context
 
 Morphe B today embeds a JSON marker and uses RUNTIME_REMAP. Tip-DEX residuals need real bytecode mutation. Upstream MorpheApp provides `bytecodePatch` / fingerprints / `.mpp` bundles ([morphe-patches-template](https://github.com/MorpheApp/morphe-patches-template)).

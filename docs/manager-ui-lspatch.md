@@ -6,10 +6,10 @@ Bottom nav (Morphe): **Install · Block Log · Home · News · Settings**. Alloy
 
 1. User installs **stock Grindr** from Play (`com.grindrapp.android`).
 2. GrindMod Install → **Create / Update Grindr++**.
-3. Pipeline: export installed APK/splits → clone package `com.grindrapp.android.plus` (label **Grindr++**, brand icon) → LSPatch `-l 2` embed → session install.
+3. Pipeline: export installed APK/splits → clone package `com.grindrapp.android.plus` (label **Grindr++**, brand icon) → LSPatch `-l 1` embed → session install. If the installed host is already LSPatch-patched, the export pulls its embedded original APK instead of re-patching the wrapper.
 4. Stock Play Grindr remains; Grindr++ is the modded clone. After a Play update, tap Update again (mapping packs apply).
 
-Module DEX still comes from GitHub Releases (`manifest.json` mod URL). Grindr CDN URLs are not the happy path.
+Module DEX comes from GitHub Releases (`manifest.json` mod URL). The host APK comes from the installed Play app by default, or from Play/Aurora when a version is picked in the availability list ([install-availability.md](install-availability.md)).
 
 ## Emergency fallback
 

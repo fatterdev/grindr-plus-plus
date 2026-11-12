@@ -11,7 +11,7 @@ Prefer a **slim embed payload** as `-m` (hooks + bridge + Xposed entry), not the
 | Type | Class | Role |
 | --- | --- | --- |
 | Seam | `PatchBackend` | Suspend API: input APKs + mod + keystore → patched output |
-| Default backend | `LSPatchIntegratedBackend` | Integrated LSPatch (`-l 2`), Maps API key rewrite, optional embed-off copy |
+| Default backend | `LSPatchIntegratedBackend` | Integrated LSPatch (`-l 1`), Maps API key rewrite, optional embed-off copy |
 | LSPatch pin | JingMatrix **v1.2** | `scripts/setup_lspatch.gradle.kts` + `app/libs/lspatch.jar` (upstream SHA-256 in `app/libs/lspatch-v1.2.sha256.txt`). v1.2 is the first stable libxposed API 102 release and loads the modern embed module. Host CLI dry-run uses the unstripped v1.2 jar; Android `lspatch.jar` strips conflicting Guava/errorprone classes. |
 | Orchestrator | `MorpheOrchestrator` | Select APKs → `PatchBackend.patch` → output ready for `SessionInstaller` |
 | Install step | `PatchApkStep` | Thin `Installation` step; delegates via `MorpheOrchestrator` (injectable `PatchBackend`) |
@@ -36,7 +36,7 @@ InstallApkStep / SessionInstaller
 
 ## Vector / LSPatch vs Morphe B
 
-- **Vector / LSPatch** remain the rootless embed mechanism (`-l 2` integrated). GrindrPlus is the module payload (`-m`).
+- **Vector / LSPatch** remain the rootless embed mechanism (`-l 1` integrated; `-l 2` rewrites DEX and corrupts Compose interface static methods). GrindrPlus is the module payload (`-m`).
 - **Morphe A** owns orchestration and the `PatchBackend` boundary; keystore and session install stay in the manager.
 - **Morphe B** (later) may replace or complement how features are delivered; it must not be required for Ver.5 green rootless install.
 

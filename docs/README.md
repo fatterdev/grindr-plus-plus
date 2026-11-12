@@ -14,12 +14,14 @@
   - [0008 — libxposed / Vector API 102](adr/0008-libxposed-api-102.md)
   - [0009 — PairIP static decrypt (Morphe B)](adr/0009-pairip-static-decrypt.md)
 - [Morphe A](morphe-a.md) — patch orchestrator (`PatchBackend` / LSPatch integrated)
+- [Install availability matrix](install-availability.md) — host version list, download sources, working/not-working states
 - [Morphe B](morphe-b.md) — post-green static feature parity
 - [Lab wiki — PairIP 26.19](lab/pairip/) — TOMBSTONE + Morphe B decrypt phase 1 (ADR 0009)
 - [Dual APK migration](dual-apk-migration.md) — `dev.fatter.gpp.morphe` / `dev.fatter.gpp.alloy`
 - [Ver.5 green checklist](ver5-green-checklist.md)
 - [E2E Settings ↔ runtime runbook](e2e-settings-runtime-runbook.md)
 - [E2E Wave 4 results](e2e-wave4-results.md)
+- [E2E Wave 5 — install pipeline + availability](e2e-wave5-install-availability.md)
 - [Wave 0 P0 debt freeze](wave0-p0-debt.md)
 - [Wave 0 pack keys inventory](wave0-pack-keys-inventory.md)
 

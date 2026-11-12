@@ -4,6 +4,8 @@
 - **Date:** 2026-10-05
 - **Related:** [vision.md](../vision.md), [0003-morphe-a-patch-backend.md](0003-morphe-a-patch-backend.md), [0004-morphe-b.md](0004-morphe-b.md)
 
+> **Update (2026-11-12):** the Morphe pipeline runs LSPatch with **`-l 1`**, not `-l 2` (see the ADR 0003 update).
+
 ## Context
 
 A single legacy `com.grindrplus` APK mixed Vector/LSPosed-module UX and LSPatch install UX. Users need a clear product split. Continuity must favor the **rootless / UI-first** audience, not rooted power users.

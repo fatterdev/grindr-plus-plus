@@ -5,6 +5,8 @@
 - **Deciders:** GrindrPlus Ver.5 maintainers
 - **Related:** [vision.md](../vision.md), [manager-ui-lspatch.md](../manager-ui-lspatch.md), [0001-mapping-pack-schema-v2.md](0001-mapping-pack-schema-v2.md)
 
+> **Update (2026-11-12):** the shipped default is **`-l 1`**. Level 2 rewrites DEX and corrupts Compose interface static methods (`DrawScope`) on 26.16.1, so `LSPatchIntegratedBackend` pins `-l 1`. The design below is otherwise unchanged. See [e2e-wave4-results.md](../e2e-wave4-results.md).
+
 ## Context
 
 Rootless install today patches Grindr by embedding the module via integrated LSPatch inside:
