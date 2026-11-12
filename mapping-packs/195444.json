@@ -3,7 +3,7 @@
   "versionName": "26.24.0",
   "versionCode": 195444,
   "confidence": "static-jadx-remap",
-  "generatedFrom": "JADX decompile of Play 26.24.0/195444 (px_9a, minSdk 32) on 2026-11-12. First-pass name/fingerprint remap from 194910: short R8 names are never trusted (collisions), FQCNs are kept only when present in DEX, and every other symbol is resolved by a unique fingerprint or explicit soft-skipped. Manual review resolved core.userSession=yaw, core.deviceInfo=zd9, ChatIndicators=fm6, LocalSavedPhrases=ezl, DisableUpdates=iz1. Hooks are unverified until runtime E2E; this pack does not claim clone boot.",
+  "generatedFrom": "JADX decompile of Play 26.24.0/195444 (px_9a, minSdk 32) on 2026-11-12. First-pass name/fingerprint remap from 194910: short R8 names are never trusted (collisions), FQCNs are kept only when present in DEX, and every other symbol is resolved by a unique fingerprint or explicit soft-skipped. Manual review resolved core.userSession=yaw, core.deviceInfo=zd9, ChatIndicators=fm6, LocalSavedPhrases=ezl, DisableUpdates=iz1. 37/85 symbols named after stale-member cleanup. Hooks are unverified until runtime E2E; this pack does not claim clone boot.",
   "symbols": {
     "core.userAgent": {
       "kind": "class",
@@ -386,7 +386,8 @@
     },
     "QuickBlock.blockViewModel.showDialogMethod": {
       "kind": "method",
-      "name": "I"
+      "name": "",
+      "note": "owner class soft-skipped"
     },
     "QuickBlock.profileViewHolder.bindMethod": {
       "kind": "method",
@@ -405,11 +406,13 @@
     },
     "FeatureGranting.isFeatureFlagEnabled.invokeMethod": {
       "kind": "method",
-      "name": "a"
+      "name": "",
+      "note": "owner class soft-skipped"
     },
     "CloneLoginCompat.isFeatureFlagEnabled.invokeMethod": {
       "kind": "method",
-      "name": "a"
+      "name": "",
+      "note": "owner class soft-skipped"
     },
     "FeatureGranting.alertParamsField": {
       "kind": "field",

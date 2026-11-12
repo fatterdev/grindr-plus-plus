@@ -18,12 +18,23 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import struct
 import zipfile
 from pathlib import Path
 from typing import Any
 
 CLASS_KINDS = {"class"}
 MEMBER_KINDS = {"method", "field"}
+
+# Member keys sometimes use a different prefix than their owning class symbol.
+# Keep the aliases explicit so an unresolved member is soft-skipped rather than
+# accepted on an unverified owner.
+OWNER_ALIASES = {
+    "http.userSession": "core.userSession",
+    "http.deviceInfo": "core.deviceInfo",
+    "http.userAgent": "core.userAgent",
+    "EnableUnlimited.userSession": "core.userSession",
+}
 
 
 def iter_java(sources: Path):
@@ -42,29 +53,76 @@ def class_path(sources: Path, name: str) -> Path | None:
     return p if p.is_file() else None
 
 
-def dex_class_descriptors(apk: Path | None, dex_dir: Path | None) -> set[str]:
-    """Collect type descriptors from DEX string pools.
+def _uleb128(data: bytes, offset: int) -> tuple[int, int]:
+    result = 0
+    shift = 0
+    while True:
+        byte = data[offset]
+        offset += 1
+        result |= (byte & 0x7F) << shift
+        if not byte & 0x80:
+            return result, offset
+        shift += 7
 
-    JADX can fail on individual classes; the DEX descriptor is the ground truth
-    for "this class still exists". The regex is intentionally broad: DEX string
-    pools store descriptors as plain strings, so an exact ``Lname;`` match is a
-    strong existence check.
+
+def _dex_string(data: bytes, offset: int) -> str:
+    length, offset = _uleb128(data, offset)
+    return data[offset : offset + length].decode("utf-8", errors="replace")
+
+
+def _dex_descriptors(data: bytes) -> set[str]:
+    """Return descriptors from DEX ``class_defs`` only.
+
+    Reading the string pool would also accept classes that are merely
+    referenced (method signatures, type instructions) but not defined in this
+    APK. ``class_defs`` is the authoritative set for the remap.
+    """
+    if len(data) < 0x70 or data[:4] != b"dex\n":
+        return set()
+    string_ids_size, string_ids_off = struct.unpack_from("<II", data, 0x38)
+    type_ids_size, type_ids_off = struct.unpack_from("<II", data, 0x40)
+    class_defs_size, class_defs_off = struct.unpack_from("<II", data, 0x60)
+    if not (string_ids_size and type_ids_size and class_defs_size):
+        return set()
+
+    strings: list[str] = []
+    for index in range(string_ids_size):
+        off = struct.unpack_from("<I", data, string_ids_off + 4 * index)[0]
+        strings.append(_dex_string(data, off))
+
+    types: list[str] = []
+    for index in range(type_ids_size):
+        string_index = struct.unpack_from("<I", data, type_ids_off + 4 * index)[0]
+        if string_index >= len(strings):
+            return set()
+        types.append(strings[string_index])
+
+    descriptors: set[str] = set()
+    for index in range(class_defs_size):
+        class_index = struct.unpack_from("<I", data, class_defs_off + 32 * index)[0]
+        if class_index >= len(types):
+            continue
+        descriptor = types[class_index]
+        if descriptor.startswith("L") and descriptor.endswith(";"):
+            descriptors.add(descriptor)
+    return descriptors
+
+
+def dex_class_descriptors(apk: Path | None, dex_dir: Path | None) -> set[str]:
+    """Collect defined class descriptors from root DEX files.
+
+    JADX can fail on individual classes; the DEX ``class_defs`` entry is the
+    ground truth for "this class still exists".
     """
     descriptors: set[str] = set()
-    pattern = re.compile(rb"L[A-Za-z0-9_$/]+;")
-
-    def scan(data: bytes) -> None:
-        for match in pattern.finditer(data):
-            descriptors.add(match.group(0).decode("latin1"))
-
     if apk and apk.is_file():
         with zipfile.ZipFile(apk) as zf:
             for name in zf.namelist():
                 if name.endswith(".dex") and "/" not in name:
-                    scan(zf.read(name))
+                    descriptors |= _dex_descriptors(zf.read(name))
     if dex_dir and dex_dir.is_dir():
         for path in dex_dir.glob("*.dex"):
-            scan(path.read_bytes())
+            descriptors |= _dex_descriptors(path.read_bytes())
     return descriptors
 
 
@@ -233,34 +291,33 @@ def remap(
         report["member_total"] += 1
         out = dict(sym)
         name = str(sym.get("name", "") or "")
+        owner = sym.get("owner") or sym.get("class")
+        if not owner:
+            owner = owner_key(key, src_symbols)
+        if not owner and "." in key:
+            prefix = key.rsplit(".", 1)[0]
+            owner = OWNER_ALIASES.get(prefix, prefix)
+
         ok = False
-        if name:
-            # Explicit owner field in the source pack (not currently used).
-            owner = sym.get("owner") or sym.get("class")
-            if not owner:
-                ok = True  # unknown owner: keep only if the name is stable? soft-skip below
-            else:
-                p = class_path(sources, str(owner))
-                ok = p is not None and member_exists(p, name, kind)
+        if name and owner:
+            owner_name = resolved.get(owner, str(owner))
+            p = class_path(sources, owner_name)
+            ok = p is not None and member_exists(p, name, kind)
         if ok and name:
             report["member_exact"] += 1
             out_symbols[key] = out
             continue
 
-        # Try the sibling owner heuristic, then search the resolved owner class.
-        owner = owner_key(key, src_symbols)
-        if owner and owner in resolved:
-            owner_name = resolved[owner]
-            p = class_path(sources, owner_name)
-            if p is not None and member_exists(p, name, kind):
-                report["member_exact"] += 1
-                out_symbols[key] = out
-                continue
+        # Unknown owner or absent member: explicit soft-skip, never keep a
+        # stale member name on faith.
         out["name"] = ""
-        out["note"] = (out.get("note", "") + " | member not proven on 26.24.0").strip(
-            " |"
+        reason = "member not proven on 26.24.0"
+        if not owner:
+            reason = "member owner unresolved on 26.24.0"
+        out["note"] = (out.get("note", "") + " | " + reason).strip(" |")
+        report["member_missing"].append(
+            {"key": key, "old": name, "kind": kind, "owner": owner}
         )
-        report["member_missing"].append({"key": key, "old": name, "kind": kind})
         out_symbols[key] = out
 
     # Hooks: never claim runtime success from a static remap.
