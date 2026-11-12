@@ -1,9 +1,10 @@
 package dev.fatter.gpp.manager.installation.steps
 
 import android.content.Context
-import com.github.diamondminer88.zip.ZipWriter
+import dev.fatter.gpp.manager.utils.copyEntry
 import java.io.File
 import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 
 /**
  * Replaces the cloned Grindr launcher icon with the Grindr++ brand.
@@ -138,12 +139,18 @@ class InjectCloneIconStep(
         }
 
         print("Injecting icon into ${apk.name} (${replacements.size} entries)")
-        ZipWriter(apk, true).use { zip ->
-            replacements.forEach { (name, bytes) ->
-                // writeEntry appends; without removing the stock entry first the
-                // APK ends up with duplicate names and Android keeps the original.
-                zip.deleteEntry(name, /* fillVoid = */ true)
-                zip.writeEntry(name, bytes)
+        val temp = File(apk.parentFile, "${apk.name}.tmp")
+        ZipFile(apk).use { zip ->
+            ZipOutputStream(temp.outputStream().buffered()).use { out ->
+                for (entry in zip.entries()) {
+                    out.copyEntry(zip, entry, replacements[entry.name])
+                }
+            }
+        }
+        if (!temp.renameTo(apk)) {
+            apk.delete()
+            if (!temp.renameTo(apk)) {
+                throw IllegalStateException("Could not replace ${apk.name} with the icon-injected APK")
             }
         }
     }

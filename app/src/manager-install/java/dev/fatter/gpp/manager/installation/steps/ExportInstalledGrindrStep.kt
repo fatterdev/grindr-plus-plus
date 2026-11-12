@@ -9,6 +9,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
 /**
@@ -59,6 +60,9 @@ class ExportInstalledGrindrStep(
                 }
                 // Preserve split naming expected by ExtractBundleStep (base.apk / split_*.apk)
                 val entryName = src.name
+                if (copyEmbeddedOriginalIfPatched(src, zos, print)) {
+                    continue
+                }
                 zos.putNextEntry(ZipEntry(entryName))
                 FileInputStream(src).use { input -> input.copyTo(zos) }
                 zos.closeEntry()
@@ -69,5 +73,32 @@ class ExportInstalledGrindrStep(
             "Exported installed Grindr to ${bundleFile.name} " +
                 "(${bundleFile.length() / 1024 / 1024}MB)"
         )
+    }
+
+    /**
+     * If [src] is already LSPatch-patched (same-package patch or a previous
+     * embed), export the embedded original APK instead of the patched
+     * wrapper. Re-patching a wrapper nests LSPatch and crashes the clone at
+     * startup in ART class verification, so the flow must always start from
+     * the original host APK.
+     */
+    private fun copyEmbeddedOriginalIfPatched(
+        src: File,
+        zos: ZipOutputStream,
+        print: Print,
+    ): Boolean {
+        try {
+            ZipFile(src).use { zip ->
+                val origin = zip.getEntry("assets/lspatch/origin.apk") ?: return false
+                print("${src.name} is LSPatch-patched; exporting its embedded original APK")
+                zos.putNextEntry(ZipEntry(src.name))
+                zip.getInputStream(origin).use { it.copyTo(zos) }
+                zos.closeEntry()
+                return true
+            }
+        } catch (t: Throwable) {
+            print("WARN: could not inspect ${src.name} for LSPatch origin (${t.message})")
+            return false
+        }
     }
 }

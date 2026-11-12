@@ -1,11 +1,11 @@
 package dev.fatter.gpp.manager.installation.steps
 
 import android.content.Context
-import com.github.diamondminer88.zip.ZipReader
-import com.github.diamondminer88.zip.ZipWriter
 import dev.fatter.gpp.manager.utils.ManifestPatcher
+import dev.fatter.gpp.manager.utils.copyEntry
 import java.io.File
 import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 
 class CloneGrindrStep(
     val folder: File,
@@ -33,30 +33,39 @@ class CloneGrindrStep(
                 }
                 ?: throw IllegalStateException("No manifest in ${file.name}")
 
-            ZipWriter(file, true).use { zip ->
-                print("Changing package and app name in ${file.name}")
-                val patchedManifestBytes = if (file.name.contains("base")) {
-                    ManifestPatcher.patchManifest(
-                        manifestBytes = manifest,
-                        packageName = packageName,
-                        appName = appName,
-                        debuggable = debuggable,
-                    )
-                } else {
-                    print("Changing package name in ${file.name}")
-                    ManifestPatcher.renamePackage(manifest, packageName)
-                }
-
-                print("Deleting old AndroidManifest.xml in ${file.name}")
-                // fillVoid = true: avoids rewriting the entire file. The voids
-                // will be removed by zipalign in SignClonedGrindrApk.
-                zip.deleteEntry(
-                    "AndroidManifest.xml",
-                    /* fillVoid = */ true
+            print("Changing package and app name in ${file.name}")
+            val patchedManifestBytes = if (file.name.contains("base")) {
+                ManifestPatcher.patchManifest(
+                    manifestBytes = manifest,
+                    packageName = packageName,
+                    appName = appName,
+                    debuggable = debuggable,
                 )
+            } else {
+                print("Changing package name in ${file.name}")
+                ManifestPatcher.renamePackage(manifest, packageName)
+            }
 
-                print("Adding patched AndroidManifest.xml in ${file.name}")
-                zip.writeEntry("AndroidManifest.xml", patchedManifestBytes)
+            // Rewrite the archive once instead of leaving voids for zipalign.
+            // Play APKs can carry a source stamp in the signing block; a clean
+            // rewrite also drops it so apksig can sign the clone.
+            val temp = File(file.parentFile, "${file.name}.tmp")
+            ZipFile(file).use { zip ->
+                ZipOutputStream(temp.outputStream().buffered()).use { out ->
+                    for (entry in zip.entries()) {
+                        out.copyEntry(
+                            zip,
+                            entry,
+                            if (entry.name == "AndroidManifest.xml") patchedManifestBytes else null,
+                        )
+                    }
+                }
+            }
+            if (!temp.renameTo(file)) {
+                file.delete()
+                if (!temp.renameTo(file)) {
+                    throw IllegalStateException("Could not replace ${file.name} with the cloned APK")
+                }
             }
         }
 

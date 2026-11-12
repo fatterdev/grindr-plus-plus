@@ -13,6 +13,7 @@ object ManifestPatcher {
     private const val ANDROID_NAMESPACE = "http://schemas.android.com/apk/res/android"
     private const val USES_CLEARTEXT_TRAFFIC = "usesCleartextTraffic"
     private const val DEBUGGABLE = "debuggable"
+    private const val EXTRACT_NATIVE_LIBS = "extractNativeLibs"
     private const val REQUEST_LEGACY_EXTERNAL_STORAGE = "requestLegacyExternalStorage"
     private const val LABEL = "label"
     private const val PACKAGE = "package"
@@ -134,11 +135,13 @@ object ManifestPatcher {
                                 mapOf(
                                     LABEL to appName,
                                     DEBUGGABLE to debuggable,
+                                    EXTRACT_NATIVE_LIBS to true,
                                     USES_CLEARTEXT_TRAFFIC to true,
                                     REQUEST_LEGACY_EXTERNAL_STORAGE to true
                                 )
                             ) {
                                 private var addDebuggable = debuggable
+                                private var addExtractNativeLibs = true
                                 private var addLegacyStorage = true
                                 private var addUseClearTextTraffic = true
 
@@ -153,6 +156,7 @@ object ManifestPatcher {
                                     if (name == REQUEST_LEGACY_EXTERNAL_STORAGE) addLegacyStorage =
                                         false
                                     if (name == DEBUGGABLE) addDebuggable = false
+                                    if (name == EXTRACT_NATIVE_LIBS) addExtractNativeLibs = false
                                     if (name == USES_CLEARTEXT_TRAFFIC) addUseClearTextTraffic =
                                         false
                                 }
@@ -217,6 +221,13 @@ object ManifestPatcher {
                                     if (addDebuggable) super.attr(
                                         ANDROID_NAMESPACE,
                                         DEBUGGABLE,
+                                        -1,
+                                        TYPE_INT_BOOLEAN,
+                                        1
+                                    )
+                                    if (addExtractNativeLibs) super.attr(
+                                        ANDROID_NAMESPACE,
+                                        EXTRACT_NATIVE_LIBS,
                                         -1,
                                         TYPE_INT_BOOLEAN,
                                         1

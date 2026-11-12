@@ -5,13 +5,16 @@ import android.widget.Toast
 import dev.fatter.gpp.manager.ManagerBridge
 import dev.fatter.gpp.manager.installation.steps.ApplyMorpheBStep
 import dev.fatter.gpp.manager.installation.steps.CheckStorageSpaceStep
+import dev.fatter.gpp.manager.installation.steps.CleanupIntermediatesStep
 import dev.fatter.gpp.manager.installation.steps.CloneGrindrStep
+import dev.fatter.gpp.manager.installation.steps.DownloadBundleStep
 import dev.fatter.gpp.manager.installation.steps.DownloadStep
 import dev.fatter.gpp.manager.installation.steps.ExportInstalledGrindrStep
 import dev.fatter.gpp.manager.installation.steps.ExtractBundleStep
 import dev.fatter.gpp.manager.installation.steps.InjectCloneIconStep
 import dev.fatter.gpp.manager.installation.steps.InstallApkStep
 import dev.fatter.gpp.manager.installation.steps.PatchApkStep
+import dev.fatter.gpp.manager.installation.steps.PlayGrindrDownloadStep
 import dev.fatter.gpp.manager.installation.steps.Print
 import dev.fatter.gpp.manager.installation.steps.SignClonedGrindrApk
 import dev.fatter.gpp.manager.installation.steps.Step
@@ -37,6 +40,8 @@ class Installation(
     val version: String,
     private val modUrl: String,
     private val mapsApiKey: String?,
+    /** Host version selected in the Install screen; null means "installed host". */
+    private val grindrVersionCode: Long? = null,
 ) {
     private val keyStoreUtils = KeyStoreUtils(context)
     private val folder = context.getExternalFilesDir(null)
@@ -44,7 +49,7 @@ class Installation(
     private val unzipFolder = File(folder, "splitApks/").also { it.mkdirs() }
     private val outputDir = File(folder, "LSPatchOutput/").also { it.mkdirs() }
     private val modFile = File(folder, "mod-$version.zip")
-    private val bundleFile = File(folder, "grindr-$version.zip")
+    private val bundleFile = File(folder, "grindr-${grindrVersionCode ?: version}.zip")
 
     private val installStep = InstallApkStep(outputDir)
 
@@ -82,9 +87,64 @@ class Installation(
                 mapsApiKey,
                 embedLSPatch = true,
             ),
+            CleanupIntermediatesStep(unzipFolder, bundleFile),
             installStep,
         ),
         operationName = "grindr_plus_from_installed",
+        print = print,
+    )
+
+    /**
+     * Create/update Grindr++ from a specific host version.
+     *
+     * The APK comes from Aurora/Play or from a server-provided URL; the patch
+     * is the same slim embed used by the installed-host path. This is the
+     * fallback for devices whose installed Grindr has no working patch.
+     */
+    suspend fun createFromVersion(
+        versionCode: Long,
+        source: DownloadSource,
+        apkUrl: String?,
+        print: Print,
+    ) = performOperation(
+        steps = listOf(
+            CheckStorageSpaceStep(folder),
+            when (source) {
+                DownloadSource.AURORA -> PlayGrindrDownloadStep(
+                    bundleFile = bundleFile,
+                    targetVersionCode = versionCode,
+                )
+                DownloadSource.URL -> DownloadBundleStep(
+                    bundleFile = bundleFile,
+                    url = apkUrl ?: throw IOException("Missing APK URL for Grindr $versionCode"),
+                )
+                DownloadSource.UNAVAILABLE -> throw IOException(
+                    "Grindr $versionCode has no download source",
+                )
+            },
+            DownloadStep(modFile, modUrl, "mod"),
+            ExtractBundleStep(bundleFile, unzipFolder),
+            CloneGrindrStep(
+                folder = unzipFolder,
+                packageName = PRODUCT_CLONE_PACKAGE,
+                appName = PRODUCT_CLONE_LABEL,
+                debuggable = false,
+            ),
+            InjectCloneIconStep(unzipFolder),
+            ApplyMorpheBStep(unzipFolder),
+            SignClonedGrindrApk(keyStoreUtils, unzipFolder),
+            PatchApkStep(
+                unzipFolder,
+                outputDir,
+                modFile,
+                keyStoreUtils.keyStore,
+                mapsApiKey,
+                embedLSPatch = true,
+            ),
+            CleanupIntermediatesStep(unzipFolder, bundleFile),
+            installStep,
+        ),
+        operationName = "grindr_plus_from_version_$versionCode",
         print = print,
     )
 

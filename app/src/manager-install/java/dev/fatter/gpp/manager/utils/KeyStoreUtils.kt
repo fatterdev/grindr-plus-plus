@@ -136,14 +136,22 @@ class KeyStoreUtils(context: Context) {
     }
 
     fun signApk(apkFile: File, output: File) {
-        ApkSigner.Builder(listOf(signerConfig))
-            .setV1SigningEnabled(true)
-            .setV2SigningEnabled(true)
-            .setV3SigningEnabled(true)
-            .setInputApk(apkFile)
-            .setOutputApk(output)
-            .build()
-            .sign()
+        try {
+            ApkSigner.Builder(listOf(signerConfig))
+                .setV1SigningEnabled(true)
+                .setV2SigningEnabled(true)
+                .setV3SigningEnabled(true)
+                .setInputApk(apkFile)
+                .setOutputApk(output)
+                .build()
+                .sign()
+        } catch (e: Exception) {
+            throw IOException(
+                "apksig failed for ${apkFile.name}: " +
+                    "${e.javaClass.simpleName}: ${e.message ?: "no message"}",
+                e,
+            )
+        }
     }
 }
 
