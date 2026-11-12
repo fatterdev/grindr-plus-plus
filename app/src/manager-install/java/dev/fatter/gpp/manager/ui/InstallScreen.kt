@@ -94,8 +94,8 @@ fun InstallPage(
     var customModUri by remember { mutableStateOf<Uri?>(null) }
 
     val grindrInstalled = remember { isPackageInstalled(context, GRINDR_PACKAGE_NAME) }
-    val cloneInstalled = remember {
-        isPackageInstalled(context, Installation.PRODUCT_CLONE_PACKAGE)
+    var cloneInstalled by remember {
+        mutableStateOf(isPackageInstalled(context, Installation.PRODUCT_CLONE_PACKAGE))
     }
 
     val manifestUrl = (Config.get("custom_manifest", DATA_URL) as String).ifBlank { DATA_URL }
@@ -295,6 +295,12 @@ fun InstallPage(
                                     onCompleted = { ok ->
                                         isWorking = false
                                         success = ok
+                                        if (ok) {
+                                            cloneInstalled = isPackageInstalled(
+                                                context,
+                                                Installation.PRODUCT_CLONE_PACKAGE,
+                                            )
+                                        }
                                     },
                                 )
                             }
@@ -413,6 +419,12 @@ fun InstallPage(
                                 onCompleted = { ok ->
                                     isWorking = false
                                     success = ok
+                                    if (ok) {
+                                        cloneInstalled = isPackageInstalled(
+                                            context,
+                                            Installation.PRODUCT_CLONE_PACKAGE,
+                                        )
+                                    }
                                 },
                             )
                         }
