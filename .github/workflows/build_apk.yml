@@ -221,7 +221,7 @@ jobs:
           **Download**
           - **Morphe** (dev.fatter.gpp.morphe): rootless Manager. Install stock Grindr from Play, then open GrindMod → Install → Create/Update Grindr++ (clone package com.grindrapp.android.plus).
           - **Alloy** (dev.fatter.gpp.alloy): rooted Vector module (https://github.com/JingMatrix/Vector).
-          - **embed** (dev.fatter.gpp.morphe.payload): slim -m payload used by the Manager; not a user app.
+          - **embed** (dev.fatter.gpp.morphe.payload): module payload downloaded automatically by GrindMod and fed to LSPatch; not an app, do not install it.
 
           The Install screen lists the installed host first, then downloadable versions with honest working / not-working states. Mapping packs and the install availability matrix update from the repository without rebuilding the Manager.
 

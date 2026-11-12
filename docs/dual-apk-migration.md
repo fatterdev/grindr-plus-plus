@@ -7,7 +7,7 @@ GrindMod ships two packages (Manager label **GrindMod**):
 | Rootless | `dev.fatter.gpp.morphe` | `gpp_v5.0.0-dev-<sha>-morphe-release.apk` |
 | Rooted | `dev.fatter.gpp.alloy` | `gpp_v5.0.0-dev-<sha>-alloy-release.apk` |
 
-The `embed` flavor (`dev.fatter.gpp.morphe.payload`, `...-embed-release.apk`) is the slim `-m` payload the Manager feeds to LSPatch — not a user app. Debug APKs are CI artifacts only and must not be used to update an installed app.
+The `embed` flavor (`dev.fatter.gpp.morphe.payload`, `...-embed-release.apk`) is the slim module payload that GrindMod downloads automatically and feeds to LSPatch (`-m`) when creating the clone — **not an app, do not install it**. Debug APKs are CI artifacts only and must not be used to update an installed app.
 
 Product / Morphe clone label: **Grindr++** (`com.grindrapp.android.plus`).
 

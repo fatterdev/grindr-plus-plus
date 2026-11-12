@@ -34,6 +34,15 @@ InstallApkStep / SessionInstaller
 
 `InstallScreen` → `Installation` is unchanged: still `ExtractBundleStep` → `PatchApkStep` → `InstallApkStep`. Morphe A only extracts the patch body behind a testable seam.
 
+## Embed payload (`-m`)
+
+GrindMod does not feed its own Manager APK to LSPatch. The release ships a third, internal artifact: the **embed payload** (`dev.fatter.gpp.morphe.payload`, `gpp_v…-embed-release.apk`).
+
+- It contains only the module runtime: the libxposed entry (`META-INF/xposed/java_init.list` → `dev.fatter.gpp.GppXposedModule`), hooks, the bridge service, mapping packs and translations.
+- It has no launcher activity and no Manager UI: it is **not an app**, it must not be installed by users, and it never appears in the launcher.
+- GrindMod downloads it automatically from `manifest.json` and passes it to LSPatch as `-m` when creating or updating Grindr++. LSPatch embeds it into the clone, so the module runs inside Grindr++.
+- Using the Manager APK instead would embed the whole Manager (Compose UI, gplayapi, the LSPatch jar) into every clone; the slim payload keeps the clone light and separates "Manager" from "module".
+
 ## Vector / LSPatch vs Morphe B
 
 - **Vector / LSPatch** remain the rootless embed mechanism (`-l 1` integrated; `-l 2` rewrites DEX and corrupts Compose interface static methods). GrindrPlus is the module payload (`-m`).

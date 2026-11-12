@@ -49,7 +49,7 @@ Free mod, no warranty. We are not responsible for lost chats, bans, or other iss
 
 Compatibility is **pack-driven** per installed Grindr `versionCode` (catalog: `mapping-packs/index.json`).
 
-**Which file to download:** release assets are signed APKs built from the tag — `gpp_v5.0.0-dev-<sha>-morphe-release.apk` (rootless Manager), `...-alloy-release.apk` (rooted module) and `...-embed-release.apk` (Manager payload, not a user app). Debug APKs are CI artifacts only; do not use them to update an installed app.
+**Which file to download:** release assets are signed APKs built from the tag — `gpp_v5.0.0-dev-<sha>-morphe-release.apk` (rootless Manager), `...-alloy-release.apk` (rooted module) and `...-embed-release.apk` (the module payload that GrindMod downloads automatically and feeds to LSPatch: **not an app, do not install it**). Debug APKs are CI artifacts only; do not use them to update an installed app.
 
 ## Installation
 
