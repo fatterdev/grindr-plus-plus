@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleBuild": "5.0.0-dev-187cccf",
-  "updatedAt": "2026-11-11",
+  "updatedAt": "2026-11-12",
   "versions": [
     {
       "versionCode": 194910,
@@ -11,7 +11,7 @@
       "pairip": true,
       "morphe": "not_working",
       "alloy": "not_working",
-      "verifiedAt": "2026-11-09",
+      "verifiedAt": "2026-11-12",
       "notes": "Native PairIP anti-tamper blocks the re-signed clone. Stock 194910 is fine; use 26.16.1 for the rootless clone."
     },
     {
@@ -33,7 +33,7 @@
       "pairip": false,
       "morphe": "working",
       "alloy": "working",
-      "verifiedAt": "2026-11-09",
+      "verifiedAt": "2026-11-12",
       "notes": "Rootless clone target. Login + Settings toggle matrix passed on the lab clone (LSPatch -l 1)."
     },
     {
