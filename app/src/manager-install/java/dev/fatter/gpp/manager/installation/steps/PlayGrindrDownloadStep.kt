@@ -25,6 +25,8 @@ import org.json.JSONObject
  */
 class PlayGrindrDownloadStep(
     private val bundleFile: File,
+    /** Explicit host version selected in the Install screen; null keeps the pack/tip heuristic. */
+    private val targetVersionCode: Long? = null,
 ) : BaseStep() {
 
     override val name = "Downloading Grindr (Play)"
@@ -35,7 +37,11 @@ class PlayGrindrDownloadStep(
             return
         }
 
-        val preferredVersionCode = preferredPackVersionCode(context)
+        val preferredVersionCode = if (targetVersionCode == null) {
+            preferredPackVersionCode(context)
+        } else {
+            0L
+        }
 
         print("Authenticating with Play (anonymous session)...")
         val play = try {
@@ -56,18 +62,23 @@ class PlayGrindrDownloadStep(
         }
 
         val tipVersionCode = app.versionCode
-        var versionCode = tipVersionCode
-        val softPreferTarget = preferredVersionCode > 0L &&
+        var versionCode = targetVersionCode ?: tipVersionCode
+        val softPreferTarget = targetVersionCode == null &&
+            preferredVersionCode > 0L &&
             tipVersionCode > 0L &&
             preferredVersionCode != tipVersionCode
 
-        if (preferredVersionCode > 0L) {
-            if (tipVersionCode == preferredVersionCode) {
+        when {
+            targetVersionCode != null -> {
+                print("Requested host versionCode=$targetVersionCode (Play tip=$tipVersionCode)")
+            }
+            preferredVersionCode > 0L && tipVersionCode == preferredVersionCode -> {
                 print(
                     "Play tip matches preferred target versionCode=$versionCode " +
                         "(align tip with a mapping pack when possible)"
                 )
-            } else {
+            }
+            preferredVersionCode > 0L -> {
                 print(
                     "Play tip versionCode=$tipVersionCode differs from preferred " +
                         "mapping-pack versionCode=$preferredVersionCode — " +
@@ -90,6 +101,13 @@ class PlayGrindrDownloadStep(
                 offerType = offerType,
             )
         } catch (e: Exception) {
+            if (targetVersionCode != null) {
+                throw IOException(
+                    "Requested Grindr version $targetVersionCode is not available from " +
+                        "Play/Aurora: ${e.message}",
+                    e,
+                )
+            }
             if (softPreferTarget) {
                 print(
                     "Preferred versionCode=$preferredVersionCode delivery failed " +
@@ -134,7 +152,12 @@ class PlayGrindrDownloadStep(
                     .let { if (it.endsWith(".apk", ignoreCase = true)) it else "$it.apk" }
                 val out = File(workDir, fileName)
                 print("  (${index + 1}/${apkFiles.size}) ${out.name} (${playFile.size / 1024}KB)")
-                val result = download(context, out, playFile.url, print)
+                var result = download(context, out, playFile.url, print)
+                if (!result.success) {
+                    print("Retrying ${out.name} after ${result.reason}")
+                    out.delete()
+                    result = download(context, out, playFile.url, print)
+                }
                 if (!result.success || !out.exists() || out.length() <= 0) {
                     throw IOException("Failed to download ${out.name}: ${result.reason}")
                 }

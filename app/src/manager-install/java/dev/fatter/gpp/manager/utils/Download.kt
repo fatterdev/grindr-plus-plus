@@ -76,7 +76,11 @@ suspend fun download(
                     .setHttpDownloader(
                         OkHttpDownloader(
                             getCustomTrustedOkHttpClient(context),
-                            Downloader.FileDownloaderType.PARALLEL
+                            // Play CDN + emulator NAT: parallel range requests
+                            // can die near the end of large splits
+                            // (UNKNOWN_IO_ERROR). A single stream is slower
+                            // but reliable.
+                            Downloader.FileDownloaderType.SEQUENTIAL
                         )
                     )
                     .setNotificationManager(
