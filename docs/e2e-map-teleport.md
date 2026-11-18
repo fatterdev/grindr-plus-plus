@@ -12,7 +12,7 @@ Status: **implementation verified, functional E2E blocked by lab login**.
 | Manager | `gpp_v5.0.0-dev-a1c2f93-morphe-debug.apk` (versionCode 17) |
 | Host | stock Grindr 26.16.1 / 179451 |
 | Clone | `com.grindrapp.android.plus`, LSPatch `-l 1` |
-| Device | `emulator-5554` (Android 16 x86_64) |
+| Device | lab emulator (Android 16 x86_64) |
 
 ## Verified
 
@@ -36,7 +36,7 @@ Explore map and tapping **Explore Here** requires a logged-in account.
 No credentials are stored in the repo or docs. The functional E2E must be
 resumed after one of these:
 
-1. a manual login on `emulator-5554` (or another 179451 clone);
+1. a manual login on the lab emulator (or another 179451 clone);
 2. the lab account supplied out-of-band;
 3. a logged-in device with a 179451 clone.
 
