@@ -283,13 +283,22 @@ object ManifestPatcher {
         override fun attr(ns: String?, name: String, resourceId: Int, type: Int, value: Any?) {
             val replace = attrs.containsKey(name)
             val newValue = attrs[name]
+            // AXML boolean attributes are typed TYPE_INT_BOOLEAN and the writer
+            // expects 1/0, not a Kotlin Boolean: passing Boolean wrote 0, so an
+            // existing `debuggable="false"` could never be turned on. Keep the
+            // other boolean attributes on their previous behavior (product path).
+            val coerced = when {
+                name == DEBUGGABLE && newValue is Boolean && type == TYPE_INT_BOOLEAN ->
+                    if (newValue) 1 else 0
+                else -> newValue
+            }
 
             super.attr(
                 ns,
                 name,
                 resourceId,
                 if (newValue is String) TYPE_STRING else type,
-                if (replace) newValue else value
+                if (replace) coerced else value
             )
         }
     }

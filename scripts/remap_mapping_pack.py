@@ -8,7 +8,7 @@ name (see ADR 0001).
 Usage:
   python scripts/remap_mapping_pack.py \
     --source mapping-packs/194910.json \
-    --sources tmp-grid-lab/gplay-195444/jadx/sources \
+    --sources <lab-local>/gplay-195444/jadx/sources \
     --version-code 195444 --version-name 26.24.0 \
     --out mapping-packs/195444.json
 """
