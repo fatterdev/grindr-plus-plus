@@ -31,6 +31,7 @@ import dev.fatter.gpp.core.http.Client
 import dev.fatter.gpp.core.http.Interceptor
 import dev.fatter.gpp.core.mapping.MappingDictionary
 import dev.fatter.gpp.debug.AgentDebugLog
+import dev.fatter.gpp.hooks.MapTeleport
 import dev.fatter.gpp.persistence.GPDatabase
 import dev.fatter.gpp.ui.DialogManager
 import dev.fatter.gpp.utils.HookManager
@@ -287,6 +288,7 @@ object GrindrPlus {
      * (that is VectorModToggle / CLI).
      */
     fun cleanupForHotReload() {
+        runCatching { MapTeleport.cleanup() }
         runCatching {
             if (::hookManager.isInitialized) {
                 hookManager.cleanupAll()
@@ -479,6 +481,8 @@ object GrindrPlus {
             AlloyDexKit.ensureInitialized(context)
         }
         hookManager.init()
+        // Always-on, no Settings toggle. Soft-skips when the mapping pack lacks keys.
+        MapTeleport.install()
         isMainInitialized = true
         AnonymousTelemetry.flush()
     }

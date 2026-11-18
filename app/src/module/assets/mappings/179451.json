@@ -3,7 +3,7 @@
   "versionName": "26.16.1",
   "versionCode": 179451,
   "confidence": "static-jadx",
-  "generatedFrom": "Obfuscation.kt + GrindrPlus.kt + RetrofitUtils + JADX 1.5.1 gap-fill (AddSavedPhraseResponse path) + soft-skips + Morphe B remaps 2026-10-05",
+  "generatedFrom": "Obfuscation.kt + GrindrPlus.kt + RetrofitUtils + JADX 1.5.1 gap-fill (AddSavedPhraseResponse path) + soft-skips + Morphe B remaps 2026-10-05 + MapTeleport keys (map selection -> real teleport) 2026-11-12",
   "symbols": {
     "core.userAgent": {
       "kind": "class",
@@ -37,12 +37,75 @@
     },
     "core.browseExploreActivity": {
       "kind": "class",
-      "name": "com.grindrapp.android.ui.browse.BrowseExploreMapActivity"
+      "name": "com.grindrapp.android.ui.browse.presentation.ui.BrowseExploreMapActivity",
+      "note": "corrected: ui.browse.presentation.ui (the ui.browse FQCN does not exist on 179451)"
     },
     "core.serverNotification": {
       "kind": "class",
       "name": "com.grindrapp.android.network.websocket.model.WebSocketNotification$ServerNotification",
       "fingerprint": "ServerNotification"
+    },
+    "MapTeleport.exploreMapView": {
+      "kind": "class",
+      "name": "pj4",
+      "method": "l",
+      "fingerprint": "view_explore_map + view_nearby_profiles + ExploreMapLocation",
+      "note": "Explore Here button handler; hook BEFORE + setResult(null) suppresses ExploreCascadeArgs navigation"
+    },
+    "MapTeleport.exploreMapView.currentLocationField": {
+      "kind": "field",
+      "name": "p",
+      "note": "ExploreMapLocation selected by camera idle / center pin"
+    },
+    "MapTeleport.exploreMapView.googleMapField": {
+      "kind": "field",
+      "name": "o",
+      "note": "GoogleMap instance on the map view; camera target is the center pin"
+    },
+    "MapTeleport.exploreMapLocation.latitudeField": {
+      "kind": "field",
+      "name": "a",
+      "note": "ExploreMapLocation latitude (real dex field a; jadx alias f7730a/f7731a)"
+    },
+    "MapTeleport.exploreMapLocation.longitudeField": {
+      "kind": "field",
+      "name": "b"
+    },
+    "MapTeleport.exploreMapFragment": {
+      "kind": "class",
+      "name": "com.grindrapp.android.ui.browse.presentation.ui.BrowseExploreMapFragment",
+      "note": "map fragment holding the visible Compose map overlay"
+    },
+    "MapTeleport.exploreMapFragment.mapViewField": {
+      "kind": "field",
+      "name": "r",
+      "note": "pj4 map view instance on the fragment"
+    },
+    "MapTeleport.roamDialog": {
+      "kind": "class",
+      "name": "coa",
+      "fingerprint": "micro_roam_wait_for_boost_title",
+      "note": "Roam dialogs helper used by the visible Show My Profile Here button"
+    },
+    "MapTeleport.roamDialog.c": {
+      "kind": "method",
+      "name": "c",
+      "note": "Boost-active gate (Wait for Boost to End)"
+    },
+    "MapTeleport.roamDialog.e": {
+      "kind": "method",
+      "name": "e",
+      "note": "Roam detail dialog path"
+    },
+    "MapTeleport.roamDialog.b": {
+      "kind": "method",
+      "name": "b",
+      "note": "Roam session dialog path"
+    },
+    "MapTeleport.roamDialog.f": {
+      "kind": "method",
+      "name": "f",
+      "note": "Roam offer dialog path"
     },
     "retrofit.fail": {
       "kind": "class",

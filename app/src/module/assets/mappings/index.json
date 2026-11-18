@@ -2,6 +2,11 @@
   "schemaVersion": 1,
   "packs": [
     {
+      "versionCode": 195444,
+      "versionName": "26.24.0",
+      "confidence": "static-jadx-remap"
+    },
+    {
       "versionCode": 194910,
       "versionName": "26.23.0",
       "confidence": "static-jadx"
