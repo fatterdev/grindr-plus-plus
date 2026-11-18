@@ -128,6 +128,62 @@ class PairIpStaticDecryptTest {
     }
 
     @Test
+    fun selectPackDir_defersKnownVersionWithoutMatchingPack() {
+        val dir = createTempDirectory(prefix = "pairip-defer-").toFile()
+        val only = pack(dir, 194910, 0x55)
+
+        // Known host version with a sole wrong-version pack must not fall back to it.
+        assertNull(PairIpStaticDecrypt.selectPackDir(listOf(only), 195444))
+        // Same when only pack.json declares a different version.
+        val named = File(dir, "current").also { it.mkdirs() }
+        File(named, "pack.json").writeText("""{"versionCode":194910}""")
+        File(named, "libsqliteJni.so").writeBytes(ByteArray(8))
+        assertNull(PairIpStaticDecrypt.selectPackDir(listOf(named), 195444))
+    }
+
+    @Test
+    fun selectPackDir_usesSoleCandidateForUnknownVersion() {
+        val dir = createTempDirectory(prefix = "pairip-unknown-").toFile()
+        val only = pack(dir, 194910, 0x55)
+
+        assertEquals(only, PairIpStaticDecrypt.selectPackDir(listOf(only), null))
+    }
+
+    @Test
+    fun apply_defersWhenKnownVersionHasNoMatchingPack() {
+        val dir = createTempDirectory(prefix = "pairip-apply-defer-").toFile()
+        val base = File(dir, "base.apk")
+        ZipOutputStream(base.outputStream()).use { zos ->
+            zos.putNextEntry(ZipEntry("AndroidManifest.xml"))
+            zos.write(axmlManifest(195444))
+            zos.closeEntry()
+            zos.putNextEntry(ZipEntry("lib/arm64-v8a/libpairipcore.so"))
+            zos.write(byteArrayOf(1, 2, 3, 4))
+            zos.closeEntry()
+        }
+        val arm64 = File(dir, "split_config.arm64_v8a.apk")
+        ZipOutputStream(arm64.outputStream()).use { zos ->
+            zos.putNextEntry(ZipEntry("lib/arm64-v8a/libsqliteJni.so"))
+            zos.write(ByteArray(32) { 0xAA.toByte() })
+            zos.closeEntry()
+        }
+        pack(dir, 194910, 0x22)
+
+        val logs = mutableListOf<String>()
+        val report = PairIpStaticDecrypt.apply(listOf(base, arm64)) { logs += it }
+
+        assertTrue(report.present)
+        assertEquals(195444, report.hostVersionCode)
+        assertFalse(report.packApplied)
+        assertNull(report.packDir)
+        assertTrue(logs.any { it.contains("no pack for host version") })
+        java.util.zip.ZipFile(arm64).use { zip ->
+            val bytes = zip.getInputStream(zip.getEntry("lib/arm64-v8a/libsqliteJni.so")).readBytes()
+            assertTrue(bytes.all { it == 0xAA.toByte() })
+        }
+    }
+
+    @Test
     fun apply_selectsPackMatchingHostVersion() {
         val dir = createTempDirectory(prefix = "pairip-apply-vc-").toFile()
         val base = File(dir, "base.apk")

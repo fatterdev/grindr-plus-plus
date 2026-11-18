@@ -138,8 +138,9 @@ object PairIpStaticDecrypt {
         if (candidates.isEmpty()) return null
         val chosen = selectPackDir(candidates, hostVersionCode)
         if (chosen == null) {
+            val reason = if (hostVersionCode == null) "ambiguous" else "no pack for host version"
             print(
-                "Morphe B PairIP: pack selection ambiguous " +
+                "Morphe B PairIP: pack selection $reason " +
                     "(versionCode=$hostVersionCode, candidates=${candidates.joinToString { it.name }})",
             )
         }
@@ -165,16 +166,16 @@ object PairIpStaticDecrypt {
 
     /**
      * Deterministic pack choice: exact `versionCode` directory, else a pack whose
-     * `pack.json` declares the host version, else the only candidate (back-compat).
-     * Ambiguous inputs fail soft (no pack) instead of splicing a wrong-version image.
+     * `pack.json` declares the host version. Only an unknown host version may use
+     * the sole candidate (back-compat); a known version with no matching pack
+     * defers the patch instead of splicing a wrong-version native image.
      */
     internal fun selectPackDir(candidates: List<File>, hostVersionCode: Int?): File? {
         if (candidates.isEmpty()) return null
-        if (hostVersionCode != null) {
-            candidates.firstOrNull { it.name == hostVersionCode.toString() }?.let { return it }
-            candidates.firstOrNull { packVersionCode(it) == hostVersionCode }?.let { return it }
-        }
-        return candidates.singleOrNull()
+        if (hostVersionCode == null) return candidates.singleOrNull()
+        candidates.firstOrNull { it.name == hostVersionCode.toString() }?.let { return it }
+        candidates.firstOrNull { packVersionCode(it) == hostVersionCode }?.let { return it }
+        return null
     }
 
     /** Minimal `pack.json` scan (no org.json so JVM unit tests stay dependency-free). */
