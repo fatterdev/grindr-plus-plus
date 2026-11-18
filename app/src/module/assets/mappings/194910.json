@@ -67,6 +67,14 @@
       "kind": "method",
       "name": "e"
     },
+    "MapTeleport.exploreMapFragment": {
+      "kind": "class",
+      "name": "com.grindrapp.android.ui.browse.presentation.ui.BrowseExploreMapFragment"
+    },
+    "MapTeleport.exploreMapFragment.mapViewField": {
+      "kind": "field",
+      "name": "exploreMapView"
+    },
     "retrofit.fail": {
       "kind": "class",
       "name": "nna",

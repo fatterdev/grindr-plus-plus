@@ -1,59 +1,64 @@
 # E2E — map teleport
 
-Status: **implementation verified, functional E2E blocked by lab login**.
+Status: **functional E2E verified on the visible map button (179451)**.
 
 ## Build under test
 
 | Item | Value |
 | --- | --- |
 | Branch | `feat/map-teleport` |
-| Commit | `c8ac0c5` |
-| Module payload | `gpp_v5.0.0-dev-a1c2f93-embed-debug.apk` |
-| Manager | `gpp_v5.0.0-dev-a1c2f93-morphe-debug.apk` (versionCode 17) |
+| Module payload | `gpp_v5.0.0-dev-ebd6918-embed-debug.apk` |
+| Manager | `gpp_v5.0.0-dev-f5c9702-morphe-debug.apk` (versionCode 17) |
 | Host | stock Grindr 26.16.1 / 179451 |
 | Clone | `com.grindrapp.android.plus`, LSPatch `-l 1` |
 | Device | lab emulator (Android 16 x86_64) |
 
 ## Verified
 
-- `:app:compileEmbedDebugKotlin` and `:app:compileAlloyDebugKotlin` pass.
-- `:app:testMorpheDebugUnitTest` passes.
-- Mapping packs validate (`scripts/validate_mapping_packs.py`).
+- `:app:compileEmbedDebugKotlin` and `:app:assembleEmbedDebug` pass.
 - Manager updated; clone re-patched with the new embed payload and installed.
 - Clone logcat at startup:
-  - `MapTeleport: installed on pj4#l (field=p)`
-  - `GPP-Debug` `MAP_TP / installed` with `class=pj4`, `method=l`,
-    `currentLocationField=p`.
-- Hook summary unchanged (`enabled=20, partial=3, skipped=5, disabled=1,
-  failed=0, total=29`); MapTeleport is intentionally not a `Hook` and has no
-  Settings toggle.
+  - `MapTeleport: primary installed on pj4#l`
+  - `MapTeleport: roam candidates b(WeakReference,Roam,...), c(WeakReference), e(WeakReference,Roam), f(WeakReference,RoamOfferUiData,...)`
+  - `MapTeleport: roam fallback installed on coa (4 methods)`
+- Functional flow (Profile → Roam → map → **Show My Profile Here**):
+  - no "Wait for Boost to End" dialog;
+  - the map closes and the grid is shown again;
+  - toast `Teleported to Map selection`;
+  - `GPP-Debug` `MAP_TP / map_state` → `mapView=pj4`, `pin=true`, `coords=true`;
+  - `GPP-Debug` `MAP_TP / roam_filter` → `method=c`,
+    `activity=...BrowseExploreMapActivity`, `coords=true`;
+  - `GPP-Debug` `MAP_TP / map_selection` and `TeleportController /
+    teleport_applied` with the selected latitude/longitude, source `map-roam`,
+    `displayName`/`saveAs` = `Map selection`.
+- Manager config for the clone:
+  - `current_location = <lat>,<lon>`
+  - `current_location_name = Map selection`
+  - `forced_coordinates = <lat>,<lon>`
+- Manager external file `com.grindrapp.android.plus.location` contains the same
+  coordinates.
+- The saved `Map selection` DB upsert completes without an error log.
 
-## Blocked
+## Notes
 
-The clone reaches `LoginActivity`; the lab session is not present. Opening the
-Explore map and tapping **Explore Here** requires a logged-in account.
+- `TeleportController` logs `httpClient not initialized; geohash skipped` on this
+  lab build: the `InstanceManager` never captured the session instances, so the
+  explicit `PUT /v4/location` call is skipped. The in-process
+  `forced_coordinates` override still applies to every `Location` read, which is
+  the same behavior as `/tp` on this build.
+- The premium **Explore Here** entry is not reachable on the lab account (no
+  premium map entry). The `pj4#l` hook is verified installed; its functional
+  path is unchanged and shares the same `TeleportController`.
 
-No credentials are stored in the repo or docs. The functional E2E must be
-resumed after one of these:
+## Manual checks still worth repeating
 
-1. a manual login on the lab emulator (or another 179451 clone);
-2. the lab account supplied out-of-band;
-3. a logged-in device with a 179451 clone.
-
-## Functional checks to run once logged in
-
-1. Open Explore, drag the map to a known point, tap **Explore Here**.
-2. Expect: no cascade/exploration screen; toast `Teleported to Map selection`.
-3. `adb logcat` shows `GPP-Debug` `MAP_TP / map_selection` and
-   `TeleportController / teleport_applied`.
-4. Manager config: `current_location` and `forced_coordinates` match the point;
-   `current_location_name = "Map selection"`.
-5. Manager external file `com.grindrapp.android.plus.location` contains the
-   coordinates.
-6. Teleport Locations dialog shows the saved `Map selection` entry.
-7. `/tp` still overwrites the target (no “Teleportation disabled” dialog);
+1. Drag the map to a different known point, tap **Show My Profile Here**;
+   confirm the config/Manager file coordinates change.
+2. Disable **Location spoofer** and confirm the stock Roam/Boost flow is shown
+   again (no teleport, no suppression).
+3. `/tp` still overwrites the target (no “Teleportation disabled” dialog);
    `/tp off` clears both keys and deletes the Manager file.
-8. App reads the spoofed latitude/longitude (LocationSpoofer hook).
+4. Teleport Locations dialog shows the saved `Map selection` entry.
 
 ## Release note
 
